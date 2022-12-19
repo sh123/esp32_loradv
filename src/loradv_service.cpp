@@ -44,10 +44,10 @@ void Service::setup(const Config &config)
   LOG_INFO("Encoder setup completed");
 
   // start codec2 playback task
-  xTaskCreate(&audioTask, "audio_task", 32000, NULL, 5, &audioTaskHandle_);
+  xTaskCreate(&audioTask, "audio_task", 32000, this, 5, &audioTaskHandle_);
 
   // start lora task
-  xTaskCreate(&loraRadioTask, "lora_task", 8000, NULL, 5, &loraTaskHandle_);
+  xTaskCreate(&loraRadioTask, "lora_task", 8000, this, 5, &loraTaskHandle_);
 
   // sleep
   LOG_INFO("Light sleep is enabled");
