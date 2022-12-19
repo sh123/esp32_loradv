@@ -385,7 +385,6 @@ void Service::audioPlayRecord()
     // audio rx-decode-playback
     if (audio_bits & CfgAudioPlayBit) {
       LOG_DEBUG("Playing audio");
-      i2s_start(CfgAudioI2sSpkId);
       double vol = (double)codecVolume_ / (double)CfgAudioMaxVolume;
       LOG_DEBUG("Volume is", vol);
       // while rx frames are available and button is not pressed
