@@ -47,6 +47,7 @@
 
 // ptt button
 #define CFG_PTT_BTN_PIN             39          // pin for ptt button
+#define CFG_PTT_BTN_GPIO_PIN        GPIO_NUM_39 // gpio pin
 
 // rotary encoder
 #define CFG_ENCODER_PIN_A           17

@@ -28,6 +28,7 @@ void initializeConfig(LoraDv::Config &cfg)
 
   // ptt button
   cfg.PttBtnPin = CFG_PTT_BTN_PIN;
+  cfg.PttBtnGpioPin = CFG_PTT_BTN_GPIO_PIN;
 
   // encoder
   cfg.EncoderPinA = CFG_ENCODER_PIN_A;

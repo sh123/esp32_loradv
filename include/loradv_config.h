@@ -59,7 +59,8 @@ struct Config {
   int PmLightSleepAwakeMs; // How long to be active
 
   // ptt button
-  int PttBtnPin;           // ptt pin
+  int PttBtnPin;            // ptt pin
+  gpio_num_t PttBtnGpioPin; // gpio pin
 
 }; // Config
 

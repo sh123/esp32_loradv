@@ -18,6 +18,7 @@ void Service::setup(const Config &config)
   config_ = config;
 
   // setup logging
+  LOG_SET_LEVEL(config_.LogLevel);
   LOG_SET_OPTION(false, false, true);  // disable file, line, enable func
 
   // oled screen
@@ -233,7 +234,7 @@ void Service::printStatus(const String &str)
 void Service::lightSleepReset() {
   LOG_DEBUG("Reset light sleep");
   if (lightSleepTimerTask_ != NULL) lightSleepTimer_.cancel(lightSleepTimerTask_);
-  lightSleepTimerTask_ = lightSleepTimer_.in(config_.PmLightSleepAfterMs, lightSleepEnterTimer);
+  lightSleepTimerTask_ = lightSleepTimer_.in(config_.PmLightSleepAfterMs, lightSleepEnterTimer, this);
 }
 
 bool Service::lightSleepEnterTimer(void *param) {
@@ -259,7 +260,7 @@ void Service::lightSleepEnter(void) {
 }
 
 esp_sleep_wakeup_cause_t Service::lightSleepWait(uint64_t sleepTimeUs) {
-  esp_sleep_enable_ext0_wakeup(static_cast<gpio_num_t>(config_.PttBtnPin), LOW);
+  esp_sleep_enable_ext0_wakeup(config_.PttBtnGpioPin, LOW);
   uint64_t bitMask = (uint64_t)(1 << config_.LoraPinA) | (uint64_t)(1 << config_.LoraPinB);
   esp_sleep_enable_ext1_wakeup(bitMask, ESP_EXT1_WAKEUP_ANY_HIGH);
   esp_sleep_enable_timer_wakeup(sleepTimeUs);
@@ -384,6 +385,7 @@ void Service::audioPlayRecord()
     // audio rx-decode-playback
     if (audio_bits & CfgAudioPlayBit) {
       LOG_DEBUG("Playing audio");
+      i2s_start(CfgAudioI2sSpkId);
       double vol = (double)codecVolume_ / (double)CfgAudioMaxVolume;
       LOG_DEBUG("Volume is", vol);
       // while rx frames are available and button is not pressed
