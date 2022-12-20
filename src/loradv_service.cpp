@@ -22,7 +22,7 @@ void Service::setup(const Config &config)
   LOG_SET_OPTION(false, false, true);  // disable file, line, enable func
 
   // oled screen
-  display_ = std::shared_ptr<Adafruit_SSD1306>(new Adafruit_SSD1306(CfgDisplayWidth, CfgDisplayHeight, &Wire, -1));
+  display_ = std::make_shared<Adafruit_SSD1306>(CfgDisplayWidth, CfgDisplayHeight, &Wire, -1);
   if(display_->begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
     LOG_INFO("Display setup completed");
   } else {
@@ -36,8 +36,8 @@ void Service::setup(const Config &config)
 
   // rotary encoder
   LOG_INFO("Encoder setup started");
-  rotaryEncoder_ = std::shared_ptr<AiEsp32RotaryEncoder>(new AiEsp32RotaryEncoder(config_.EncoderPinA, config_.EncoderPinB, 
-    config_.EncoderPinBtn, config_.EncoderPinVcc, config_.EncoderSteps));
+  rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config_.EncoderPinA, config_.EncoderPinB, 
+    config_.EncoderPinBtn, config_.EncoderPinVcc, config_.EncoderSteps);
   rotaryEncoder_->begin();
   rotaryEncoder_->setBoundaries(0, CfgAudioMaxVolume);
   rotaryEncoder_->setEncoderValue(CfgAudioMaxVolume);
