@@ -52,6 +52,9 @@ private:
   const int CfgDisplayWidth = 128;                // display width
   const int CfgDisplayHeight = 32;                // display height
 
+  const int CfgRadioTaskStack = 4000;
+  const int CfgAudioTaskStack = 24000;
+
 private:
   void setupRig(long freq, long bw, int sf, int cr, int pwr, int sync, int crcBytes, bool isExplicit);
   void setupAudio(int bytesPerSample);
@@ -96,22 +99,13 @@ private:
   CircularBuffer<uint8_t, CfgRadioQueueLen> loraRadioTxQueue_;
   CircularBuffer<uint8_t, CfgRadioQueueLen> loraRadioTxQueueIndex_;
 
-  // packet buffers
-  byte loraRadioRxBuf_[CfgRadioPacketBufLen];
-  byte loraRadioTxBuf_[CfgRadioPacketBufLen];
-
   // other
   bool rigIsImplicitMode_;
   bool isIsrInstalled_;
   static volatile bool loraIsrEnabled_;
   volatile bool btnPressed_;
   long codecVolume_;
-
-  struct CODEC2* codec_;
-  int codecSamplesPerFrame_;
   int codecBytesPerFrame_;
-  int16_t *codecSamples_;
-  uint8_t *codecBits_;
 
 }; // Service
 
