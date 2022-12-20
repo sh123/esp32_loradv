@@ -43,11 +43,11 @@ private:
   static const int CfgRadioQueueLen = 512;        // circular buffer length
   static const int CfgRadioPacketBufLen = 256;    // packet buffer length
 
-  static const int CfgRadioRxBit = 0x01;          // task bit for rx
-  static const int CfgRadioTxBit = 0x02;          // task bit for tx
+  static const uint32_t CfgRadioRxBit = 0x01;          // task bit for rx
+  static const uint32_t CfgRadioTxBit = 0x02;          // task bit for tx
 
-  const int CfgAudioPlayBit = 0x01;               // task bit for playback
-  const int CfgAudioRecBit = 0x02;                // task bit for recording
+  const uint32_t CfgAudioPlayBit = 0x01;               // task bit for playback
+  const uint32_t CfgAudioRecBit = 0x02;                // task bit for recording
 
   const int CfgDisplayWidth = 128;                // display width
   const int CfgDisplayHeight = 32;                // display height

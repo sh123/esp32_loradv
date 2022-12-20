@@ -134,7 +134,7 @@ void Service::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sync
 void Service::setupAudio(int bytesPerSample) 
 {
   // speaker
-  i2s_config_t i2s_speaker_config = {
+  i2s_config_t i2sSpeakerConfig = {
     .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
     .sample_rate = CfgAudioSampleRate,
     .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
@@ -147,16 +147,16 @@ void Service::setupAudio(int bytesPerSample)
     .tx_desc_auto_clear= true, 
     .fixed_mclk=-1    
   };
-  i2s_pin_config_t i2s_speaker_pin_config = {
+  i2s_pin_config_t i2sSpeakerPinConfig = {
     .bck_io_num = config_.AudioSpkPinBclk,
     .ws_io_num = config_.AudioSpkPinLrc,
     .data_out_num = config_.AudioSpkPinDin,
     .data_in_num = I2S_PIN_NO_CHANGE
   };
-  if (i2s_driver_install(CfgAudioI2sSpkId, &i2s_speaker_config, 0, NULL) != ESP_OK) {
+  if (i2s_driver_install(CfgAudioI2sSpkId, &i2sSpeakerConfig, 0, NULL) != ESP_OK) {
     LOG_ERROR("Failed to install i2s speaker driver");
   }
-  if (i2s_set_pin(CfgAudioI2sSpkId, &i2s_speaker_pin_config) != ESP_OK) {
+  if (i2s_set_pin(CfgAudioI2sSpkId, &i2sSpeakerPinConfig) != ESP_OK) {
     LOG_ERROR("Failed to set i2s speaker pins");
   }
 
@@ -190,7 +190,7 @@ void Service::setupAudio(int bytesPerSample)
 
 void Service::setFreq(long loraFreq) const 
 {
-  rig_->setFrequency((float)config_.LoraFreqRx / 1e6);
+  rig_->setFrequency((float)loraFreq / (float)1e6);
   int state = rig_->startReceive();
   if (state != RADIOLIB_ERR_NONE) {
     LOG_ERROR("Start receive error:", state);
@@ -206,8 +206,7 @@ ICACHE_RAM_ATTR void Service::onRigIsrRxPacket()
 {
   if (!loraIsrEnabled_) return;
   BaseType_t xHigherPriorityTaskWoken;
-  uint32_t lora_rx_bit = CfgRadioRxBit;
-  xTaskNotifyFromISR(loraTaskHandle_, lora_rx_bit, eSetBits, &xHigherPriorityTaskWoken);
+  xTaskNotifyFromISR(loraTaskHandle_, CfgRadioRxBit, eSetBits, &xHigherPriorityTaskWoken);
 }
 
 float Service::getBatteryVoltage() 
@@ -288,26 +287,25 @@ void Service::loraRadioRxTx()
 
   // wait for ISR notification, read data and send for audio processing
   while (true) {
-    uint32_t lora_status_bits = 0;
-    xTaskNotifyWaitIndexed(0, 0x00, ULONG_MAX, &lora_status_bits, portMAX_DELAY);
+    uint32_t cmdBits = 0;
+    xTaskNotifyWaitIndexed(0, 0x00, ULONG_MAX, &cmdBits, portMAX_DELAY);
 
-    LOG_DEBUG("Lora task bits", lora_status_bits);
+    LOG_DEBUG("Lora task bits", cmdBits);
 
     // lora rx
-    if (lora_status_bits & CfgRadioRxBit) {
-      int packet_size = rig_->getPacketLength();
-      if (packet_size > 0) {
-        int state = rig_->readData(loraRadioRxBuf_, packet_size);
+    if (cmdBits & CfgRadioRxBit) {
+      int packetSize = rig_->getPacketLength();
+      if (packetSize > 0) {
+        int state = rig_->readData(loraRadioRxBuf_, packetSize);
         if (state == RADIOLIB_ERR_NONE) {
           // process packet
-          LOG_DEBUG("Received packet, size", packet_size);
-          if (packet_size % codecBytesPerFrame_ == 0) {
-            for (int i = 0; i < packet_size; i++) {
+          LOG_DEBUG("Received packet, size", packetSize);
+          if (packetSize % codecBytesPerFrame_ == 0) {
+            for (int i = 0; i < packetSize; i++) {
                 loraRadioRxQueue_.push(loraRadioRxBuf_[i]);
             }
-            loraRadioRxQueueIndex_.push(packet_size);
-            uint32_t audio_play_bit = CfgAudioPlayBit;
-            xTaskNotify(audioTaskHandle_, audio_play_bit, eSetBits);
+            loraRadioRxQueueIndex_.push(packetSize);
+            xTaskNotify(audioTaskHandle_, CfgAudioPlayBit, eSetBits);
           } else {
             LOG_ERROR("Audio packet of wrong size, expected mod", codecBytesPerFrame_);
           }
@@ -323,7 +321,7 @@ void Service::loraRadioRxTx()
       } // packet size > 0
     } // lora rx
     // lora tx data
-    else if (lora_status_bits & CfgRadioTxBit) {
+    else if (cmdBits & CfgRadioTxBit) {
       loraIsrEnabled_ = false;
       // take packet by packet
       while (loraRadioTxQueueIndex_.size() > 0) {
@@ -333,9 +331,9 @@ void Service::loraRadioRxTx()
           loraRadioTxBuf_[i] = loraRadioTxQueue_.shift();
         }
         // transmit packet
-        int lora_radio_state = rig_->transmit(loraRadioTxBuf_, tx_bytes_cnt);
-        if (lora_radio_state != RADIOLIB_ERR_NONE) {
-          LOG_ERROR("Lora radio transmit failed:", lora_radio_state);
+        int loraRadioState = rig_->transmit(loraRadioTxBuf_, tx_bytes_cnt);
+        if (loraRadioState != RADIOLIB_ERR_NONE) {
+          LOG_ERROR("Lora radio transmit failed:", loraRadioState);
         }
         LOG_DEBUG("Transmitted packet", tx_bytes_cnt);
         vTaskDelay(1);
@@ -343,9 +341,9 @@ void Service::loraRadioRxTx()
       } // packet transmit loop
       
       // switch to receive after all transmitted
-      int lora_radio_state = rig_->startReceive();
-      if (lora_radio_state != RADIOLIB_ERR_NONE) {
-        LOG_ERROR("Start receive error: ", lora_radio_state);
+      int loraRadioState = rig_->startReceive();
+      if (loraRadioState != RADIOLIB_ERR_NONE) {
+        LOG_ERROR("Start receive error: ", loraRadioState);
       }
       loraIsrEnabled_ = true;
     } // lora tx
@@ -375,71 +373,69 @@ void Service::audioPlayRecord()
   }
 
   // wait for data notification, decode frames and playback
-  size_t bytes_read, bytes_written;
+  size_t bytesRead, bytesWritten;
   while(true) {
-    uint32_t audio_bits = 0;
-    xTaskNotifyWaitIndexed(0, 0x00, ULONG_MAX, &audio_bits, portMAX_DELAY);
+    uint32_t audioBits = 0;
+    xTaskNotifyWaitIndexed(0, 0x00, ULONG_MAX, &audioBits, portMAX_DELAY);
 
-    LOG_DEBUG("Audio task bits", audio_bits);
+    LOG_DEBUG("Audio task bits", audioBits);
 
     // audio rx-decode-playback
-    if (audio_bits & CfgAudioPlayBit) {
+    if (audioBits & CfgAudioPlayBit) {
       LOG_DEBUG("Playing audio");
       double vol = (double)codecVolume_ / (double)CfgAudioMaxVolume;
       LOG_DEBUG("Volume is", vol);
       // while rx frames are available and button is not pressed
       while (!btnPressed_ && loraRadioRxQueueIndex_.size() > 0) {
-        int packet_size = loraRadioRxQueueIndex_.shift();
-        LOG_DEBUG("Playing packet", packet_size);
+        int packetSize = loraRadioRxQueueIndex_.shift();
+        LOG_DEBUG("Playing packet", packetSize);
         // split by frame, decode and play
-        for (int i = 0; i < packet_size; i++) {
+        for (int i = 0; i < packetSize; i++) {
           codecBits_[i % codecBytesPerFrame_] = loraRadioRxQueue_.shift();
           if (i % codecBytesPerFrame_ == codecBytesPerFrame_ - 1) {
             codec2_decode(codec_, codecSamples_, codecBits_);
             for (int j = 0; j < codecSamplesPerFrame_; j++) {
               codecSamples_[j] *= vol;
             }
-            i2s_write(CfgAudioI2sSpkId, codecSamples_, sizeof(uint16_t) * codecSamplesPerFrame_, &bytes_written, portMAX_DELAY);
+            i2s_write(CfgAudioI2sSpkId, codecSamples_, sizeof(uint16_t) * codecSamplesPerFrame_, &bytesWritten, portMAX_DELAY);
             vTaskDelay(1);
           }
         }
       } // while rx data available
     } // audio decode playback
     // audio record-encode-tx
-    else if (audio_bits & CfgAudioRecBit) {
+    else if (audioBits & CfgAudioRecBit) {
       LOG_DEBUG("Recording audio");
-      int packet_size = 0;
+      int packetSize = 0;
       // record while button is pressed
       i2s_start(CfgAudioI2sMicId);
       while (btnPressed_) {
         // send packet if enough audio encoded frames are accumulated
-        if (packet_size + codecBytesPerFrame_ > config_.AudioMaxPktSize) {
-          LOG_DEBUG("Recorded packet", packet_size);
-          loraRadioTxQueueIndex_.push(packet_size);
-          uint32_t lora_tx_bits = CfgRadioTxBit;
-          xTaskNotify(loraTaskHandle_, lora_tx_bits, eSetBits);
-          packet_size = 0;
+        if (packetSize + codecBytesPerFrame_ > config_.AudioMaxPktSize) {
+          LOG_DEBUG("Recorded packet", packetSize);
+          loraRadioTxQueueIndex_.push(packetSize);
+          xTaskNotify(loraTaskHandle_, CfgRadioTxBit, eSetBits);
+          packetSize = 0;
         }
         // read and encode one sample
         if (!btnPressed_) break;
-        size_t bytes_read;
-        i2s_read(CfgAudioI2sMicId, codecSamples_, sizeof(uint16_t) * codecSamplesPerFrame_, &bytes_read, portMAX_DELAY);
+        size_t bytesRead;
+        i2s_read(CfgAudioI2sMicId, codecSamples_, sizeof(uint16_t) * codecSamplesPerFrame_, &bytesRead, portMAX_DELAY);
         if (!btnPressed_) break;
         codec2_encode(codec_, codecBits_, codecSamples_);
         if (!btnPressed_) break;
         for (int i = 0; i < codecBytesPerFrame_; i++) {
           loraRadioTxQueue_.push(codecBits_[i]);
         }
-        packet_size += codecBytesPerFrame_;
+        packetSize += codecBytesPerFrame_;
         vTaskDelay(1);
       } // btn_pressed_
       // send remaining tail audio encoded samples
-      if (packet_size > 0) {
-          LOG_DEBUG("Recorded packet", packet_size);
-          loraRadioTxQueueIndex_.push(packet_size);
-          uint32_t lora_tx_bits = CfgRadioTxBit;
-          xTaskNotify(loraTaskHandle_, lora_tx_bits, eSetBits);        
-          packet_size = 0;
+      if (packetSize > 0) {
+          LOG_DEBUG("Recorded packet", packetSize);
+          loraRadioTxQueueIndex_.push(packetSize);
+          xTaskNotify(loraTaskHandle_, CfgRadioTxBit, eSetBits);        
+          packetSize = 0;
       }
       vTaskDelay(1);
       i2s_stop(CfgAudioI2sMicId);
