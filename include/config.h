@@ -1,3 +1,6 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
 // Uncomment for SX126X module usage
 #define USE_SX126X
 
@@ -80,3 +83,5 @@
 #define CFG_PM_LSLEEP_AFTER_MS      60000
 #define CFG_PM_LSLEEP_DURATION_MS   3000
 #define CFG_PM_LSLEEP_AWAKE_MS      100
+
+#endif // CONFIG_H

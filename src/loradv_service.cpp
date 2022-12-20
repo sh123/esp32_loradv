@@ -2,14 +2,11 @@
 
 namespace LoraDv {
 
-volatile bool Service::loraIsrEnabled_ = true;
 std::shared_ptr<AiEsp32RotaryEncoder> Service::rotaryEncoder_;
-TaskHandle_t Service::loraTaskHandle_;
 
 Service::Service()
   : btnPressed_(false)
   , codecVolume_(CfgAudioMaxVolume)
-  , isIsrInstalled_(false)
 {
 }
 
@@ -48,7 +45,7 @@ void Service::setup(const Config &config)
   xTaskCreate(&audioTask, "audio_task", CfgAudioTaskStack, this, 5, &audioTaskHandle_);
 
   // start lora task
-  xTaskCreate(&loraRadioTask, "lora_task", CfgRadioTaskStack, this, 5, &loraTaskHandle_);
+  radioTask_.setup(config, audioTaskHandle_, CfgAudioPlayBit);
 
   // sleep
   LOG_INFO("Light sleep is enabled");
@@ -56,79 +53,6 @@ void Service::setup(const Config &config)
   printStatus("RX");
 
   LOG_INFO("Board setup completed");
-}
-
-void Service::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sync, int crcBytes, bool isExplicit)
-{
-  rigIsImplicitMode_ = !isExplicit;
-  rigIsImplicitMode_ = sf == 6;      // must be implicit for SF6
-  int loraSpeed = (int)(sf * (4.0 / cr) / (pow(2.0, sf) / bw));
-
-  LOG_INFO("Initializing LoRa");
-  LOG_INFO("Frequency:", loraFreq, "Hz");
-  LOG_INFO("Bandwidth:", bw, "Hz");
-  LOG_INFO("Spreading:", sf);
-  LOG_INFO("Coding rate:", cr);
-  LOG_INFO("Power:", pwr, "dBm");
-  LOG_INFO("Sync:", "0x" + String(sync, HEX));
-  LOG_INFO("CRC:", crcBytes);
-  LOG_INFO("Header:", rigIsImplicitMode_ ? "implicit" : "explicit");
-  LOG_INFO("Speed:", loraSpeed, "bps");
-  float snrLimit = -7;
-  switch (sf) {
-    case 7:
-        snrLimit = -7.5;
-        break;
-    case 8:
-        snrLimit = -10.0;
-        break;
-    case 9:
-        snrLimit = -12.6;
-        break;
-    case 10:
-        snrLimit = -15.0;
-        break;
-    case 11:
-        snrLimit = -17.5;
-        break;
-    case 12:
-        snrLimit = -20.0;
-        break;
-  }
-  LOG_INFO("Min level:", -174 + 10 * log10(bw) + 6 + snrLimit, "dBm");
-  rig_ = std::make_shared<MODULE_NAME>(new Module(config_.LoraPinSs, config_.LoraPinA, config_.LoraPinRst, config_.LoraPinB));
-  int state = rig_->begin((float)loraFreq / 1e6, (float)bw / 1e3, sf, cr, sync, pwr);
-  if (state != RADIOLIB_ERR_NONE) {
-    LOG_ERROR("Radio start error:", state);
-  }
-  rig_->setCRC(crcBytes);
-#ifdef USE_SX126X
-    #pragma message("Using SX126X")
-    LOG_INFO("Using SX126X module");
-    rig_->setRfSwitchPins(config_.LoraPinSwitchRx, config_.LoraPinSwitchTx);
-    if (isIsrInstalled_) rig_->clearDio1Action();
-    rig_->setDio1Action(onRigIsrRxPacket);
-    isIsrInstalled_ = true;
-#else
-    #pragma message("Using SX127X")
-    LOG_INFO("Using SX127X module");
-    if (isIsrInstalled_) radio_->clearDio0Action();
-    radio_->setDio0Action(onRigIsrRxPacket);
-    isIsrInstalled_ = true;
-#endif
-
-  if (rigIsImplicitMode_) {
-    rig_->implicitHeader(0xff);
-  } else {
-    rig_->explicitHeader();
-  }
-  
-  state = rig_->startReceive();
-  if (state != RADIOLIB_ERR_NONE) {
-    LOG_ERROR("Receive start error:", state);
-  }
-
-  LOG_INFO("LoRa initialized");
 }
 
 void Service::setupAudio(int bytesPerSample) 
@@ -187,25 +111,9 @@ void Service::setupAudio(int bytesPerSample)
   }
 }
 
-void Service::setFreq(long loraFreq) const 
-{
-  rig_->setFrequency((float)loraFreq / (float)1e6);
-  int state = rig_->startReceive();
-  if (state != RADIOLIB_ERR_NONE) {
-    LOG_ERROR("Start receive error:", state);
-  }
-}
-
 IRAM_ATTR void Service::isrReadEncoder()
 {
   rotaryEncoder_->readEncoder_ISR();
-}
-
-IRAM_ATTR void Service::onRigIsrRxPacket() 
-{
-  if (!loraIsrEnabled_) return;
-  BaseType_t xHigherPriorityTaskWoken;
-  xTaskNotifyFromISR(loraTaskHandle_, CfgRadioRxBit, eSetBits, &xHigherPriorityTaskWoken);
 }
 
 float Service::getBatteryVoltage() 
@@ -266,91 +174,6 @@ esp_sleep_wakeup_cause_t Service::lightSleepWait(uint64_t sleepTimeUs) {
   return esp_sleep_get_wakeup_cause();
 }
 
-void Service::loraRadioTask(void *param)
-{
-  reinterpret_cast<Service*>(param)->loraRadioRxTx();
-}
-
-void Service::loraRadioRxTx() 
-{
-  LOG_INFO("Lora task started");
-
-  // setup radio
-  setupRig(config_.LoraFreqRx, config_.LoraBw, config_.LoraSf, 
-    config_.LoraCodingRate, config_.LoraPower, config_.LoraSync, config_.LoraCrc, config_.LoraExplicit);
-
-  int state = rig_->startReceive();
-  if (state != RADIOLIB_ERR_NONE) {
-    LOG_ERROR("Receive start error:", state);
-  }
-
-  byte *packetBuf = new byte[CfgRadioPacketBufLen];
-
-  // wait for ISR notification, read data and send for audio processing
-  while (true) {
-    uint32_t cmdBits = 0;
-    xTaskNotifyWaitIndexed(0, 0x00, ULONG_MAX, &cmdBits, portMAX_DELAY);
-
-    LOG_DEBUG("Lora task bits", cmdBits);
-
-    // lora rx
-    if (cmdBits & CfgRadioRxBit) {
-      int packetSize = rig_->getPacketLength();
-      if (packetSize > 0 && packetSize < CfgRadioPacketBufLen) {
-        int state = rig_->readData(packetBuf, packetSize);
-        if (state == RADIOLIB_ERR_NONE) {
-          // process packet
-          LOG_DEBUG("Received packet, size", packetSize);
-          if (packetSize % codecBytesPerFrame_ == 0) {
-            for (int i = 0; i < packetSize; i++) {
-              loraRadioRxQueue_.push(packetBuf[i]);
-            }
-            loraRadioRxQueueIndex_.push(packetSize);
-            xTaskNotify(audioTaskHandle_, CfgAudioPlayBit, eSetBits);
-          } else {
-            LOG_ERROR("Audio packet of wrong size, expected mod", codecBytesPerFrame_);
-          }
-        } else {
-          LOG_ERROR("Read data error: ", state);
-        }
-        // probably not needed, still in receive
-        state = rig_->startReceive();
-        if (state != RADIOLIB_ERR_NONE) {
-          LOG_ERROR("Start receive error: ", state);
-        }
-        lightSleepReset();
-      } // packet size > 0
-    } // lora rx
-    // lora tx data
-    else if (cmdBits & CfgRadioTxBit) {
-      loraIsrEnabled_ = false;
-      // take packet by packet
-      while (loraRadioTxQueueIndex_.size() > 0) {
-        // take packet size and read it
-        int txBytesCnt = loraRadioTxQueueIndex_.shift();
-        for (int i = 0; i < txBytesCnt; i++) {
-          packetBuf[i] = loraRadioTxQueue_.shift();
-        }
-        // transmit packet
-        int loraRadioState = rig_->transmit(packetBuf, txBytesCnt);
-        if (loraRadioState != RADIOLIB_ERR_NONE) {
-          LOG_ERROR("Lora radio transmit failed:", loraRadioState);
-        }
-        LOG_DEBUG("Transmitted packet", txBytesCnt);
-        vTaskDelay(1);
-        lightSleepReset();
-      } // packet transmit loop
-      
-      // switch to receive after all transmitted
-      int loraRadioState = rig_->startReceive();
-      if (loraRadioState != RADIOLIB_ERR_NONE) {
-        LOG_ERROR("Start receive error: ", loraRadioState);
-      }
-      loraIsrEnabled_ = true;
-    } // lora tx
-  }  // task loop
-}
-
 void Service::audioTask(void *param) {
   static_cast<Service*>(param)->audioPlayRecord();
 }
@@ -387,12 +210,23 @@ void Service::audioPlayRecord()
       double vol = (double)codecVolume_ / (double)CfgAudioMaxVolume;
       LOG_DEBUG("Volume is", vol);
       // while rx frames are available and button is not pressed
-      while (!btnPressed_ && loraRadioRxQueueIndex_.size() > 0) {
-        int packetSize = loraRadioRxQueueIndex_.shift();
+      while (!btnPressed_ && radioTask_.hasData()) {
+        byte packetSize;
+        if (!radioTask_.readPacketSize(packetSize)) {
+          LOG_ERROR("Failed to read packet size");
+          vTaskDelay(1);
+          continue;
+        }
         LOG_DEBUG("Playing packet", packetSize);
         // split by frame, decode and play
         for (int i = 0; i < packetSize; i++) {
-          codecBits[i % codecBytesPerFrame_] = loraRadioRxQueue_.shift();
+          byte b;
+          if (!radioTask_.readNextByte(b)) {
+            LOG_ERROR("Failed to read next byte");
+            vTaskDelay(1);
+            continue;
+          }
+          codecBits[i % codecBytesPerFrame_] = b;
           if (i % codecBytesPerFrame_ == codecBytesPerFrame_ - 1) {
             codec2_decode(codec, codecSamples, codecBits);
             for (int j = 0; j < codecSamplesPerFrame; j++) {
@@ -400,6 +234,7 @@ void Service::audioPlayRecord()
             }
             i2s_write(CfgAudioI2sSpkId, codecSamples, sizeof(uint16_t) * codecSamplesPerFrame, &bytesWritten, portMAX_DELAY);
             vTaskDelay(1);
+            lightSleepReset();
           }
         }
       } // while rx data available
@@ -414,19 +249,24 @@ void Service::audioPlayRecord()
         // send packet if enough audio encoded frames are accumulated
         if (packetSize + codecBytesPerFrame_ > config_.AudioMaxPktSize) {
           LOG_DEBUG("Recorded packet", packetSize);
-          loraRadioTxQueueIndex_.push(packetSize);
-          xTaskNotify(loraTaskHandle_, CfgRadioTxBit, eSetBits);
+          if (!radioTask_.writePacketSize(packetSize)) {
+            LOG_ERROR("Failed to write packet size");
+            vTaskDelay(1);
+            continue;
+          }
+          radioTask_.notifyTx();
           packetSize = 0;
         }
         // read and encode one sample
         if (!btnPressed_) break;
         size_t bytesRead;
+        lightSleepReset();
         i2s_read(CfgAudioI2sMicId, codecSamples, sizeof(uint16_t) * codecSamplesPerFrame, &bytesRead, portMAX_DELAY);
         if (!btnPressed_) break;
         codec2_encode(codec, codecBits, codecSamples);
         if (!btnPressed_) break;
         for (int i = 0; i < codecBytesPerFrame_; i++) {
-          loraRadioTxQueue_.push(codecBits[i]);
+          radioTask_.writeNextByte(codecBits[i]);
         }
         packetSize += codecBytesPerFrame_;
         vTaskDelay(1);
@@ -434,8 +274,11 @@ void Service::audioPlayRecord()
       // send remaining tail audio encoded samples
       if (packetSize > 0) {
           LOG_DEBUG("Recorded packet", packetSize);
-          loraRadioTxQueueIndex_.push(packetSize);
-          xTaskNotify(loraTaskHandle_, CfgRadioTxBit, eSetBits);        
+          if (radioTask_.writePacketSize(packetSize)) {
+            radioTask_.notifyTx();
+          } else {
+            LOG_ERROR("Failed to write byte");
+          }
           packetSize = 0;
       }
       vTaskDelay(1);

@@ -23,6 +23,7 @@
 #endif
 
 #include "loradv_config.h"
+#include "radio_task.h"
 
 namespace LoraDv {
 
@@ -40,29 +41,19 @@ private:
   const i2s_port_t CfgAudioI2sMicId = I2S_NUM_1;  // audio i2s mic number
   const int CfgAudioMaxVolume = 100;              // maximum volume value
 
-  static const int CfgRadioQueueLen = 512;        // circular buffer length
-  static const int CfgRadioPacketBufLen = 256;    // packet buffer length
-
-  static const uint32_t CfgRadioRxBit = 0x01;     // task bit for rx
-  static const uint32_t CfgRadioTxBit = 0x02;     // task bit for tx
-
   const uint32_t CfgAudioPlayBit = 0x01;          // task bit for playback
   const uint32_t CfgAudioRecBit = 0x02;           // task bit for recording
 
   const int CfgDisplayWidth = 128;                // display width
   const int CfgDisplayHeight = 32;                // display height
 
-  const int CfgRadioTaskStack = 4096;
   const int CfgAudioTaskStack = 32768;
 
 private:
-  void setupRig(long freq, long bw, int sf, int cr, int pwr, int sync, int crcBytes, bool isExplicit);
   void setupAudio(int bytesPerSample);
 
   static IRAM_ATTR void isrReadEncoder();
-  static IRAM_ATTR void onRigIsrRxPacket();
 
-  void setFreq(long freq) const;
   float getBatteryVoltage();
   void printStatus(const String &str);
 
@@ -71,9 +62,6 @@ private:
   void lightSleepEnter(void);
   esp_sleep_wakeup_cause_t lightSleepWait(uint64_t sleepTimeUs);
 
-  static void loraRadioTask(void *param);
-  void loraRadioRxTx();
-
   static void audioTask(void *param);
   void audioPlayRecord();
 
@@ -81,28 +69,18 @@ private:
   Config config_;
 
   // peripherals
-  std::shared_ptr<MODULE_NAME> rig_;
+  RadioTask radioTask_;
   std::shared_ptr<Adafruit_SSD1306> display_;
   static std::shared_ptr<AiEsp32RotaryEncoder> rotaryEncoder_;
 
   // tasks
   TaskHandle_t audioTaskHandle_;
-  static TaskHandle_t loraTaskHandle_;
 
   // timers
   Timer<1> lightSleepTimer_;
   Timer<1>::Task lightSleepTimerTask_;
 
-  // task queues
-  CircularBuffer<uint8_t, CfgRadioQueueLen> loraRadioRxQueue_;
-  CircularBuffer<uint8_t, CfgRadioQueueLen> loraRadioRxQueueIndex_;
-  CircularBuffer<uint8_t, CfgRadioQueueLen> loraRadioTxQueue_;
-  CircularBuffer<uint8_t, CfgRadioQueueLen> loraRadioTxQueueIndex_;
-
   // other
-  bool rigIsImplicitMode_;
-  bool isIsrInstalled_;
-  static volatile bool loraIsrEnabled_;
   volatile bool btnPressed_;
   long codecVolume_;
   int codecBytesPerFrame_;
