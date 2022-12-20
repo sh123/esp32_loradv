@@ -59,8 +59,8 @@ private:
   void setupRig(long freq, long bw, int sf, int cr, int pwr, int sync, int crcBytes, bool isExplicit);
   void setupAudio(int bytesPerSample);
 
-  static void IRAM_ATTR isrReadEncoder();
-  static ICACHE_RAM_ATTR void onRigIsrRxPacket();
+  static IRAM_ATTR void isrReadEncoder();
+  static IRAM_ATTR void onRigIsrRxPacket();
 
   void setFreq(long freq) const;
   float getBatteryVoltage();

@@ -20,6 +20,16 @@ void Service::setup(const Config &config)
   // setup logging
   LOG_SET_LEVEL(config_.LogLevel);
   LOG_SET_OPTION(false, false, true);  // disable file, line, enable func
+  
+  // rotary encoder
+  LOG_INFO("Encoder setup started");
+  rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config_.EncoderPinA, config_.EncoderPinB, 
+    config_.EncoderPinBtn, config_.EncoderPinVcc, config_.EncoderSteps);
+  rotaryEncoder_->begin();
+  rotaryEncoder_->setBoundaries(0, CfgAudioMaxVolume);
+  rotaryEncoder_->setEncoderValue(CfgAudioMaxVolume);
+  rotaryEncoder_->setup(isrReadEncoder);
+  LOG_INFO("Encoder setup completed");
 
   // oled screen
   display_ = std::make_shared<Adafruit_SSD1306>(CfgDisplayWidth, CfgDisplayHeight, &Wire, -1);
@@ -33,16 +43,6 @@ void Service::setup(const Config &config)
   LOG_INFO("PTT setup started");
   pinMode(config_.PttBtnPin, INPUT);
   LOG_INFO("PTT setup completed");
-
-  // rotary encoder
-  LOG_INFO("Encoder setup started");
-  rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config_.EncoderPinA, config_.EncoderPinB, 
-    config_.EncoderPinBtn, config_.EncoderPinVcc, config_.EncoderSteps);
-  rotaryEncoder_->begin();
-  rotaryEncoder_->setBoundaries(0, CfgAudioMaxVolume);
-  rotaryEncoder_->setEncoderValue(CfgAudioMaxVolume);
-  rotaryEncoder_->setup(isrReadEncoder);
-  LOG_INFO("Encoder setup completed");
 
   // start codec2 playback task
   xTaskCreate(&audioTask, "audio_task", CfgAudioTaskStack, this, 5, &audioTaskHandle_);
@@ -159,7 +159,6 @@ void Service::setupAudio(int bytesPerSample)
   if (i2s_set_pin(CfgAudioI2sSpkId, &i2sSpeakerPinConfig) != ESP_OK) {
     LOG_ERROR("Failed to set i2s speaker pins");
   }
-
   // mic
   i2s_config_t i2sMicConfig = {
     .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX),
@@ -197,12 +196,12 @@ void Service::setFreq(long loraFreq) const
   }
 }
 
-void IRAM_ATTR Service::isrReadEncoder()
+IRAM_ATTR void Service::isrReadEncoder()
 {
   rotaryEncoder_->readEncoder_ISR();
 }
 
-ICACHE_RAM_ATTR void Service::onRigIsrRxPacket() 
+IRAM_ATTR void Service::onRigIsrRxPacket() 
 {
   if (!loraIsrEnabled_) return;
   BaseType_t xHigherPriorityTaskWoken;
@@ -371,6 +370,7 @@ void Service::audioPlayRecord()
   int16_t *codecSamples = (int16_t*)malloc(sizeof(int16_t) * codecSamplesPerFrame);
   uint8_t *codecBits = (uint8_t*)malloc(sizeof(uint8_t) * codecBytesPerFrame_);
   LOG_INFO("C2 initialized", codecSamplesPerFrame, codecBytesPerFrame_);
+  delay(3000);
   setupAudio(codecSamplesPerFrame);
 
   // wait for data notification, decode frames and playback
