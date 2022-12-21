@@ -8,7 +8,7 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 - I2S microphone INMP441
 - PTT button
 - Rotary encoder with push button
-- Small OLED screen SSD1306 128x32
+- Small OLED display SSD1306 128x32
 - Battery voltage control
 
 ## Build instructions
