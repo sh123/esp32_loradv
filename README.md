@@ -13,6 +13,7 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 - Small OLED display SSD1306 128x32
 - Battery voltage control
 - Powered from a single 18650 battery
+- Uses single charge and 5v boost controller based on Hotchip HT4928S
 
 ## Build instructions
 - Modify `include/config.h` if needed
