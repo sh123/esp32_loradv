@@ -37,7 +37,6 @@ private:
 private:
   static IRAM_ATTR void isrReadEncoder();
 
-  float getBatteryVoltage();
   void printStatus(const String &str);
 
 private:
