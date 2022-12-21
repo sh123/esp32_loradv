@@ -51,7 +51,7 @@ void Service::setup(const Config &config)
   pmService_->setup(config, display_);
 
   // start codec2 playback task
-  audioTask_->setup(config, radioTask_, pmService_);
+  audioTask_->start(config, radioTask_, pmService_);
 
   // start lora task
   radioTask_->setup(config, audioTask_);
@@ -87,7 +87,7 @@ void Service::loop()
     LOG_DEBUG("PTT pushed, start TX");
     printStatus("TX");
     audioTask_->setPtt(true);
-    audioTask_->notifyRecord();
+    audioTask_->record();
   } else if (digitalRead(config_.PttBtnPin) == HIGH && btnPressed_) {
     btnPressed_ = false;
     LOG_DEBUG("PTT released");

@@ -18,10 +18,11 @@ class AudioTask {
 public:
   AudioTask();
 
-  void setup(const Config &config, std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService);
+  void start(const Config &config, std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService);
+  inline void stop() { isRunning_ = false; }
 
-  void notifyPlay(); 
-  void notifyRecord(); 
+  void play() const; 
+  void record() const;
 
   inline void setPtt(bool isPttOn) { isPttOn_ = isPttOn; }
 
@@ -38,15 +39,17 @@ private:
   const uint32_t CfgAudioPlayBit = 0x01;          // task bit for playback
   const uint32_t CfgAudioRecBit = 0x02;           // task bit for recording
 
-  const int CfgAudioTaskStack = 32768;
+  const int CfgAudioTaskStack = 32768;            // audio stack size
 
 private:
-  void setupAudio(int bytesPerSample);
+  void installAudio(int bytesPerSample) const;
+  void uninstallAudio() const;
 
-  static void audioTask(void *param);
-  void audioPlayRecord();
-  void audioPlay();
-  void audioRecord();
+  static void task(void *param);
+
+  void audioTask();
+  void audioTaskPlay();
+  void audioTaskRecord();
 
 private:
   Config config_;

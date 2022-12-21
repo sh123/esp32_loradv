@@ -181,7 +181,7 @@ void RadioTask::loraRadioRx(byte *packetBuf)
         loraRadioRxQueue_.push(packetBuf[i]);
       }
       loraRadioRxQueueIndex_.push(packetSize);
-      audioTask_->notifyPlay();
+      audioTask_->play();
     } else {
       LOG_ERROR("Read data error: ", state);
     }

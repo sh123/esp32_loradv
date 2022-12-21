@@ -4,18 +4,19 @@ namespace LoraDv {
 
 AudioTask::AudioTask()
   : isPttOn_(false)
+  , isRunning_(false)
 {
 }
 
-void AudioTask::setup(const Config &config, std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService)
+void AudioTask::start(const Config &config, std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService)
 {
   config_ = config;
   radioTask_ = radioTask;
   pmService_ = pmService;
-  xTaskCreate(&audioTask, "audio_task", CfgAudioTaskStack, this, 5, &audioTaskHandle_);
+  xTaskCreate(&task, "audio_task", CfgAudioTaskStack, this, 5, &audioTaskHandle_);
 }
 
-void AudioTask::setupAudio(int bytesPerSample) 
+void AudioTask::installAudio(int bytesPerSample) const
 {
   // speaker
   i2s_config_t i2sSpeakerConfig = {
@@ -71,23 +72,32 @@ void AudioTask::setupAudio(int bytesPerSample)
   }
 }
 
-void AudioTask::notifyPlay() 
+void AudioTask::uninstallAudio() const
+{
+  i2s_stop(CfgAudioI2sSpkId);
+  i2s_stop(CfgAudioI2sMicId);
+  i2s_driver_uninstall(CfgAudioI2sSpkId);
+  i2s_driver_uninstall(CfgAudioI2sMicId);
+}
+
+void AudioTask::play() const
 {
   xTaskNotify(audioTaskHandle_, CfgAudioPlayBit, eSetBits);
 }
 
-void AudioTask::notifyRecord() 
+void AudioTask::record() const
 {
   xTaskNotify(audioTaskHandle_, CfgAudioRecBit, eSetBits);
 }
 
-void AudioTask::audioTask(void *param) {
-  static_cast<AudioTask*>(param)->audioPlayRecord();
+void AudioTask::task(void *param) {
+  static_cast<AudioTask*>(param)->audioTask();
 }
 
-void AudioTask::audioPlayRecord()
+void AudioTask::audioTask()
 {
   LOG_INFO("Audio task started");
+  isRunning_ = true;
 
   // construct codec2
   codec_ = codec2_create(config_.AudioCodec2Mode);
@@ -97,26 +107,34 @@ void AudioTask::audioPlayRecord()
   }
   codecSamplesPerFrame_ = codec2_samples_per_frame(codec_);
   codecBytesPerFrame_ = codec2_bytes_per_frame(codec_);
-  codecSamples_ = (int16_t*)malloc(sizeof(int16_t) * codecSamplesPerFrame_);
-  codecBits_ = (uint8_t*)malloc(sizeof(uint8_t) * codecBytesPerFrame_);
+  codecSamples_ = new int16_t[codecSamplesPerFrame_];
+  codecBits_ = new uint8_t[codecBytesPerFrame_];
   LOG_INFO("C2 initialized", config_.AudioCodec2Mode, codecSamplesPerFrame_, codecBytesPerFrame_);
   delay(3000);
-  setupAudio(codecSamplesPerFrame_);
+  installAudio(codecSamplesPerFrame_);
 
-  while(true) {
+  while(isRunning_) {
     uint32_t audioBits = 0;
     xTaskNotifyWaitIndexed(0, 0x00, ULONG_MAX, &audioBits, portMAX_DELAY);
 
-    LOG_DEBUG("Audio task bits", audioBits);
+    LOG_DEBUG("Audio task command bits", audioBits);
     if (audioBits & CfgAudioPlayBit) {
-      audioPlay();
+      audioTaskPlay();
     } else if (audioBits & CfgAudioRecBit) {
-      audioRecord();
+      audioTaskRecord();
     }
   }
+
+  delete codecBits_;
+  delete codecSamples_;
+  codec2_destroy(codec_);
+
+  uninstallAudio();
+
+  LOG_INFO("Audio task stopped");
 }
 
-void AudioTask::audioPlay()
+void AudioTask::audioTaskPlay()
 {
   size_t bytesWritten;
   LOG_DEBUG("Playing audio");
@@ -152,7 +170,7 @@ void AudioTask::audioPlay()
   } // while rx data available
 }
 
-void AudioTask::audioRecord()
+void AudioTask::audioTaskRecord()
 {      
   size_t bytesRead;
   LOG_DEBUG("Recording audio");
