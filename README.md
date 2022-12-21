@@ -5,7 +5,7 @@ This project is amateur radio ESP32 based LoRa Codec2 DV trasceiver, which is us
 
 It is interoperable with https://github.com/sh123/codec2_talkie application.
 
-It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional peripherals:
+It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional peripherals/features:
 - I2S speaker module MAX98357A + 4ohm 3w speaker (40mm diameter)
 - I2S microphone INMP441
 - PTT button
@@ -14,6 +14,7 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 - Battery voltage control
 - Powered from a single 18650 battery
 - Uses single charge and 5v boost controller based on Hotchip HT4928S
+- Goes to ESP32 light sleep when no activity, so all power consumption is around 30-40mA when in RX, wakes up on new data from radio module or when user starts transmitting
 
 ## Build instructions
 - Modify `include/config.h` if needed
