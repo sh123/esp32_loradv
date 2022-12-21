@@ -12,8 +12,10 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 - Battery voltage control
 
 ## Build instructions
+- Modify `include/config.h` if needed
 - Install platformio
-- Build, upload
+- Build with platformio
+- Upload with platformio
 
 ## Picture
 ![Device](extras/images/device.png)
