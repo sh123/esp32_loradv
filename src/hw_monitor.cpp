@@ -1,0 +1,20 @@
+#include "hw_monitor.h"
+
+namespace LoraDv {
+
+HwMonitor::HwMonitor() 
+{
+}
+
+void HwMonitor::setup(const Config &config)
+{
+  config_ = config;
+}
+
+float HwMonitor::getBatteryVoltage() const
+{
+  int bat_value = analogRead(config_.BatteryMonPin);
+  return 2 * bat_value * (3.3 / 4096.0) + config_.BatteryMonCal;
+}
+
+} // LoraDv

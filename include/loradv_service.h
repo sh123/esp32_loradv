@@ -24,6 +24,9 @@
 
 #include "loradv_config.h"
 #include "radio_task.h"
+#include "audio_task.h"
+#include "pm_service.h"
+#include "hw_monitor.h"
 
 namespace LoraDv {
 
@@ -36,54 +39,29 @@ public:
   void loop();
 
 private:
-  const uint32_t CfgAudioSampleRate = 8000;       // audio sample rate
-  const i2s_port_t CfgAudioI2sSpkId = I2S_NUM_0;  // audio i2s speaker number
-  const i2s_port_t CfgAudioI2sMicId = I2S_NUM_1;  // audio i2s mic number
-  const int CfgAudioMaxVolume = 100;              // maximum volume value
-
-  const uint32_t CfgAudioPlayBit = 0x01;          // task bit for playback
-  const uint32_t CfgAudioRecBit = 0x02;           // task bit for recording
-
   const int CfgDisplayWidth = 128;                // display width
   const int CfgDisplayHeight = 32;                // display height
 
-  const int CfgAudioTaskStack = 32768;
-
 private:
-  void setupAudio(int bytesPerSample);
-
   static IRAM_ATTR void isrReadEncoder();
 
   float getBatteryVoltage();
   void printStatus(const String &str);
 
-  static bool lightSleepEnterTimer(void *param);
-  void lightSleepReset();
-  void lightSleepEnter(void);
-  esp_sleep_wakeup_cause_t lightSleepWait(uint64_t sleepTimeUs);
-
-  static void audioTask(void *param);
-  void audioPlayRecord();
-
 private:
   Config config_;
 
-  // peripherals
-  RadioTask radioTask_;
+  std::shared_ptr<RadioTask> radioTask_;
+  std::shared_ptr<AudioTask> audioTask_;
+
+  std::shared_ptr<PmService> pmService_;
+  std::shared_ptr<HwMonitor> hwMonitor_;
+  
   std::shared_ptr<Adafruit_SSD1306> display_;
   static std::shared_ptr<AiEsp32RotaryEncoder> rotaryEncoder_;
 
-  // tasks
-  TaskHandle_t audioTaskHandle_;
-
-  // timers
-  Timer<1> lightSleepTimer_;
-  Timer<1>::Task lightSleepTimerTask_;
-
   // other
   volatile bool btnPressed_;
-  long codecVolume_;
-  int codecBytesPerFrame_;
 
 }; // Service
 

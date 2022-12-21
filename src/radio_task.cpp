@@ -11,11 +11,10 @@ RadioTask::RadioTask()
 {
 }
 
-void RadioTask::setup(const Config &config, TaskHandle_t taskHandle, uint32_t commandBits)
+void RadioTask::setup(const Config &config, std::shared_ptr<AudioTask> audioTask)
 {
   config_ = config;
-  onRxPacketTaskHandle_ = taskHandle;
-  onRxPacketCommandBits_ = commandBits;
+  audioTask_ = audioTask;
   xTaskCreate(&loraRadioTask, "lora_task", CfgRadioTaskStack, this, 5, &loraTaskHandle_);
 }
 
@@ -182,7 +181,7 @@ void RadioTask::loraRadioRx(byte *packetBuf)
         loraRadioRxQueue_.push(packetBuf[i]);
       }
       loraRadioRxQueueIndex_.push(packetSize);
-      xTaskNotify(onRxPacketTaskHandle_, onRxPacketCommandBits_, eSetBits);
+      audioTask_->notifyPlay();
     } else {
       LOG_ERROR("Read data error: ", state);
     }

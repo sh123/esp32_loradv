@@ -8,16 +8,19 @@
 #include <CircularBuffer.h>
 
 #include "loradv_config.h"
+#include "audio_task.h"
 #include "config.h"
 
 namespace LoraDv {
+
+class AudioTask;
 
 class RadioTask {
 
 public:
   RadioTask();
 
-  void setup(const Config &config, TaskHandle_t taskHandle, uint32_t commandBits);
+  void setup(const Config &config, std::shared_ptr<AudioTask> audioTask);
 
   void setFreq(long freq) const;
 
@@ -52,11 +55,9 @@ private:
   Config config_;
 
   std::shared_ptr<MODULE_NAME> rig_;
+  std::shared_ptr<AudioTask> audioTask_;
 
   static TaskHandle_t loraTaskHandle_;
-
-  TaskHandle_t onRxPacketTaskHandle_;
-  uint32_t onRxPacketCommandBits_;
 
   CircularBuffer<uint8_t, CfgRadioQueueLen> loraRadioRxQueue_;
   CircularBuffer<uint8_t, CfgRadioQueueLen> loraRadioRxQueueIndex_;
