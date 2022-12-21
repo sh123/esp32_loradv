@@ -11,9 +11,9 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 - PTT button
 - Rotary encoder with push button
 - Small OLED display SSD1306 128x32
-- Battery voltage control
-- Powered from a single 18650 battery
-- Uses single charge and 5v boost controller based on Hotchip HT4928S
+- Battery voltage monitoring
+- Powered from a single commonly avaialble 18650 battery
+- Uses combined charge + 5v boost controller based on Hotchip HT4928S
 - Goes to ESP32 light sleep when no activity, so all power consumption is around 30-40mA when in RX, wakes up on new data from radio module or when user starts transmitting
 
 ## Build instructions
