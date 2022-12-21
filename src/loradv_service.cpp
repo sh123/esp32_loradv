@@ -13,18 +13,18 @@ Service::Service()
 {
 }
 
-void Service::setup(const Config &config)
+void Service::setup(std::shared_ptr<Config> config)
 {
   config_ = config;
 
   // setup logging
-  LOG_SET_LEVEL(config_.LogLevel);
+  LOG_SET_LEVEL(config_->LogLevel);
   LOG_SET_OPTION(false, false, true);  // disable file, line, enable func
   
   // rotary encoder
   LOG_INFO("Encoder setup started");
-  rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config_.EncoderPinA, config_.EncoderPinB, 
-    config_.EncoderPinBtn, config_.EncoderPinVcc, config_.EncoderSteps);
+  rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config_->EncoderPinA, config_->EncoderPinB, 
+    config_->EncoderPinBtn, config_->EncoderPinVcc, config_->EncoderSteps);
   rotaryEncoder_->begin();
   rotaryEncoder_->setBoundaries(0, audioTask_->getMaxVolume());
   rotaryEncoder_->setEncoderValue(audioTask_->getMaxVolume());
@@ -41,7 +41,7 @@ void Service::setup(const Config &config)
 
   // ptt button
   LOG_INFO("PTT setup started");
-  pinMode(config_.PttBtnPin, INPUT);
+  pinMode(config_->PttBtnPin, INPUT);
   LOG_INFO("PTT setup completed");
 
   // hardware monitoring
@@ -54,7 +54,7 @@ void Service::setup(const Config &config)
   audioTask_->start(config, radioTask_, pmService_);
 
   // start lora task
-  radioTask_->setup(config, audioTask_);
+  radioTask_->start(config, audioTask_);
 
   LOG_INFO("Board setup completed");
 }
@@ -66,29 +66,29 @@ IRAM_ATTR void Service::isrReadEncoder()
 
 void Service::printStatus(const String &str)
 {
-    display_->clearDisplay();
-    display_->setTextSize(2);
-    display_->setTextColor(WHITE);
-    display_->setCursor(0, 0);
-    display_->print(str); display_->print(" "); 
-    if (btnPressed_)
-      display_->println((float)config_.LoraFreqTx / 1e6);
-    else
-      display_->println((float)config_.LoraFreqRx / 1e6);
-    display_->print(audioTask_->getVolume()); display_->print("% "); display_->print(hwMonitor_->getBatteryVoltage()); display_->print("V");
-    display_->display();
+  display_->clearDisplay();
+  display_->setTextSize(2);
+  display_->setTextColor(WHITE);
+  display_->setCursor(0, 0);
+  display_->print(str); display_->print(" "); 
+  if (btnPressed_)
+    display_->println((float)config_->LoraFreqTx / 1e6);
+  else
+    display_->println((float)config_->LoraFreqRx / 1e6);
+  display_->print(audioTask_->getVolume()); display_->print("% "); display_->print(hwMonitor_->getBatteryVoltage()); display_->print("V");
+  display_->display();
 }
 
 void Service::loop() 
 {
   // button 
-  if (digitalRead(config_.PttBtnPin) == LOW && !btnPressed_) {
+  if (digitalRead(config_->PttBtnPin) == LOW && !btnPressed_) {
     btnPressed_ = true;
     LOG_DEBUG("PTT pushed, start TX");
     printStatus("TX");
     audioTask_->setPtt(true);
     audioTask_->record();
-  } else if (digitalRead(config_.PttBtnPin) == HIGH && btnPressed_) {
+  } else if (digitalRead(config_->PttBtnPin) == HIGH && btnPressed_) {
     btnPressed_ = false;
     LOG_DEBUG("PTT released");
     printStatus("RX");

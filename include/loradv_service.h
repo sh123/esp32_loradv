@@ -35,7 +35,7 @@ class Service {
 public:
   Service();
 
-  void setup(const Config &conf);
+  void setup(std::shared_ptr<Config> conf);
   void loop();
 
 private:
@@ -49,7 +49,7 @@ private:
   void printStatus(const String &str);
 
 private:
-  Config config_;
+  std::shared_ptr<Config> config_;
 
   std::shared_ptr<RadioTask> radioTask_;
   std::shared_ptr<AudioTask> audioTask_;

@@ -15,7 +15,7 @@ class PmService {
 public:
   PmService();
 
-  void setup(const Config &config, std::shared_ptr<Adafruit_SSD1306> display);
+  void setup(std::shared_ptr<Config> config, std::shared_ptr<Adafruit_SSD1306> display);
   bool loop();
 
   void lightSleepReset();
@@ -26,8 +26,7 @@ private:
   esp_sleep_wakeup_cause_t lightSleepWait(uint64_t sleepTimeUs);
 
 private:
-  Config config_;
-
+  std::shared_ptr<Config> config_;
   std::shared_ptr<Adafruit_SSD1306> display_;
 
   Timer<1> lightSleepTimer_;

@@ -8,14 +8,15 @@ TaskHandle_t RadioTask::loraTaskHandle_;
 RadioTask::RadioTask()
   : rigIsImplicitMode_(false)
   , isIsrInstalled_(false)
+  , isRunning_(false)
 {
 }
 
-void RadioTask::setup(const Config &config, std::shared_ptr<AudioTask> audioTask)
+void RadioTask::start(std::shared_ptr<Config> config, std::shared_ptr<AudioTask> audioTask)
 {
   config_ = config;
   audioTask_ = audioTask;
-  xTaskCreate(&loraRadioTask, "lora_task", CfgRadioTaskStack, this, 5, &loraTaskHandle_);
+  xTaskCreate(&task, "lora_task", CfgRadioTaskStack, this, 5, &loraTaskHandle_);
 }
 
 void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sync, int crcBytes, bool isExplicit)
@@ -56,7 +57,7 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
         break;
   }
   LOG_INFO("Min level:", -174 + 10 * log10(bw) + 6 + snrLimit, "dBm");
-  rig_ = std::make_shared<MODULE_NAME>(new Module(config_.LoraPinSs, config_.LoraPinA, config_.LoraPinRst, config_.LoraPinB));
+  rig_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs, config_->LoraPinA, config_->LoraPinRst, config_->LoraPinB));
   int state = rig_->begin((float)loraFreq / 1e6, (float)bw / 1e3, sf, cr, sync, pwr);
   if (state != RADIOLIB_ERR_NONE) {
     LOG_ERROR("Radio start error:", state);
@@ -65,7 +66,7 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
 #ifdef USE_SX126X
     #pragma message("Using SX126X")
     LOG_INFO("Using SX126X module");
-    rig_->setRfSwitchPins(config_.LoraPinSwitchRx, config_.LoraPinSwitchTx);
+    rig_->setRfSwitchPins(config_->LoraPinSwitchRx, config_->LoraPinSwitchTx);
     if (isIsrInstalled_) rig_->clearDio1Action();
     rig_->setDio1Action(onRigIsrRxPacket);
     isIsrInstalled_ = true;
@@ -136,40 +137,44 @@ IRAM_ATTR void RadioTask::onRigIsrRxPacket()
   xTaskNotifyFromISR(loraTaskHandle_, CfgRadioRxBit, eSetBits, &xHigherPriorityTaskWoken);
 }
 
-void RadioTask::loraRadioTask(void *param)
+void RadioTask::task(void *param)
 {
-  reinterpret_cast<RadioTask*>(param)->loraRadioRxTx();
+  reinterpret_cast<RadioTask*>(param)->rigTask();
 }
 
-void RadioTask::notifyTx() 
+void RadioTask::transmit() const
 {
   xTaskNotify(loraTaskHandle_, CfgRadioTxBit, eSetBits);
 }
 
-void RadioTask::loraRadioRxTx() 
+void RadioTask::rigTask() 
 {
   LOG_INFO("Lora task started");
+  isRunning_ = true;
 
-  setupRig(config_.LoraFreqRx, config_.LoraBw, config_.LoraSf, 
-    config_.LoraCodingRate, config_.LoraPower, config_.LoraSync, config_.LoraCrc, config_.LoraExplicit);
+  setupRig(config_->LoraFreqRx, config_->LoraBw, config_->LoraSf, 
+    config_->LoraCodingRate, config_->LoraPower, config_->LoraSync, config_->LoraCrc, config_->LoraExplicit);
 
   byte *packetBuf = new byte[CfgRadioPacketBufLen];
 
-  while (true) {
+  while (isRunning_) {
     uint32_t cmdBits = 0;
     xTaskNotifyWaitIndexed(0, 0x00, ULONG_MAX, &cmdBits, portMAX_DELAY);
 
     LOG_DEBUG("Lora task bits", cmdBits);
     if (cmdBits & CfgRadioRxBit) {
-      loraRadioRx(packetBuf);
+      rigTaskReceive(packetBuf);
     }
     else if (cmdBits & CfgRadioTxBit) {
-      loraRadioTx(packetBuf);
+      rigTaskTransmit(packetBuf);
     }
   } 
+
+  delete packetBuf;
+  LOG_INFO("Lora task stopped");
 }
 
-void RadioTask::loraRadioRx(byte *packetBuf) 
+void RadioTask::rigTaskReceive(byte *packetBuf) 
 {
   int packetSize = rig_->getPacketLength();
   if (packetSize > 0 && packetSize < CfgRadioPacketBufLen) {
@@ -190,11 +195,10 @@ void RadioTask::loraRadioRx(byte *packetBuf)
     if (state != RADIOLIB_ERR_NONE) {
       LOG_ERROR("Start receive error: ", state);
     }
-    // TODO, reset light sleep
   }
 }
 
-void RadioTask::loraRadioTx(byte *packetBuf) 
+void RadioTask::rigTaskTransmit(byte *packetBuf) 
 {
   loraIsrEnabled_ = false;
   while (loraRadioTxQueueIndex_.size() > 0) {
@@ -208,7 +212,6 @@ void RadioTask::loraRadioTx(byte *packetBuf)
     }
     LOG_DEBUG("Transmitted packet", txBytesCnt);
     vTaskDelay(1);
-    // TODO, reset light sleep
   }
   int loraRadioState = rig_->startReceive();
   if (loraRadioState != RADIOLIB_ERR_NONE) {

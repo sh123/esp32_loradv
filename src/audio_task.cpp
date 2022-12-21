@@ -8,7 +8,7 @@ AudioTask::AudioTask()
 {
 }
 
-void AudioTask::start(const Config &config, std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService)
+void AudioTask::start(std::shared_ptr<Config> config, std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService)
 {
   config_ = config;
   radioTask_ = radioTask;
@@ -33,9 +33,9 @@ void AudioTask::installAudio(int bytesPerSample) const
     .fixed_mclk=-1    
   };
   i2s_pin_config_t i2sSpeakerPinConfig = {
-    .bck_io_num = config_.AudioSpkPinBclk,
-    .ws_io_num = config_.AudioSpkPinLrc,
-    .data_out_num = config_.AudioSpkPinDin,
+    .bck_io_num = config_->AudioSpkPinBclk,
+    .ws_io_num = config_->AudioSpkPinLrc,
+    .data_out_num = config_->AudioSpkPinDin,
     .data_in_num = I2S_PIN_NO_CHANGE
   };
   if (i2s_driver_install(CfgAudioI2sSpkId, &i2sSpeakerConfig, 0, NULL) != ESP_OK) {
@@ -59,10 +59,10 @@ void AudioTask::installAudio(int bytesPerSample) const
     .fixed_mclk=-1
   };
   i2s_pin_config_t i2sMicPinConfig = {
-    .bck_io_num = config_.AudioMicPinSck,
-    .ws_io_num = config_.AudioMicPinWs,
+    .bck_io_num = config_->AudioMicPinSck,
+    .ws_io_num = config_->AudioMicPinWs,
     .data_out_num = I2S_PIN_NO_CHANGE,
-    .data_in_num = config_.AudioMicPinSd 
+    .data_in_num = config_->AudioMicPinSd 
   };
   if (i2s_driver_install(CfgAudioI2sMicId, &i2sMicConfig, 0, NULL) != ESP_OK) {
     LOG_ERROR("Failed to install i2s mic driver");
@@ -100,7 +100,7 @@ void AudioTask::audioTask()
   isRunning_ = true;
 
   // construct codec2
-  codec_ = codec2_create(config_.AudioCodec2Mode);
+  codec_ = codec2_create(config_->AudioCodec2Mode);
   if (codec_ == NULL) {
     LOG_ERROR("Failed to create codec2");
     return;
@@ -109,7 +109,7 @@ void AudioTask::audioTask()
   codecBytesPerFrame_ = codec2_bytes_per_frame(codec_);
   codecSamples_ = new int16_t[codecSamplesPerFrame_];
   codecBits_ = new uint8_t[codecBytesPerFrame_];
-  LOG_INFO("C2 initialized", config_.AudioCodec2Mode, codecSamplesPerFrame_, codecBytesPerFrame_);
+  LOG_INFO("C2 initialized", config_->AudioCodec2Mode, codecSamplesPerFrame_, codecBytesPerFrame_);
   delay(3000);
   installAudio(codecSamplesPerFrame_);
 
@@ -179,14 +179,14 @@ void AudioTask::audioTaskRecord()
   i2s_start(CfgAudioI2sMicId);
   while (isPttOn_) {
     // send packet if enough audio encoded frames are accumulated
-    if (packetSize + codecBytesPerFrame_ > config_.AudioMaxPktSize) {
+    if (packetSize + codecBytesPerFrame_ > config_->AudioMaxPktSize) {
       LOG_DEBUG("Recorded packet", packetSize);
       if (!radioTask_->writePacketSize(packetSize)) {
         LOG_ERROR("Failed to write packet size");
         vTaskDelay(1);
         continue;
       }
-      radioTask_->notifyTx();
+      radioTask_->transmit();
       pmService_->lightSleepReset();
       packetSize = 0;
     }
@@ -207,7 +207,7 @@ void AudioTask::audioTaskRecord()
   if (packetSize > 0) {
       LOG_DEBUG("Recorded packet", packetSize);
       if (radioTask_->writePacketSize(packetSize)) {
-        radioTask_->notifyTx();
+        radioTask_->transmit();
         pmService_->lightSleepReset();
       } else {
         LOG_ERROR("Failed to write byte");

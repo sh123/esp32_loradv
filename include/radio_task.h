@@ -20,7 +20,8 @@ class RadioTask {
 public:
   RadioTask();
 
-  void setup(const Config &config, std::shared_ptr<AudioTask> audioTask);
+  void start(std::shared_ptr<Config> config, std::shared_ptr<AudioTask> audioTask);
+  inline void stop() { isRunning_ = false; }
 
   void setFreq(long freq) const;
 
@@ -28,7 +29,7 @@ public:
   bool readPacketSize(byte &packetSize);
   bool readNextByte(byte &b);
 
-  void notifyTx();
+  void transmit() const;
   bool writePacketSize(byte packetSize);
   bool writeNextByte(byte b);
 
@@ -46,13 +47,14 @@ private:
 
   static IRAM_ATTR void onRigIsrRxPacket();
 
-  static void loraRadioTask(void *param);
-  void loraRadioRxTx();
-  void loraRadioRx(byte *packetBuf);
-  void loraRadioTx(byte *packetBuf);
+  static void task(void *param);
+
+  void rigTask();
+  void rigTaskReceive(byte *packetBuf);
+  void rigTaskTransmit(byte *packetBuf);
 
 private:
-  Config config_;
+  std::shared_ptr<Config> config_;
 
   std::shared_ptr<MODULE_NAME> rig_;
   std::shared_ptr<AudioTask> audioTask_;
@@ -67,6 +69,7 @@ private:
   bool rigIsImplicitMode_;
   bool isIsrInstalled_;
   static volatile bool loraIsrEnabled_;
+  volatile bool isRunning_;
 };
 
 }

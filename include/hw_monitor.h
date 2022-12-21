@@ -2,7 +2,7 @@
 #define HW_MONITOR_H
 
 #include <Arduino.h>
-
+#include <memory>
 #include "loradv_config.h"
 
 namespace LoraDv {
@@ -11,12 +11,12 @@ class HwMonitor {
 
 public:
   HwMonitor();
-  void setup(const Config &config);
+  void setup(std::shared_ptr<Config> config);
 
   float getBatteryVoltage() const;
 
 private:
-  Config config_;
+  std::shared_ptr<Config> config_;
 
 };
 
