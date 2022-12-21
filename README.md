@@ -12,7 +12,7 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 - Rotary encoder with push button
 - Small OLED display SSD1306 128x32
 - Battery voltage control
-- Powered with a single 18650 battery
+- Powered from a single 18650 battery
 
 ## Build instructions
 - Modify `include/config.h` if needed
