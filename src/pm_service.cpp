@@ -49,7 +49,7 @@ void PmService::lightSleepEnter(void)
 
 esp_sleep_wakeup_cause_t PmService::lightSleepWait(uint64_t sleepTimeUs) const
 {
-  esp_sleep_enable_ext0_wakeup(config_->PttBtnGpioPin, LOW);
+  esp_sleep_enable_ext0_wakeup((gpio_num_t)config_->PttBtnPin, LOW);
 #ifdef USE_SX126X
   uint64_t bitMask = (uint64_t)(1 << config_->LoraPinA) | (uint64_t)(1 << config_->LoraPinB);
 #else

@@ -64,8 +64,6 @@ struct Config {
 
   // ptt button
   int PttBtnPin;            // ptt pin
-  gpio_num_t PttBtnGpioPin; // gpio pin
-
 }; // Config
 
 } // LoraDv
