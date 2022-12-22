@@ -201,6 +201,7 @@ void RadioTask::rigTaskReceive(byte *packetBuf)
 void RadioTask::rigTaskTransmit(byte *packetBuf) 
 {
   loraIsrEnabled_ = false;
+  if (isHalfDuplex()) setFreq(config_->LoraFreqTx);
   while (loraRadioTxQueueIndex_.size() > 0) {
     int txBytesCnt = loraRadioTxQueueIndex_.shift();
     for (int i = 0; i < txBytesCnt; i++) {
@@ -213,6 +214,7 @@ void RadioTask::rigTaskTransmit(byte *packetBuf)
     LOG_DEBUG("Transmitted packet", txBytesCnt);
     vTaskDelay(1);
   }
+  if (isHalfDuplex()) setFreq(config_->LoraFreqRx);
   int loraRadioState = rig_->startReceive();
   if (loraRadioState != RADIOLIB_ERR_NONE) {
     LOG_ERROR("Start receive error: ", loraRadioState);
