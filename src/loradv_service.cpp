@@ -23,10 +23,10 @@ void Service::setup(std::shared_ptr<Config> config)
   
   // rotary encoder
   LOG_INFO("Encoder setup started");
-  rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config_->EncoderPinA, config_->EncoderPinB, 
-    config_->EncoderPinBtn, config_->EncoderPinVcc, config_->EncoderSteps);
+  rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config_->EncoderPinA_, config_->EncoderPinB_, 
+    config_->EncoderPinBtn_, config_->EncoderPinVcc_, config_->EncoderSteps_);
   rotaryEncoder_->begin();
-  rotaryEncoder_->setBoundaries(0, config_->AudioMaxVol);
+  rotaryEncoder_->setBoundaries(0, config_->AudioMaxVol_);
   rotaryEncoder_->setEncoderValue(config_->AudioVol);
   rotaryEncoder_->setup(isrReadEncoder);
   LOG_INFO("Encoder setup completed");
@@ -41,7 +41,7 @@ void Service::setup(std::shared_ptr<Config> config)
 
   // ptt button
   LOG_INFO("PTT setup started");
-  pinMode(config_->PttBtnPin, INPUT);
+  pinMode(config_->PttBtnPin_, INPUT);
   LOG_INFO("PTT setup completed");
 
   // hardware monitoring
@@ -82,13 +82,13 @@ void Service::printStatus(const String &str) const
 void Service::processPttButton()
 {
     // button 
-  if (digitalRead(config_->PttBtnPin) == LOW && !btnPressed_) {
+  if (digitalRead(config_->PttBtnPin_) == LOW && !btnPressed_) {
     btnPressed_ = true;
     LOG_DEBUG("PTT pushed, start TX");
     printStatus("TX");
     audioTask_->setPtt(true);
     audioTask_->record();
-  } else if (digitalRead(config_->PttBtnPin) == HIGH && btnPressed_) {
+  } else if (digitalRead(config_->PttBtnPin_) == HIGH && btnPressed_) {
     btnPressed_ = false;
     LOG_DEBUG("PTT released");
     printStatus("RX");

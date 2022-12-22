@@ -14,7 +14,7 @@ void AudioTask::start(std::shared_ptr<Config> config, std::shared_ptr<RadioTask>
   radioTask_ = radioTask;
   pmService_ = pmService;
   volume_ = config->AudioVol;
-  maxVolume_ = config->AudioMaxVol;
+  maxVolume_ = config->AudioMaxVol_;
   xTaskCreate(&task, "audio_task", CfgAudioTaskStack, this, 5, &audioTaskHandle_);
 }
 
@@ -35,9 +35,9 @@ void AudioTask::installAudio(int bytesPerSample) const
     .fixed_mclk=-1    
   };
   i2s_pin_config_t i2sSpeakerPinConfig = {
-    .bck_io_num = config_->AudioSpkPinBclk,
-    .ws_io_num = config_->AudioSpkPinLrc,
-    .data_out_num = config_->AudioSpkPinDin,
+    .bck_io_num = config_->AudioSpkPinBclk_,
+    .ws_io_num = config_->AudioSpkPinLrc_,
+    .data_out_num = config_->AudioSpkPinDin_,
     .data_in_num = I2S_PIN_NO_CHANGE
   };
   if (i2s_driver_install(CfgAudioI2sSpkId, &i2sSpeakerConfig, 0, NULL) != ESP_OK) {
@@ -61,10 +61,10 @@ void AudioTask::installAudio(int bytesPerSample) const
     .fixed_mclk=-1
   };
   i2s_pin_config_t i2sMicPinConfig = {
-    .bck_io_num = config_->AudioMicPinSck,
-    .ws_io_num = config_->AudioMicPinWs,
+    .bck_io_num = config_->AudioMicPinSck_,
+    .ws_io_num = config_->AudioMicPinWs_,
     .data_out_num = I2S_PIN_NO_CHANGE,
-    .data_in_num = config_->AudioMicPinSd 
+    .data_in_num = config_->AudioMicPinSd_ 
   };
   if (i2s_driver_install(CfgAudioI2sMicId, &i2sMicConfig, 0, NULL) != ESP_OK) {
     LOG_ERROR("Failed to install i2s mic driver");
@@ -182,7 +182,7 @@ void AudioTask::audioTaskRecord()
   i2s_start(CfgAudioI2sMicId);
   while (isPttOn_) {
     // send packet if enough audio encoded frames are accumulated
-    if (packetSize + codecBytesPerFrame_ > config_->AudioMaxPktSize) {
+    if (packetSize + codecBytesPerFrame_ > config_->AudioMaxPktSize_) {
       LOG_DEBUG("Recorded packet", packetSize);
       if (!radioTask_->writePacketSize(packetSize)) {
         LOG_ERROR("Failed to write packet size");

@@ -1,7 +1,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// Uncomment for SX126X module usage
+// saved settings version, increment to load new settings
+#define CFG_VERSION  1
+
+// Comment out for SX127X module usage
 #define USE_SX126X
 
 // Check your module name at https://github.com/jgromes/RadioLib/wiki/Modules

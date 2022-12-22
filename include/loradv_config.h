@@ -2,11 +2,15 @@
 #define LORADV_CONFIG_H
 
 #include <Arduino.h>
+#include <Preferences.h>
 #include <DebugLog.h>
 
 namespace LoraDv {
 
-struct Config {
+class Config {
+public:
+  const int Version = 1;
+
   DebugLogLevel LogLevel;    // log level
 
   // lora modulation parameters
@@ -16,54 +20,63 @@ struct Config {
   int LoraSf;           // lora spreading factor, e.g. 12
   int LoraCodingRate;   // lora coding rate, e.g. 7
   int LoraPower;        // lora power level in dbm, 20
-  int LoraSync;         // lora sync word/packet id, 0x34
-  int LoraCrc;          // lora crc mode, 0 - disabled, 1 - 1 byte, 2 - 2 bytes
-  bool LoraExplicit;    // lora header mode, true - explicit, false - implicit
+  int LoraSync_;        // lora sync word/packet id, 0x34
+  int LoraCrc_;         // lora crc mode, 0 - disabled, 1 - 1 byte, 2 - 2 bytes
+  bool LoraExplicit_;   // lora header mode, true - explicit, false - implicit
 
   // lora hardware pinouts and isr
-  byte LoraPinSs;       // lora ss pin
-  byte LoraPinRst;      // lora rst pin
-  byte LoraPinA;        // (sx127x - dio0, sx126x/sx128x - dio1)
-  byte LoraPinB;        // (sx127x - dio1, sx126x/sx128x - busy)
-  byte LoraPinSwitchRx; // (sx127x - unused, sx126x - RXEN pin number)
-  byte LoraPinSwitchTx; // (sx127x - unused, sx126x - TXEN pin number)
+  byte LoraPinSs_;       // lora ss pin
+  byte LoraPinRst_;      // lora rst pin
+  byte LoraPinA_;        // (sx127x - dio0, sx126x/sx128x - dio1)
+  byte LoraPinB_;        // (sx127x - dio1, sx126x/sx128x - busy)
+  byte LoraPinSwitchRx_; // (sx127x - unused, sx126x - RXEN pin number)
+  byte LoraPinSwitchTx_; // (sx127x - unused, sx126x - TXEN pin number)
 
   // rotary encoder
-  byte EncoderPinA;     // Encoder A pin number
-  byte EncoderPinB;     // Encoder B pin number
-  byte EncoderPinBtn;   // Encoder button pin number
-  byte EncoderPinVcc;   // Encoder VCC pin (or -1 if not connected)
-  byte EncoderSteps;    // Encoder number of steps
+  byte EncoderPinA_;     // Encoder A pin number
+  byte EncoderPinB_;     // Encoder B pin number
+  byte EncoderPinBtn_;   // Encoder button pin number
+  byte EncoderPinVcc_;   // Encoder VCC pin (or -1 if not connected)
+  byte EncoderSteps_;    // Encoder number of steps
 
   // audio params
-  int AudioCodec2Mode;  // Audio Codec2 mode
-  int AudioMaxPktSize;  // Aggregated packet maximum size
+  int AudioCodec2Mode;   // Audio Codec2 mode
+  int AudioMaxPktSize_;  // Aggregated packet maximum size
 
   // i2s speaker
-  byte AudioSpkPinBclk; // Speaker i2s clk pin
-  byte AudioSpkPinLrc;  // Speaker i2s lrc pin
-  byte AudioSpkPinDin;  // Speaker i2s din pin
+  byte AudioSpkPinBclk_; // Speaker i2s clk pin
+  byte AudioSpkPinLrc_;  // Speaker i2s lrc pin
+  byte AudioSpkPinDin_;  // Speaker i2s din pin
 
   // i2s mic
-  byte AudioMicPinSd;   // Mic i2s sd pin
-  byte AudioMicPinWs;   // Mic i2s ws pin
-  byte AudioMicPinSck;  // Mic i2s sck pin
+  byte AudioMicPinSd_;   // Mic i2s sd pin
+  byte AudioMicPinWs_;   // Mic i2s ws pin
+  byte AudioMicPinSck_;  // Mic i2s sck pin
 
   // audio state
-  int AudioMaxVol;      // maximum volume
-  int AudioVol;         // current volume
+  int AudioMaxVol_;      // maximum volume
+  int AudioVol;          // current volume
 
   // battery monitor
-  byte BatteryMonPin;   // Battery monitor adc pin
+  byte BatteryMonPin_;  // Battery monitor adc pin
   int BatteryMonCal;    // Battery monitor calibrarion value
 
   // power management
   int PmLightSleepAfterMs; // Light sleep activation after given ms
-  int PmLightSleepDurationMs; // How long to sleep
-  int PmLightSleepAwakeMs; // How long to be active
+  int PmLightSleepDurationMs_; // How long to sleep
+  int PmLightSleepAwakeMs_; // How long to be active
 
   // ptt button
-  int PttBtnPin;            // ptt pin
+  int PttBtnPin_;            // ptt pin
+
+public:
+  Config();
+  void Load();
+  void Save();
+
+private:
+  Preferences prefs_;
+
 }; // Config
 
 } // LoraDv

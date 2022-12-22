@@ -57,7 +57,7 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
         break;
   }
   LOG_INFO("Min level:", -174 + 10 * log10(bw) + 6 + snrLimit, "dBm");
-  rig_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs, config_->LoraPinA, config_->LoraPinRst, config_->LoraPinB));
+  rig_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
   int state = rig_->begin((float)loraFreq / 1e6, (float)bw / 1e3, sf, cr, sync, pwr);
   if (state != RADIOLIB_ERR_NONE) {
     LOG_ERROR("Radio start error:", state);
@@ -66,7 +66,7 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
 #ifdef USE_SX126X
     #pragma message("Using SX126X")
     LOG_INFO("Using SX126X module");
-    rig_->setRfSwitchPins(config_->LoraPinSwitchRx, config_->LoraPinSwitchTx);
+    rig_->setRfSwitchPins(config_->LoraPinSwitchRx_, config_->LoraPinSwitchTx_);
     if (isIsrInstalled_) rig_->clearDio1Action();
     rig_->setDio1Action(onRigIsrRxPacket);
     isIsrInstalled_ = true;
@@ -153,7 +153,7 @@ void RadioTask::rigTask()
   isRunning_ = true;
 
   setupRig(config_->LoraFreqRx, config_->LoraBw, config_->LoraSf, 
-    config_->LoraCodingRate, config_->LoraPower, config_->LoraSync, config_->LoraCrc, config_->LoraExplicit);
+    config_->LoraCodingRate, config_->LoraPower, config_->LoraSync_, config_->LoraCrc_, config_->LoraExplicit_);
 
   byte *packetBuf = new byte[CfgRadioPacketBufLen];
 
