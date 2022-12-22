@@ -172,6 +172,7 @@ void RadioTask::rigTask()
 
   delete packetBuf;
   LOG_INFO("Lora task stopped");
+  vTaskDelete(NULL);
 }
 
 void RadioTask::rigTaskReceive(byte *packetBuf) 

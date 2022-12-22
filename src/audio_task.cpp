@@ -134,6 +134,7 @@ void AudioTask::audioTask()
   uninstallAudio();
 
   LOG_INFO("Audio task stopped");
+  vTaskDelete(NULL);
 }
 
 void AudioTask::audioTaskPlay()
