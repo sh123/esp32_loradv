@@ -47,7 +47,7 @@ void PmService::lightSleepEnter(void)
   isExitFromSleep_ = true;
 }
 
-esp_sleep_wakeup_cause_t PmService::lightSleepWait(uint64_t sleepTimeUs) 
+esp_sleep_wakeup_cause_t PmService::lightSleepWait(uint64_t sleepTimeUs) const
 {
   esp_sleep_enable_ext0_wakeup(config_->PttBtnGpioPin, LOW);
 #ifdef USE_SX126X

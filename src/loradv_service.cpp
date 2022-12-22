@@ -64,7 +64,7 @@ IRAM_ATTR void Service::isrReadEncoder()
   rotaryEncoder_->readEncoder_ISR();
 }
 
-void Service::printStatus(const String &str)
+void Service::printStatus(const String &str) const
 {
   display_->clearDisplay();
   display_->setTextSize(2);
@@ -79,9 +79,9 @@ void Service::printStatus(const String &str)
   display_->display();
 }
 
-void Service::loop() 
+void Service::processPttButton()
 {
-  // button 
+    // button 
   if (digitalRead(config_->PttBtnPin) == LOW && !btnPressed_) {
     btnPressed_ = true;
     LOG_DEBUG("PTT pushed, start TX");
@@ -94,6 +94,10 @@ void Service::loop()
     printStatus("RX");
     audioTask_->setPtt(false);
   }
+}
+
+void Service::processRotaryEncoder()
+{
   // rotary encoder
   if (rotaryEncoder_->encoderChanged())
   {
@@ -112,7 +116,12 @@ void Service::loop()
     LOG_INFO("Encoder button long pressed");
     pmService_->lightSleepReset();
   }
+}
 
+void Service::loop() 
+{
+  processPttButton();
+  processRotaryEncoder();
   if (pmService_->loop()) {
     printStatus("RX");
   }

@@ -23,7 +23,7 @@ public:
 private:
   static bool lightSleepEnterTimer(void *param);
   void lightSleepEnter();
-  esp_sleep_wakeup_cause_t lightSleepWait(uint64_t sleepTimeUs);
+  esp_sleep_wakeup_cause_t lightSleepWait(uint64_t sleepTimeUs) const;
 
 private:
   std::shared_ptr<Config> config_;
