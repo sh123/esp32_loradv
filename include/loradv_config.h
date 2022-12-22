@@ -49,6 +49,10 @@ struct Config {
   byte AudioMicPinWs;   // Mic i2s ws pin
   byte AudioMicPinSck;  // Mic i2s sck pin
 
+  // audio state
+  int AudioMaxVol;      // maximum volume
+  int AudioVol;         // current volume
+
   // battery monitor
   byte BatteryMonPin;   // Battery monitor adc pin
   int BatteryMonCal;    // Battery monitor calibrarion value

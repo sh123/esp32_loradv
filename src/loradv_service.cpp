@@ -26,8 +26,8 @@ void Service::setup(std::shared_ptr<Config> config)
   rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config_->EncoderPinA, config_->EncoderPinB, 
     config_->EncoderPinBtn, config_->EncoderPinVcc, config_->EncoderSteps);
   rotaryEncoder_->begin();
-  rotaryEncoder_->setBoundaries(0, audioTask_->getMaxVolume());
-  rotaryEncoder_->setEncoderValue(audioTask_->getMaxVolume());
+  rotaryEncoder_->setBoundaries(0, config_->AudioMaxVol);
+  rotaryEncoder_->setEncoderValue(config_->AudioVol);
   rotaryEncoder_->setup(isrReadEncoder);
   LOG_INFO("Encoder setup completed");
 

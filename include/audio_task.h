@@ -26,15 +26,13 @@ public:
 
   inline void setPtt(bool isPttOn) { isPttOn_ = isPttOn; }
 
-  inline void setVolume(int volume) { codecVolume_ = volume; }
-  inline int getVolume() const { return codecVolume_; }
-  inline int getMaxVolume() const { return CfgAudioMaxVolume; }
+  inline void setVolume(int volume) { if (volume <= maxVolume_) volume_ = volume; }
+  inline int getVolume() const { return volume_; }
 
 private:
   const uint32_t CfgAudioSampleRate = 8000;       // audio sample rate
   const i2s_port_t CfgAudioI2sSpkId = I2S_NUM_0;  // audio i2s speaker number
   const i2s_port_t CfgAudioI2sMicId = I2S_NUM_1;  // audio i2s mic number
-  const int CfgAudioMaxVolume = 100;              // maximum volume value
 
   const uint32_t CfgAudioPlayBit = 0x01;          // task bit for playback
   const uint32_t CfgAudioRecBit = 0x02;           // task bit for recording
@@ -64,7 +62,9 @@ private:
 
   int codecSamplesPerFrame_;
   int codecBytesPerFrame_;
-  long codecVolume_;
+
+  long volume_;
+  long maxVolume_;
 
   bool isPttOn_;
   volatile bool isRunning_;

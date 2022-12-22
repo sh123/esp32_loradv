@@ -13,6 +13,8 @@ void AudioTask::start(std::shared_ptr<Config> config, std::shared_ptr<RadioTask>
   config_ = config;
   radioTask_ = radioTask;
   pmService_ = pmService;
+  volume_ = config->AudioVol;
+  maxVolume_ = config->AudioMaxVol;
   xTaskCreate(&task, "audio_task", CfgAudioTaskStack, this, 5, &audioTaskHandle_);
 }
 
@@ -138,7 +140,7 @@ void AudioTask::audioTaskPlay()
 {
   size_t bytesWritten;
   LOG_DEBUG("Playing audio");
-  double vol = (double)codecVolume_ / (double)CfgAudioMaxVolume;
+  double vol = (double)volume_ / (double)maxVolume_;
   LOG_DEBUG("Volume is", vol);
   while (!isPttOn_ && radioTask_->hasData()) {
     byte packetSize;

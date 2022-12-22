@@ -64,6 +64,8 @@
 // audio
 #define CFG_AUDIO_CODEC2_MODE       CODEC2_MODE_700C
 #define CFG_AUDIO_MAX_PKT_SIZE      48
+#define CFG_AUDIO_MAX_VOL           100
+#define CFG_AUDIO_VOL               50
 
 // i2s speaker
 #define CFG_AUDIO_SPK_PIN_BCLK      26

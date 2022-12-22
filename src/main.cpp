@@ -54,6 +54,8 @@ void initializeConfig(std::shared_ptr<LoraDv::Config> cfg)
   // audio parameters
   cfg->AudioCodec2Mode = CFG_AUDIO_CODEC2_MODE;
   cfg->AudioMaxPktSize = CFG_AUDIO_MAX_PKT_SIZE;
+  cfg->AudioMaxVol = CFG_AUDIO_MAX_VOL;
+  cfg->AudioVol = CFG_AUDIO_VOL;
 
   // i2s speaker
   cfg->AudioSpkPinBclk = CFG_AUDIO_SPK_PIN_BCLK;
