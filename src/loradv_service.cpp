@@ -72,9 +72,9 @@ void Service::printStatus(const String &str)
   display_->setCursor(0, 0);
   display_->print(str); display_->print(" "); 
   if (btnPressed_)
-    display_->println((float)config_->LoraFreqTx / 1e6);
+    display_->println((float)config_->LoraFreqTx / 1e6, 3);
   else
-    display_->println((float)config_->LoraFreqRx / 1e6);
+    display_->println((float)config_->LoraFreqRx / 1e6, 3);
   display_->print(audioTask_->getVolume()); display_->print("% "); display_->print(hwMonitor_->getBatteryVoltage()); display_->print("V");
   display_->display();
 }
