@@ -24,3 +24,5 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 
 ## Picture
 ![Device](extras/images/device.png)
+
+![Device](extras/images/peripherals.png)
