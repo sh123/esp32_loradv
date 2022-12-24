@@ -17,11 +17,25 @@ void Service::setup(std::shared_ptr<Config> config)
 {
   config_ = config;
 
-  // setup logging
   LOG_SET_LEVEL(config_->LogLevel);
   LOG_SET_OPTION(false, false, true);  // disable file, line, enable func
   
-  // rotary encoder
+  setupEncoder();
+  setupScreen();
+
+  LOG_INFO("PTT setup started");
+  pinMode(config_->PttBtnPin_, INPUT);
+  LOG_INFO("PTT setup completed");
+
+  hwMonitor_->setup(config);
+  pmService_->setup(config, display_);
+  audioTask_->start(config, radioTask_, pmService_);
+  radioTask_->start(config, audioTask_);
+  LOG_INFO("Board setup completed");
+}
+
+void Service::setupEncoder() 
+{
   LOG_INFO("Encoder setup started");
   rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config_->EncoderPinA_, config_->EncoderPinB_, 
     config_->EncoderPinBtn_, config_->EncoderPinVcc_, config_->EncoderSteps_);
@@ -30,33 +44,16 @@ void Service::setup(std::shared_ptr<Config> config)
   rotaryEncoder_->setEncoderValue(config_->AudioVol);
   rotaryEncoder_->setup(isrReadEncoder);
   LOG_INFO("Encoder setup completed");
+}
 
-  // oled screen
+void Service::setupScreen() 
+{
   display_ = std::make_shared<Adafruit_SSD1306>(CfgDisplayWidth, CfgDisplayHeight, &Wire, -1);
   if(display_->begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
     LOG_INFO("Display setup completed");
   } else {
     LOG_ERROR("Display init failed");
   }
-
-  // ptt button
-  LOG_INFO("PTT setup started");
-  pinMode(config_->PttBtnPin_, INPUT);
-  LOG_INFO("PTT setup completed");
-
-  // hardware monitoring
-  hwMonitor_->setup(config);
-
-  // power management
-  pmService_->setup(config, display_);
-
-  // start codec2 playback task
-  audioTask_->start(config, radioTask_, pmService_);
-
-  // start lora task
-  radioTask_->start(config, audioTask_);
-
-  LOG_INFO("Board setup completed");
 }
 
 IRAM_ATTR void Service::isrReadEncoder()
@@ -75,7 +72,8 @@ void Service::printStatus(const String &str) const
     display_->println((float)config_->LoraFreqTx / 1e6, 3);
   else
     display_->println((float)config_->LoraFreqRx / 1e6, 3);
-  display_->print(audioTask_->getVolume()); display_->print("% "); display_->print(hwMonitor_->getBatteryVoltage()); display_->print("V");
+  display_->print(audioTask_->getVolume()); display_->print("% "); 
+  display_->print(hwMonitor_->getBatteryVoltage()); display_->print("V");
   display_->display();
 }
 

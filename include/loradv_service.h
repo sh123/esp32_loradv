@@ -35,6 +35,9 @@ private:
   const int CfgDisplayHeight = 32;                // display height
 
 private:
+  void setupEncoder();
+  void setupScreen();
+
   static IRAM_ATTR void isrReadEncoder();
 
   void printStatus(const String &str) const;
