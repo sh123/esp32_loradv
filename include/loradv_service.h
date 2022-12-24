@@ -19,6 +19,7 @@
 #include "audio_task.h"
 #include "pm_service.h"
 #include "hw_monitor.h"
+#include "settings_menu.h"
 
 namespace LoraDv {
 
@@ -58,6 +59,8 @@ private:
   
   std::shared_ptr<Adafruit_SSD1306> display_;
   static std::shared_ptr<AiEsp32RotaryEncoder> rotaryEncoder_;
+
+  std::shared_ptr<SettingsMenu> settingsMenu_;
 
   // other
   volatile bool btnPressed_;

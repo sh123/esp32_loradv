@@ -10,6 +10,7 @@ Service::Service()
   , audioTask_(std::make_shared<AudioTask>())
   , pmService_(std::make_shared<PmService>())
   , hwMonitor_(std::make_shared<HwMonitor>())
+  , settingsMenu_(nullptr)
 {
 }
 
@@ -94,25 +95,41 @@ bool Service::processPttButton()
 
 bool Service::processRotaryEncoder()
 {
-  // rotary encoder
+  bool shouldUpdateScreen = false;
   long encoderDelta = rotaryEncoder_->encoderChanged();
   if (encoderDelta != 0)
   {
     LOG_INFO("Encoder changed:", rotaryEncoder_->readEncoder(), encoderDelta);
-    audioTask_->changeVolume(encoderDelta);
-    return true;
+    if (settingsMenu_ == nullptr) {
+      audioTask_->changeVolume(encoderDelta);
+      shouldUpdateScreen = true;
+    } else {
+      settingsMenu_->onEncoderPositionChanged(encoderDelta);
+      settingsMenu_->draw(display_);
+    }
   }
   if (rotaryEncoder_->isEncoderButtonClicked())
   {
     LOG_INFO("Encoder button clicked", esp_get_free_heap_size());
-    return true;
+    if (settingsMenu_ == nullptr) {
+      shouldUpdateScreen = true;
+    } else {
+      settingsMenu_->onEncoderButtonClicked();
+      settingsMenu_->draw(display_);
+    }
   }
   if (rotaryEncoder_->isEncoderButtonClicked(CfgEncoderBtnLongMs))
   {
     LOG_INFO("Encoder button long clicked");
-    return true;
+    if (settingsMenu_ == nullptr) {
+      settingsMenu_ = std::make_shared<SettingsMenu>(config_);
+      settingsMenu_->draw(display_);
+    } else {
+      settingsMenu_.reset();
+      shouldUpdateScreen = true;
+    }
   }
-  return false;
+  return shouldUpdateScreen;
 }
 
 void Service::loop() 

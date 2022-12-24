@@ -2,7 +2,7 @@
 
 namespace LoraDv {
 
-class SettingsLoraFreqStepItem : SettingsItem {
+class SettingsLoraFreqStepItem : public SettingsItem {
 private:
   static const int CfgItemsCount = 7;
 public:
@@ -24,8 +24,9 @@ private:
   long items_[CfgItemsCount];
 };
 
-class SettingsLoraFreqRxItem : SettingsItem {
+class SettingsLoraFreqRxItem : public SettingsItem {
 public:
+  SettingsLoraFreqRxItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
   void changeValue(int delta) { 
     long newVal = config_->LoraFreqRx + config_->LoraFreqStep * delta;
     if (newVal >= 400e6 && newVal <= 520e6) config_->LoraFreqRx = newVal;
@@ -34,8 +35,9 @@ public:
   void getValue(std::stringstream &s) const { s << config_->LoraFreqRx << "Hz"; }
 };
 
-class SettingsLoraFreqTxItem : SettingsItem {
+class SettingsLoraFreqTxItem : public SettingsItem {
 public:
+  SettingsLoraFreqTxItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
   void changeValue(int delta) {
     long newVal = config_->LoraFreqTx + config_->LoraFreqStep * delta;
     if (newVal >= 400e6 && newVal <= 520e6) config_->LoraFreqTx = newVal;
@@ -44,7 +46,7 @@ public:
   void getValue(std::stringstream &s) const { s << config_->LoraFreqTx << "Hz"; }
 };
 
-class SettingsLoraBwItem : SettingsItem {
+class SettingsLoraBwItem : public SettingsItem {
 private:
   static const int CfgItemsCount = 10;
 public:
@@ -66,8 +68,9 @@ private:
   long items_[CfgItemsCount];
 };
 
-class SettingsLoraSfItem : SettingsItem {
+class SettingsLoraSfItem : public SettingsItem {
 public:
+  SettingsLoraSfItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
   void changeValue(int delta) { 
     long newVal = config_->LoraSf + delta;
     if (newVal >= 6 && newVal <= 12) config_->LoraSf = newVal;
@@ -76,8 +79,9 @@ public:
   void getValue(std::stringstream &s) const { s << config_->LoraSf; }
 };
 
-class SettingsLoraCrItem : SettingsItem {
+class SettingsLoraCrItem : public SettingsItem {
 public:
+  SettingsLoraCrItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
   void changeValue(int delta) { 
     long newVal = config_->LoraCodingRate + delta;
     if (newVal >= 5 && newVal <= 8) config_->LoraCodingRate = newVal;
@@ -86,8 +90,9 @@ public:
   void getValue(std::stringstream &s) const { s << config_->LoraCodingRate; }
 };
 
-class SettingsLoraPowerItem : SettingsItem {
+class SettingsLoraPowerItem : public SettingsItem {
 public:
+  SettingsLoraPowerItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
   void changeValue(int delta) { 
     long newVal = config_->LoraPower + delta;
     if (newVal >= 2 && newVal <= 22) config_->LoraPower = newVal;
@@ -96,7 +101,7 @@ public:
   void getValue(std::stringstream &s) const { s << config_->LoraPower << "dBm"; }
 };
 
-class SettingsAudioCodec2ModeItem : SettingsItem {
+class SettingsAudioCodec2ModeItem : public SettingsItem {
 private:
   static const int CfgItemsCount = 8;
 public:
@@ -147,8 +152,9 @@ private:
   } map_[CfgItemsCount];
 };
 
-class SettingsAudioVolItem : SettingsItem {
+class SettingsAudioVolItem : public SettingsItem {
 public:
+  SettingsAudioVolItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
   void changeValue(int delta) { 
     long newVal = config_->AudioVol + delta;
     if (newVal >= 0 && newVal <= 100) config_->AudioVol = newVal;
@@ -157,8 +163,9 @@ public:
   void getValue(std::stringstream &s) const { s << config_->AudioVol; }
 };
 
-class SettingsBatteryMonCalItem : SettingsItem {
+class SettingsBatteryMonCalItem : public SettingsItem {
 public:
+  SettingsBatteryMonCalItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
   void changeValue(int delta) { 
     float newVal = config_->BatteryMonCal + 0.01f * delta;
     if (newVal >= -2.0f && newVal <= 2.0f) config_->BatteryMonCal = newVal;
@@ -167,8 +174,9 @@ public:
   void getValue(std::stringstream &s) const { s << config_->BatteryMonCal << "V"; }
 };
 
-class SettingsPmLightSleepAfterMsItem : SettingsItem {
+class SettingsPmLightSleepAfterMsItem : public SettingsItem {
 public:
+  SettingsPmLightSleepAfterMsItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
   void changeValue(int delta) { 
     int newVal = config_->PmLightSleepAfterMs + 1000 * delta;
     if (newVal >= 10 && newVal <= 5*60) config_->PmLightSleepAfterMs = newVal * 1000;
@@ -177,8 +185,49 @@ public:
   void getValue(std::stringstream &s) const { s << config_->PmLightSleepAfterMs / 1000 << "s"; }
 };
 
-SettingsMenu::SettingsMenu() 
+SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
+  : config_(config)
+  , selectedMenuItemIndex_(0)
+  , isValueSelected_(false)
 {
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraFreqStepItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraFreqRxItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraFreqTxItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraBwItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraSfItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraCrItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraPowerItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioCodec2ModeItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsBatteryMonCalItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsPmLightSleepAfterMsItem(config)));
+}
+
+void SettingsMenu::draw(std::shared_ptr<Adafruit_SSD1306> display) 
+{
+  std::stringstream s;
+  items_[selectedMenuItemIndex_]->getName(s);
+  s << std::endl;
+  items_[selectedMenuItemIndex_]->getValue(s);
+
+  display->clearDisplay();
+  display->setTextSize(2);
+  display->setTextColor(WHITE);
+  display->setCursor(0, 0);
+  display->print(s.str().c_str());
+  display->display();
+}
+
+void SettingsMenu::onEncoderPositionChanged(int delta)
+{
+  selectedMenuItemIndex_ = (selectedMenuItemIndex_ + delta) % items_.size();
+  if (isValueSelected_) {
+    items_[selectedMenuItemIndex_]->changeValue(delta);
+  }
+}
+
+void SettingsMenu::onEncoderButtonClicked()
+{
+  isValueSelected_ = !isValueSelected_;
 }
 
 } // LoraDv

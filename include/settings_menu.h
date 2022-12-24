@@ -7,6 +7,7 @@
 #include <codec2.h>
 #include <memory>
 #include <sstream>
+#include <iostream>
 
 #include "loradv_config.h"
 
@@ -24,11 +25,19 @@ protected:
 };
 
 class SettingsMenu {
-private:
-  static const int CfgItemsCount = 10;
-
 public:
-  SettingsMenu();
+  SettingsMenu(std::shared_ptr<Config> config);
+
+  void draw(std::shared_ptr<Adafruit_SSD1306> display);
+
+  void onEncoderPositionChanged(int delta);
+  void onEncoderButtonClicked();
+
+private:
+  bool isValueSelected_;
+  int selectedMenuItemIndex_;
+  std::shared_ptr<Config> config_;
+  std::vector<std::shared_ptr<SettingsItem>> items_;
 };
 
 } // LoraDv
