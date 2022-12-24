@@ -5,6 +5,8 @@
 #include <Preferences.h>
 #include <DebugLog.h>
 
+#include "version.h"
+
 #if __has_include("/tmp/esp32_loradv_config.h")
 #pragma message("Using external config")
 #include "/tmp/esp32_loradv_config.h"
@@ -17,7 +19,7 @@ namespace LoraDv {
 
 class Config {
 public:
-  const int Version = 1;
+  int Version;          // config version
 
   DebugLogLevel LogLevel;    // log level
 

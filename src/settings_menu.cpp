@@ -218,6 +218,17 @@ public:
   void select() { ESP.restart(); }
 };
 
+class SettingsInfoItem : public SettingsItem {
+public:
+  SettingsInfoItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
+  void changeValue(int delta) { }
+  void getName(std::stringstream &s) const { s << "15.Info"; }
+  void getValue(std::stringstream &s) const { 
+    s << "App:" << LORADV_VERSION << " Conf:" << config_->Version << std::endl;
+    s << "Free:" << esp_get_free_heap_size() << "KB" << std::endl;
+  }
+};
+
 SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   : config_(config)
   , selectedMenuItemIndex_(0)
@@ -237,6 +248,7 @@ SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsSaveItem(config)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsResetItem(config)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsRebootItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsInfoItem(config)));
 }
 
 void SettingsMenu::draw(std::shared_ptr<Adafruit_SSD1306> display) 

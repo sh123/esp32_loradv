@@ -11,6 +11,9 @@ Config::Config()
 
 void Config::InitializeDefault()
 {
+  // default version
+  Version = CFG_VERSION;
+  
   // log level
   LogLevel = CFG_LOG_LEVEL;
   
@@ -90,9 +93,10 @@ void Config::Load()
   }
   // new default version is higher, save and use default settings
   int version = prefs_.getInt(N(Version));
-  LOG_INFO("Version", version, Version);
+  LOG_INFO("Current prefs version", version);
+  LOG_INFO("New prefs version", Version);
   if (Version > version) {
-    LOG_INFO("Not loaded, new default settings version");
+    LOG_INFO("Not loaded, new default settings version requested");
     prefs_.end();
     Save();
     return;
