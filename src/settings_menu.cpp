@@ -209,6 +209,15 @@ public:
   void select() { config_->Reset(); }
 };
 
+class SettingsRebootItem : public SettingsItem {
+public:
+  SettingsRebootItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
+  void changeValue(int delta) { }
+  void getName(std::stringstream &s) const { s << "14.Reboot"; }
+  void getValue(std::stringstream &s) const { s << "Click to reboot"; }
+  void select() { ESP.restart(); }
+};
+
 SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   : config_(config)
   , selectedMenuItemIndex_(0)
@@ -227,6 +236,7 @@ SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsPmLightSleepAfterMsItem(config)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsSaveItem(config)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsResetItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsRebootItem(config)));
 }
 
 void SettingsMenu::draw(std::shared_ptr<Adafruit_SSD1306> display) 
