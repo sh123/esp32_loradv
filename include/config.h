@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <codec2.h>
+
 // saved settings version, increment to load new settings
 #define CFG_VERSION  1
 

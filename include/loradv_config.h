@@ -5,6 +5,14 @@
 #include <Preferences.h>
 #include <DebugLog.h>
 
+#if __has_include("/tmp/esp32_loradv_config.h")
+#pragma message("Using external config")
+#include "/tmp/esp32_loradv_config.h"
+#else
+#pragma message("Using default built-in config")
+#include "config.h"
+#endif
+
 namespace LoraDv {
 
 class Config {
