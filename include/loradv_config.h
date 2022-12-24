@@ -16,6 +16,7 @@ public:
   // lora modulation parameters
   long LoraFreqRx;      // lora RX frequency, e.g. 433.775e6
   long LoraFreqTx;      // lora TX frequency, e.g. 433.775e6
+  long LoraFreqStep;    // lora frequency step
   long LoraBw;          // lora bandwidth, e.g. 125e3
   int LoraSf;           // lora spreading factor, e.g. 12
   int LoraCodingRate;   // lora coding rate, e.g. 7

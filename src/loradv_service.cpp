@@ -79,7 +79,6 @@ void Service::printStatus(const String &str) const
 
 void Service::processPttButton()
 {
-    // button 
   if (digitalRead(config_->PttBtnPin_) == LOW && !btnPressed_) {
     btnPressed_ = true;
     LOG_DEBUG("PTT pushed, start TX");

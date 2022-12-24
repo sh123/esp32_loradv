@@ -45,6 +45,7 @@
 // LoRa protocol default parameters (they need to match between devices!!!)
 #define CFG_LORA_FREQ_RX            433.775e6   // RX frequency in MHz
 #define CFG_LORA_FREQ_TX            433.775e6   // TX frequency in MHz
+#define CFG_LORA_FREQ_STEP          5e3         // frquency step
 #define CFG_LORA_BW                 125e3       // bandwidth (from 7.8 kHz up to 500 kHz)
 #define CFG_LORA_SF                 8           // spreading factor (6 - 12), 6 requires implicit header mode
 #define CFG_LORA_CR                 7           // coding rate (5 - 8)

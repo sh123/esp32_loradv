@@ -38,6 +38,11 @@ void Config::Load()
   } else {
     prefs_.putLong(N(LoraFreqTx), LoraFreqTx);
   }
+  if (prefs_.isKey(N(LoraFreqStep))) {
+    LoraFreqStep = prefs_.getLong(N(LoraFreqStep));
+  } else {
+    prefs_.putLong(N(LoraFreqStop), LoraFreqStep);
+  }
   if (prefs_.isKey(N(LoraBw))) {
     LoraBw = prefs_.getLong(N(LoraBw));
   } else {
@@ -88,6 +93,7 @@ void Config::Save()
   prefs_.putInt(N(Version), Version);
   prefs_.putLong(N(LoraFreqRx), LoraFreqRx);
   prefs_.putLong(N(LoraFreqTx), LoraFreqTx);
+  prefs_.putLong(N(LoraFreqStop), LoraFreqStep);
   prefs_.putLong(N(LoraBw), LoraBw);
   prefs_.putInt(N(LoraSf), LoraSf);
   prefs_.putInt(N(LoraCodingRate), LoraCodingRate);

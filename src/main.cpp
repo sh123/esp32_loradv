@@ -24,6 +24,7 @@ void initializeDefaultConfig(std::shared_ptr<LoraDv::Config> cfg)
   // lora parameters, must match on devices
   cfg->LoraFreqRx = CFG_LORA_FREQ_RX;
   cfg->LoraFreqTx = CFG_LORA_FREQ_TX;
+  cfg->LoraFreqStep = CFG_LORA_FREQ_STEP;
   cfg->LoraBw = CFG_LORA_BW;
   cfg->LoraSf = CFG_LORA_SF;
   cfg->LoraCodingRate = CFG_LORA_CR;
