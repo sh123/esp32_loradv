@@ -97,21 +97,22 @@ void Service::processPttButton()
 void Service::processRotaryEncoder()
 {
   // rotary encoder
-  if (rotaryEncoder_->encoderChanged())
+  long encoderDelta = rotaryEncoder_->encoderChanged();
+  if (encoderDelta != 0)
   {
-    LOG_INFO("Encoder changed:", rotaryEncoder_->readEncoder());
+    LOG_INFO("Encoder changed:", rotaryEncoder_->readEncoder(), encoderDelta);
     audioTask_->setVolume(rotaryEncoder_->readEncoder());
     printStatus("RX");
     pmService_->lightSleepReset();
   }
   if (rotaryEncoder_->isEncoderButtonClicked())
   {
-    LOG_INFO("Encoder button pressed", esp_get_free_heap_size());
+    LOG_INFO("Encoder button clicked", esp_get_free_heap_size());
     pmService_->lightSleepReset();
   }
-  if (rotaryEncoder_->isEncoderButtonClicked(2000))
+  if (rotaryEncoder_->isEncoderButtonClicked(CfgEncoderBtnLongMs))
   {
-    LOG_INFO("Encoder button long pressed");
+    LOG_INFO("Encoder button long clicked");
     pmService_->lightSleepReset();
   }
 }
