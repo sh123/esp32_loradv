@@ -32,6 +32,9 @@ void Service::setup(std::shared_ptr<Config> config)
   pmService_->setup(config, display_);
   audioTask_->start(config, radioTask_, pmService_);
   radioTask_->start(config, audioTask_);
+
+  updateScreen();
+
   LOG_INFO("Board setup completed");
 }
 
@@ -107,6 +110,7 @@ bool Service::processRotaryEncoder()
       settingsMenu_->onEncoderPositionChanged(encoderDelta);
       settingsMenu_->draw(display_);
     }
+    pmService_->lightSleepReset();
   }
   if (rotaryEncoder_->isEncoderButtonClicked())
   {
@@ -117,6 +121,7 @@ bool Service::processRotaryEncoder()
       settingsMenu_->onEncoderButtonClicked();
       settingsMenu_->draw(display_);
     }
+    pmService_->lightSleepReset();
   }
   if (rotaryEncoder_->isEncoderButtonClicked(CfgEncoderBtnLongMs))
   {
@@ -128,6 +133,7 @@ bool Service::processRotaryEncoder()
       settingsMenu_.reset();
       shouldUpdateScreen = true;
     }
+    pmService_->lightSleepReset();
   }
   return shouldUpdateScreen;
 }
@@ -136,7 +142,6 @@ void Service::loop()
 {
   if (processPttButton() || processRotaryEncoder() || pmService_->loop()) {
     updateScreen();
-    pmService_->lightSleepReset();
   }
 }
 

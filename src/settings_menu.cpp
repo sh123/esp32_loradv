@@ -15,7 +15,8 @@ public:
         break;
   }
   void changeValue(int delta) {
-    config_->LoraFreqStep = items_[(selIndex_ + delta) % CfgItemsCount];
+    selIndex_ = abs((selIndex_ + delta) % CfgItemsCount);
+    config_->LoraFreqStep = items_[selIndex_];
   }
   void getName(std::stringstream &s) const { s << "Frequency Step"; }
   void getValue(std::stringstream &s) const { s << config_->LoraFreqStep << "Hz"; }
@@ -59,7 +60,8 @@ public:
         break;
   }
   void changeValue(int delta) {
-    config_->LoraBw = items_[(selIndex_ + delta) % CfgItemsCount];
+    selIndex_ = abs((selIndex_ + delta) % CfgItemsCount);
+    config_->LoraBw = items_[selIndex_];
   }
   void getName(std::stringstream &s) const { s << "Bandwidth"; }
   void getValue(std::stringstream &s) const { s << config_->LoraBw << "Hz"; }
@@ -108,32 +110,33 @@ public:
   SettingsAudioCodec2ModeItem(std::shared_ptr<Config> config) 
     : SettingsItem(config)
     , items_{ 
-      CODEC2_MODE_3200,
-      CODEC2_MODE_2400,
-      CODEC2_MODE_1600,
-      CODEC2_MODE_1400,
-      CODEC2_MODE_1300,
-      CODEC2_MODE_1200,
+      CODEC2_MODE_450,
       CODEC2_MODE_700C,
-      CODEC2_MODE_450 
+      CODEC2_MODE_1200,
+      CODEC2_MODE_1300,
+      CODEC2_MODE_1400,
+      CODEC2_MODE_1600,
+      CODEC2_MODE_2400,
+      CODEC2_MODE_3200
     }
     , map_{ 
-      { CODEC2_MODE_3200, "3200" },
-      { CODEC2_MODE_2400, "2400" },
-      { CODEC2_MODE_1600, "1600" },
-      { CODEC2_MODE_1400, "1400" },
-      { CODEC2_MODE_1300, "1300" },
-      { CODEC2_MODE_1200, "1200" },
+      { CODEC2_MODE_450, "450" },
       { CODEC2_MODE_700C, "700" },
-      { CODEC2_MODE_450, "450" }
+      { CODEC2_MODE_1200, "1200" },
+      { CODEC2_MODE_1300, "1300" },
+      { CODEC2_MODE_1400, "1400" },
+      { CODEC2_MODE_1600, "1600" },
+      { CODEC2_MODE_2400, "2400" },
+      { CODEC2_MODE_3200, "3200" }
     }
   {
     for (selIndex_ = 0; selIndex_ < CfgItemsCount; selIndex_++)
-      if (config_->LoraBw == items_[selIndex_])
+      if (config_->AudioCodec2Mode == items_[selIndex_])
         break;
   }
   void changeValue(int delta) {
-    config_->AudioCodec2Mode = items_[(selIndex_ + delta) % CfgItemsCount];
+    selIndex_ = abs((selIndex_ + delta) % CfgItemsCount);
+    config_->AudioCodec2Mode = items_[selIndex_];
   }
   void getName(std::stringstream &s) const { s << "Codec2 Mode"; }
   void getValue(std::stringstream &s) const { 
@@ -179,7 +182,7 @@ public:
   SettingsPmLightSleepAfterMsItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
   void changeValue(int delta) { 
     int newVal = config_->PmLightSleepAfterMs + 1000 * delta;
-    if (newVal >= 10 && newVal <= 5*60) config_->PmLightSleepAfterMs = newVal * 1000;
+    if (newVal >= 10*1000 && newVal <= 5*60*1000) config_->PmLightSleepAfterMs = newVal;
   }
   void getName(std::stringstream &s) const { s << "Sleep After"; }
   void getValue(std::stringstream &s) const { s << config_->PmLightSleepAfterMs / 1000 << "s"; }
@@ -207,10 +210,11 @@ void SettingsMenu::draw(std::shared_ptr<Adafruit_SSD1306> display)
   std::stringstream s;
   items_[selectedMenuItemIndex_]->getName(s);
   s << std::endl;
+  if (isValueSelected_) s << ">";
   items_[selectedMenuItemIndex_]->getValue(s);
 
   display->clearDisplay();
-  display->setTextSize(2);
+  display->setTextSize(1);
   display->setTextColor(WHITE);
   display->setCursor(0, 0);
   display->print(s.str().c_str());
@@ -219,9 +223,10 @@ void SettingsMenu::draw(std::shared_ptr<Adafruit_SSD1306> display)
 
 void SettingsMenu::onEncoderPositionChanged(int delta)
 {
-  selectedMenuItemIndex_ = (selectedMenuItemIndex_ + delta) % items_.size();
   if (isValueSelected_) {
     items_[selectedMenuItemIndex_]->changeValue(delta);
+  } else {
+    selectedMenuItemIndex_ = (selectedMenuItemIndex_ + delta) % items_.size();
   }
 }
 

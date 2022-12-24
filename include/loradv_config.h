@@ -67,8 +67,8 @@ public:
   int AudioVol;          // current volume
 
   // battery monitor
-  byte BatteryMonPin_;  // Battery monitor adc pin
-  int BatteryMonCal;    // Battery monitor calibrarion value
+  byte BatteryMonPin_;   // Battery monitor adc pin
+  float BatteryMonCal;   // Battery monitor calibrarion value
 
   // power management
   int PmLightSleepAfterMs; // Light sleep activation after given ms

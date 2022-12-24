@@ -131,9 +131,9 @@ void Config::Load()
     prefs_.putInt(N(AudioVol), AudioVol);
   }
   if (prefs_.isKey(N(BatteryMonCal))) {
-    BatteryMonCal = prefs_.getInt(N(BatteryMonCal));
+    BatteryMonCal = prefs_.getFloat(N(BatteryMonCal));
   } else {
-    prefs_.putInt(N(BatteryMonCal), BatteryMonCal);
+    prefs_.putFloat(N(BatteryMonCal), BatteryMonCal);
   }
   if (prefs_.isKey(N(PmLightSleepAfterMs))) {
     PmLightSleepAfterMs = prefs_.getInt(N(PmLightSleepAfterMs));
@@ -157,7 +157,7 @@ void Config::Save()
   prefs_.putInt(N(LoraPower), LoraPower);
   prefs_.putInt(N(AudioCodec2Mode), AudioCodec2Mode);
   prefs_.putInt(N(AudioVol), AudioVol);
-  prefs_.putInt(N(BatteryMonCal), BatteryMonCal);
+  prefs_.putFloat(N(BatteryMonCal), BatteryMonCal);
   prefs_.putInt(N(PmLightSleepAfterMs), PmLightSleepAfterMs);
   LOG_INFO("Saved settings");
 }

@@ -4,7 +4,7 @@
 #include <codec2.h>
 
 // saved settings version, increment to load new settings
-#define CFG_VERSION  1
+#define CFG_VERSION  2
 
 // Comment out for SX127X module usage
 #define USE_SX126X
