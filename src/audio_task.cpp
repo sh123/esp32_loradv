@@ -18,6 +18,13 @@ void AudioTask::start(std::shared_ptr<Config> config, std::shared_ptr<RadioTask>
   xTaskCreate(&task, "audio_task", CfgAudioTaskStack, this, 5, &audioTaskHandle_);
 }
 
+void AudioTask::changeVolume(int deltaVolume) 
+{
+  int newVolume = volume_ + deltaVolume;
+  if (newVolume >= 0 && newVolume <= config_->AudioMaxVol_)
+    setVolume(newVolume);
+}
+
 void AudioTask::installAudio(int bytesPerSample) const
 {
   // speaker

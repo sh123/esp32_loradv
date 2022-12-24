@@ -40,8 +40,6 @@ void Service::setupEncoder()
   rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config_->EncoderPinA_, config_->EncoderPinB_, 
     config_->EncoderPinBtn_, config_->EncoderPinVcc_, config_->EncoderSteps_);
   rotaryEncoder_->begin();
-  rotaryEncoder_->setBoundaries(0, config_->AudioMaxVol_);
-  rotaryEncoder_->setEncoderValue(config_->AudioVol);
   rotaryEncoder_->setup(isrReadEncoder);
   LOG_INFO("Encoder setup completed");
 }
@@ -101,7 +99,7 @@ bool Service::processRotaryEncoder()
   if (encoderDelta != 0)
   {
     LOG_INFO("Encoder changed:", rotaryEncoder_->readEncoder(), encoderDelta);
-    audioTask_->setVolume(rotaryEncoder_->readEncoder());
+    audioTask_->changeVolume(encoderDelta);
     return true;
   }
   if (rotaryEncoder_->isEncoderButtonClicked())

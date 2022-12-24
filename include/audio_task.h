@@ -27,6 +27,7 @@ public:
   inline void setPtt(bool isPttOn) { isPttOn_ = isPttOn; }
 
   inline void setVolume(int volume) { if (volume <= maxVolume_) volume_ = volume; }
+  void changeVolume(int deltaVolume);
   inline int getVolume() const { return volume_; }
 
 private:
