@@ -184,11 +184,11 @@ class SettingsPmLightSleepAfterMsItem : public SettingsItem {
 public:
   SettingsPmLightSleepAfterMsItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
   void changeValue(int delta) { 
-    int newVal = config_->PmLightSleepAfterMs + 1000 * delta;
-    if (newVal >= 10*1000 && newVal <= 5*60*1000) config_->PmLightSleepAfterMs = newVal;
+    int newVal = config_->PmSleepAfterMs + 1000 * delta;
+    if (newVal >= 10*1000 && newVal <= 5*60*1000) config_->PmSleepAfterMs = newVal;
   }
   void getName(std::stringstream &s) const { s << "11.Sleep"; }
-  void getValue(std::stringstream &s) const { s << config_->PmLightSleepAfterMs / 1000 << "s"; }
+  void getValue(std::stringstream &s) const { s << config_->PmSleepAfterMs / 1000 << "s"; }
 };
 
 class SettingsSaveItem : public SettingsItem {

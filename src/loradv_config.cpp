@@ -68,7 +68,7 @@ void Config::InitializeDefault()
   BatteryMonCal = CFG_AUDIO_BATTERY_MON_CAL;
 
   // power management
-  PmLightSleepAfterMs = CFG_PM_LSLEEP_AFTER_MS;
+  PmSleepAfterMs = CFG_PM_LSLEEP_AFTER_MS;
   PmLightSleepDurationMs_ = CFG_PM_LSLEEP_DURATION_MS;
   PmLightSleepAwakeMs_ = CFG_PM_LSLEEP_AWAKE_MS;
 }
@@ -151,10 +151,10 @@ void Config::Load()
   } else {
     prefs_.putFloat(N(BatteryMonCal), BatteryMonCal);
   }
-  if (prefs_.isKey(N(PmLightSleepAfterMs))) {
-    PmLightSleepAfterMs = prefs_.getInt(N(PmLightSleepAfterMs));
+  if (prefs_.isKey(N(PmSleepAfterMs))) {
+    PmSleepAfterMs = prefs_.getInt(N(PmSleepAfterMs));
   } else {
-    prefs_.putInt(N(PmLightSleepAfterMs), PmLightSleepAfterMs);
+    prefs_.putInt(N(PmSleepAfterMs), PmSleepAfterMs);
   }
   prefs_.end();
   LOG_INFO("Settings are loaded");
@@ -175,7 +175,7 @@ void Config::Save()
   prefs_.putInt(N(AudioCodec2Mode), AudioCodec2Mode);
   prefs_.putInt(N(AudioVol), AudioVol);
   prefs_.putFloat(N(BatteryMonCal), BatteryMonCal);
-  prefs_.putInt(N(PmLightSleepAfterMs), PmLightSleepAfterMs);
+  prefs_.putInt(N(PmSleepAfterMs), PmSleepAfterMs);
   prefs_.end();
   LOG_INFO("Saved settings");
 }

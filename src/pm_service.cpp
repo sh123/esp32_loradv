@@ -20,7 +20,7 @@ void PmService::lightSleepReset()
   if (lightSleepTimerTask_ != 0) {
     lightSleepTimer_.cancel(lightSleepTimerTask_);
   }
-  lightSleepTimerTask_ = lightSleepTimer_.in(config_->PmLightSleepAfterMs, lightSleepEnterTimer, this);
+  lightSleepTimerTask_ = lightSleepTimer_.in(config_->PmSleepAfterMs, lightSleepEnterTimer, this);
 }
 
 bool PmService::lightSleepEnterTimer(void *param) 

@@ -73,7 +73,7 @@ public:
   float BatteryMonCal;   // Battery monitor calibrarion value
 
   // power management
-  int PmLightSleepAfterMs; // Light sleep activation after given ms
+  int PmSleepAfterMs; // Light sleep activation after given ms
   int PmLightSleepDurationMs_; // How long to sleep
   int PmLightSleepAwakeMs_; // How long to be active
 
