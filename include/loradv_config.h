@@ -82,8 +82,11 @@ public:
   Config();
   void Load();
   void Save();
+  void Reset();
 
 private:
+  void InitializeDefault();
+
   Preferences prefs_;
 
 }; // Config

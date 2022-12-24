@@ -19,6 +19,7 @@ public:
   virtual void changeValue(int delta) = 0;
   virtual void getName(std::stringstream &s) const = 0;
   virtual void getValue(std::stringstream &s) const = 0;
+  virtual void select() {} 
 
 protected:
   std::shared_ptr<Config> config_;

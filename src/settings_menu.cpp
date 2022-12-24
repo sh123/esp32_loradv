@@ -19,7 +19,7 @@ public:
     if (newIndex >= 0 && newIndex < CfgItemsCount) selIndex_ = newIndex;
     config_->LoraFreqStep = items_[selIndex_];
   }
-  void getName(std::stringstream &s) const { s << "Frequency Step"; }
+  void getName(std::stringstream &s) const { s << "1.Freq Step"; }
   void getValue(std::stringstream &s) const { s << config_->LoraFreqStep << "Hz"; }
 private:
   int selIndex_;
@@ -33,7 +33,7 @@ public:
     long newVal = config_->LoraFreqRx + config_->LoraFreqStep * delta;
     if (newVal >= 400e6 && newVal <= 520e6) config_->LoraFreqRx = newVal;
   }
-  void getName(std::stringstream &s) const { s << "RX Frequency"; }
+  void getName(std::stringstream &s) const { s << "2.RX Freq"; }
   void getValue(std::stringstream &s) const { s << config_->LoraFreqRx << "Hz"; }
 };
 
@@ -44,7 +44,7 @@ public:
     long newVal = config_->LoraFreqTx + config_->LoraFreqStep * delta;
     if (newVal >= 400e6 && newVal <= 520e6) config_->LoraFreqTx = newVal;
   }
-  void getName(std::stringstream &s) const { s << "TX Frequency"; }
+  void getName(std::stringstream &s) const { s << "3.TX Freq"; }
   void getValue(std::stringstream &s) const { s << config_->LoraFreqTx << "Hz"; }
 };
 
@@ -65,7 +65,7 @@ public:
     if (newIndex >= 0 && newIndex < CfgItemsCount) selIndex_ = newIndex;
     config_->LoraBw = items_[selIndex_];
   }
-  void getName(std::stringstream &s) const { s << "Bandwidth"; }
+  void getName(std::stringstream &s) const { s << "4.Bandwidth"; }
   void getValue(std::stringstream &s) const { s << config_->LoraBw << "Hz"; }
 private:
   int selIndex_;
@@ -79,7 +79,7 @@ public:
     long newVal = config_->LoraSf + delta;
     if (newVal >= 6 && newVal <= 12) config_->LoraSf = newVal;
   }
-  void getName(std::stringstream &s) const { s << "Spreading Factor"; }
+  void getName(std::stringstream &s) const { s << "5.Spreading"; }
   void getValue(std::stringstream &s) const { s << config_->LoraSf; }
 };
 
@@ -90,7 +90,7 @@ public:
     long newVal = config_->LoraCodingRate + delta;
     if (newVal >= 5 && newVal <= 8) config_->LoraCodingRate = newVal;
   }
-  void getName(std::stringstream &s) const { s << "Coding Rate"; }
+  void getName(std::stringstream &s) const { s << "6.Coding Rate"; }
   void getValue(std::stringstream &s) const { s << config_->LoraCodingRate; }
 };
 
@@ -101,7 +101,7 @@ public:
     long newVal = config_->LoraPower + delta;
     if (newVal >= 2 && newVal <= 22) config_->LoraPower = newVal;
   }
-  void getName(std::stringstream &s) const { s << "Power"; }
+  void getName(std::stringstream &s) const { s << "7.Power"; }
   void getValue(std::stringstream &s) const { s << config_->LoraPower << "dBm"; }
 };
 
@@ -141,7 +141,7 @@ public:
     if (newIndex >= 0 && newIndex < CfgItemsCount) selIndex_ = newIndex;
     config_->AudioCodec2Mode = items_[selIndex_];
   }
-  void getName(std::stringstream &s) const { s << "Codec2 Mode"; }
+  void getName(std::stringstream &s) const { s << "8.Codec2 Mode"; }
   void getValue(std::stringstream &s) const { 
     for (int i = 0; i < CfgItemsCount; i++)
       if (config_->AudioCodec2Mode == map_[i].k) {
@@ -165,7 +165,7 @@ public:
     long newVal = config_->AudioVol + delta;
     if (newVal >= 0 && newVal <= 100) config_->AudioVol = newVal;
   }
-  void getName(std::stringstream &s) const { s << "Default Volume"; }
+  void getName(std::stringstream &s) const { s << "9.Volume"; }
   void getValue(std::stringstream &s) const { s << config_->AudioVol << "%"; }
 };
 
@@ -176,7 +176,7 @@ public:
     float newVal = config_->BatteryMonCal + 0.01f * delta;
     if (newVal >= -2.0f && newVal <= 2.0f) config_->BatteryMonCal = newVal;
   }
-  void getName(std::stringstream &s) const { s << "Battery Calibration"; }
+  void getName(std::stringstream &s) const { s << "10.Battery Cal"; }
   void getValue(std::stringstream &s) const { s << config_->BatteryMonCal << "V"; }
 };
 
@@ -187,8 +187,26 @@ public:
     int newVal = config_->PmLightSleepAfterMs + 1000 * delta;
     if (newVal >= 10*1000 && newVal <= 5*60*1000) config_->PmLightSleepAfterMs = newVal;
   }
-  void getName(std::stringstream &s) const { s << "Sleep After"; }
+  void getName(std::stringstream &s) const { s << "11.Sleep"; }
   void getValue(std::stringstream &s) const { s << config_->PmLightSleepAfterMs / 1000 << "s"; }
+};
+
+class SettingsSaveItem : public SettingsItem {
+public:
+  SettingsSaveItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
+  void changeValue(int delta) { }
+  void getName(std::stringstream &s) const { s << "12.Save Settings"; }
+  void getValue(std::stringstream &s) const { s << "Click to save"; }
+  void select() { config_->Save(); }
+};
+
+class SettingsResetItem : public SettingsItem {
+public:
+  SettingsResetItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
+  void changeValue(int delta) { }
+  void getName(std::stringstream &s) const { s << "13.Reset Settings"; }
+  void getValue(std::stringstream &s) const { s << "Click to reset"; }
+  void select() { config_->Reset(); }
 };
 
 SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
@@ -207,6 +225,8 @@ SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioVolItem(config)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsBatteryMonCalItem(config)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsPmLightSleepAfterMsItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsSaveItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsResetItem(config)));
 }
 
 void SettingsMenu::draw(std::shared_ptr<Adafruit_SSD1306> display) 
@@ -238,6 +258,9 @@ void SettingsMenu::onEncoderPositionChanged(int delta)
 void SettingsMenu::onEncoderButtonClicked()
 {
   isValueSelected_ = !isValueSelected_;
+  if (isValueSelected_) {
+    items_[selectedMenuItemIndex_]->select();
+  }
 }
 
 } // LoraDv

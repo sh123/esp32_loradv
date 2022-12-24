@@ -6,7 +6,12 @@ namespace LoraDv {
 
 Config::Config()
 {
-    // log level
+  InitializeDefault();
+}
+
+void Config::InitializeDefault()
+{
+  // log level
   LogLevel = CFG_LOG_LEVEL;
   
   // lora parameters, must match on devices
@@ -65,6 +70,12 @@ Config::Config()
   PmLightSleepAwakeMs_ = CFG_PM_LSLEEP_AWAKE_MS;
 }
 
+void Config::Reset()
+{
+  InitializeDefault();
+  Save();
+}
+
 void Config::Load()
 {
   LOG_INFO("Loading settings");
@@ -73,16 +84,17 @@ void Config::Load()
   // uninitialized, save
   if (!prefs_.isKey(N(Version))) {
     LOG_INFO("Not loaded, first time settings");
-    Save();
     prefs_.end();
+    Save();
     return;
   }
   // new default version is higher, save and use default settings
   int version = prefs_.getInt(N(Version));
+  LOG_INFO("Version", version, Version);
   if (Version > version) {
     LOG_INFO("Not loaded, new default settings version");
-    Save();
     prefs_.end();
+    Save();
     return;
   }
   if (prefs_.isKey(N(LoraFreqRx))) {
@@ -147,6 +159,7 @@ void Config::Load()
 void Config::Save()
 {
   LOG_INFO("Saving settings");
+  prefs_.begin("LoraDv");
   prefs_.putInt(N(Version), Version);
   prefs_.putLong(N(LoraFreqRx), LoraFreqRx);
   prefs_.putLong(N(LoraFreqTx), LoraFreqTx);
@@ -159,6 +172,7 @@ void Config::Save()
   prefs_.putInt(N(AudioVol), AudioVol);
   prefs_.putFloat(N(BatteryMonCal), BatteryMonCal);
   prefs_.putInt(N(PmLightSleepAfterMs), PmLightSleepAfterMs);
+  prefs_.end();
   LOG_INFO("Saved settings");
 }
 
