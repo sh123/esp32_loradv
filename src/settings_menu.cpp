@@ -166,7 +166,7 @@ public:
     if (newVal >= 0 && newVal <= 100) config_->AudioVol = newVal;
   }
   void getName(std::stringstream &s) const { s << "Default Volume"; }
-  void getValue(std::stringstream &s) const { s << config_->AudioVol; }
+  void getValue(std::stringstream &s) const { s << config_->AudioVol << "%"; }
 };
 
 class SettingsBatteryMonCalItem : public SettingsItem {
