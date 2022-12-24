@@ -15,7 +15,8 @@ public:
         break;
   }
   void changeValue(int delta) {
-    selIndex_ = abs((selIndex_ + delta) % CfgItemsCount);
+    int newIndex = selIndex_ + delta;
+    if (newIndex >= 0 && newIndex < CfgItemsCount) selIndex_ = newIndex;
     config_->LoraFreqStep = items_[selIndex_];
   }
   void getName(std::stringstream &s) const { s << "Frequency Step"; }
@@ -60,7 +61,8 @@ public:
         break;
   }
   void changeValue(int delta) {
-    selIndex_ = abs((selIndex_ + delta) % CfgItemsCount);
+    int newIndex = selIndex_ + delta;
+    if (newIndex >= 0 && newIndex < CfgItemsCount) selIndex_ = newIndex;
     config_->LoraBw = items_[selIndex_];
   }
   void getName(std::stringstream &s) const { s << "Bandwidth"; }
@@ -135,7 +137,8 @@ public:
         break;
   }
   void changeValue(int delta) {
-    selIndex_ = abs((selIndex_ + delta) % CfgItemsCount);
+    int newIndex = selIndex_ + delta;
+    if (newIndex >= 0 && newIndex < CfgItemsCount) selIndex_ = newIndex;
     config_->AudioCodec2Mode = items_[selIndex_];
   }
   void getName(std::stringstream &s) const { s << "Codec2 Mode"; }
@@ -201,6 +204,7 @@ SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraCrItem(config)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraPowerItem(config)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioCodec2ModeItem(config)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioVolItem(config)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsBatteryMonCalItem(config)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsPmLightSleepAfterMsItem(config)));
 }
@@ -226,7 +230,8 @@ void SettingsMenu::onEncoderPositionChanged(int delta)
   if (isValueSelected_) {
     items_[selectedMenuItemIndex_]->changeValue(delta);
   } else {
-    selectedMenuItemIndex_ = (selectedMenuItemIndex_ + delta) % items_.size();
+    int newIndex = selectedMenuItemIndex_ + delta;
+    if (newIndex >= 0 && newIndex < items_.size()) selectedMenuItemIndex_ = newIndex;
   }
 }
 
