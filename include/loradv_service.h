@@ -42,10 +42,10 @@ private:
 
   static IRAM_ATTR void isrReadEncoder();
 
-  void printStatus(const String &str) const;
+  void updateScreen() const;
 
-  void processPttButton();
-  void processRotaryEncoder();
+  bool processPttButton();
+  bool processRotaryEncoder();
 
 private:
   std::shared_ptr<Config> config_;

@@ -61,13 +61,13 @@ IRAM_ATTR void Service::isrReadEncoder()
   rotaryEncoder_->readEncoder_ISR();
 }
 
-void Service::printStatus(const String &str) const
+void Service::updateScreen() const
 {
   display_->clearDisplay();
   display_->setTextSize(2);
   display_->setTextColor(WHITE);
   display_->setCursor(0, 0);
-  display_->print(str); display_->print(" "); 
+  display_->print(btnPressed_ ? "TX" : "RX"); display_->print(" "); 
   if (btnPressed_)
     display_->println((float)config_->LoraFreqTx / 1e6, 3);
   else
@@ -77,23 +77,24 @@ void Service::printStatus(const String &str) const
   display_->display();
 }
 
-void Service::processPttButton()
+bool Service::processPttButton()
 {
   if (digitalRead(config_->PttBtnPin_) == LOW && !btnPressed_) {
     btnPressed_ = true;
     LOG_DEBUG("PTT pushed, start TX");
-    printStatus("TX");
     audioTask_->setPtt(true);
     audioTask_->record();
+    return true;
   } else if (digitalRead(config_->PttBtnPin_) == HIGH && btnPressed_) {
     btnPressed_ = false;
     LOG_DEBUG("PTT released");
-    printStatus("RX");
     audioTask_->setPtt(false);
+    return true;
   }
+  return false;
 }
 
-void Service::processRotaryEncoder()
+bool Service::processRotaryEncoder()
 {
   // rotary encoder
   long encoderDelta = rotaryEncoder_->encoderChanged();
@@ -101,27 +102,26 @@ void Service::processRotaryEncoder()
   {
     LOG_INFO("Encoder changed:", rotaryEncoder_->readEncoder(), encoderDelta);
     audioTask_->setVolume(rotaryEncoder_->readEncoder());
-    printStatus("RX");
-    pmService_->lightSleepReset();
+    return true;
   }
   if (rotaryEncoder_->isEncoderButtonClicked())
   {
     LOG_INFO("Encoder button clicked", esp_get_free_heap_size());
-    pmService_->lightSleepReset();
+    return true;
   }
   if (rotaryEncoder_->isEncoderButtonClicked(CfgEncoderBtnLongMs))
   {
     LOG_INFO("Encoder button long clicked");
-    pmService_->lightSleepReset();
+    return true;
   }
+  return false;
 }
 
 void Service::loop() 
 {
-  processPttButton();
-  processRotaryEncoder();
-  if (pmService_->loop()) {
-    printStatus("RX");
+  if (processPttButton() || processRotaryEncoder() || pmService_->loop()) {
+    updateScreen();
+    pmService_->lightSleepReset();
   }
 }
 
