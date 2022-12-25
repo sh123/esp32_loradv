@@ -24,7 +24,10 @@ public:
   inline void stop() { isRunning_ = false; }
 
   void setFreq(long freq) const;
-  bool isHalfDuplex() const { return config_->LoraFreqTx != config_->LoraFreqRx; }
+  inline bool isHalfDuplex() const { return config_->LoraFreqTx != config_->LoraFreqRx; }
+
+  static int getSpeed(int sf, int cr, long bw) { return (int)(sf * (4.0 / cr) / (pow(2.0, sf) / bw)); }
+  static float getSnrLimit(int sf, long bw);
 
   bool hasData() const;
   bool readPacketSize(byte &packetSize);

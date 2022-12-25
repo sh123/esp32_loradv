@@ -19,22 +19,8 @@ void RadioTask::start(std::shared_ptr<Config> config, std::shared_ptr<AudioTask>
   xTaskCreate(&task, "lora_task", CfgRadioTaskStack, this, 5, &loraTaskHandle_);
 }
 
-void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sync, int crcBytes, bool isExplicit)
+float RadioTask::getSnrLimit(int sf, long bw) 
 {
-  rigIsImplicitMode_ = !isExplicit;
-  rigIsImplicitMode_ = sf == 6;      // must be implicit for SF6
-  int loraSpeed = (int)(sf * (4.0 / cr) / (pow(2.0, sf) / bw));
-
-  LOG_INFO("Initializing LoRa");
-  LOG_INFO("Frequency:", loraFreq, "Hz");
-  LOG_INFO("Bandwidth:", bw, "Hz");
-  LOG_INFO("Spreading:", sf);
-  LOG_INFO("Coding rate:", cr);
-  LOG_INFO("Power:", pwr, "dBm");
-  LOG_INFO("Sync:", "0x" + String(sync, HEX));
-  LOG_INFO("CRC:", crcBytes);
-  LOG_INFO("Header:", rigIsImplicitMode_ ? "implicit" : "explicit");
-  LOG_INFO("Speed:", loraSpeed, "bps");
   float snrLimit = -7;
   switch (sf) {
     case 7:
@@ -56,7 +42,24 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
         snrLimit = -20.0;
         break;
   }
-  LOG_INFO("Min level:", -174 + 10 * log10(bw) + 6 + snrLimit, "dBm");
+  return -174 + 10 * log10(bw) + 6 + snrLimit;
+}
+
+void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sync, int crcBytes, bool isExplicit)
+{
+  rigIsImplicitMode_ = !isExplicit;
+  rigIsImplicitMode_ = sf == 6;      // must be implicit for SF6
+  LOG_INFO("Initializing LoRa");
+  LOG_INFO("Frequency:", loraFreq, "Hz");
+  LOG_INFO("Bandwidth:", bw, "Hz");
+  LOG_INFO("Spreading:", sf);
+  LOG_INFO("Coding rate:", cr);
+  LOG_INFO("Power:", pwr, "dBm");
+  LOG_INFO("Sync:", "0x" + String(sync, HEX));
+  LOG_INFO("CRC:", crcBytes);
+  LOG_INFO("Header:", rigIsImplicitMode_ ? "implicit" : "explicit");
+  LOG_INFO("Speed:", getSpeed(sf, cr, bw), "bps");
+  LOG_INFO("Min level:", getSnrLimit(sf, bw));
   rig_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
   int state = rig_->begin((float)loraFreq / 1e6, (float)bw / 1e3, sf, cr, sync, pwr);
   if (state != RADIOLIB_ERR_NONE) {
