@@ -15,7 +15,7 @@ void AudioTask::start(std::shared_ptr<Config> config, std::shared_ptr<RadioTask>
   pmService_ = pmService;
   volume_ = config->AudioVol;
   maxVolume_ = config->AudioMaxVol_;
-  xTaskCreate(&task, "audio_task", CfgAudioTaskStack, this, 5, &audioTaskHandle_);
+  xTaskCreate(&task, "AudioTask", CfgAudioTaskStack, this, 5, &audioTaskHandle_);
 }
 
 void AudioTask::changeVolume(int deltaVolume) 

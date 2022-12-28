@@ -66,16 +66,22 @@ IRAM_ATTR void Service::isrReadEncoder()
 void Service::updateScreen() const
 {
   display_->clearDisplay();
-  display_->setTextSize(2);
   display_->setTextColor(WHITE);
   display_->setCursor(0, 0);
-  display_->print(btnPressed_ ? "TX" : "RX"); display_->print(" "); 
+
+  display_->setTextSize(2);
   if (btnPressed_)
-    display_->println((float)config_->LoraFreqTx / 1e6, 3);
+    display_->print((float)config_->LoraFreqTx / 1e6, 3);
   else
-    display_->println((float)config_->LoraFreqRx / 1e6, 3);
+    display_->print((float)config_->LoraFreqRx / 1e6, 3);
+  display_->print(" "); 
+  display_->print(btnPressed_ ? "TX" : "RX");
+  display_->println();
+
+  display_->setTextSize(1);
   display_->print(audioTask_->getVolume()); display_->print("% "); 
-  display_->print(hwMonitor_->getBatteryVoltage()); display_->print("V");
+  display_->print(hwMonitor_->getBatteryVoltage()); display_->println("V");
+
   display_->display();
 }
 

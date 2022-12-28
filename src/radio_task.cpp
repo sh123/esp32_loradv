@@ -16,7 +16,7 @@ void RadioTask::start(std::shared_ptr<Config> config, std::shared_ptr<AudioTask>
 {
   config_ = config;
   audioTask_ = audioTask;
-  xTaskCreate(&task, "lora_task", CfgRadioTaskStack, this, 5, &loraTaskHandle_);
+  xTaskCreate(&task, "RadioTask", CfgRadioTaskStack, this, 5, &loraTaskHandle_);
 }
 
 float RadioTask::getSnrLimit(int sf, long bw) 
