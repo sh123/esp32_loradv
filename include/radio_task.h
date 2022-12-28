@@ -22,12 +22,14 @@ public:
 
   void start(std::shared_ptr<Config> config, std::shared_ptr<AudioTask> audioTask);
   inline void stop() { isRunning_ = false; }
+  bool loop();
 
   void setFreq(long freq) const;
   inline bool isHalfDuplex() const { return config_->LoraFreqTx != config_->LoraFreqRx; }
 
   static int getSpeed(int sf, int cr, long bw) { return (int)(sf * (4.0 / cr) / (pow(2.0, sf) / bw)); }
   static float getSnrLimit(int sf, long bw);
+  inline float getRssi() const { return lastRssi_; }
 
   bool hasData() const;
   bool readPacketSize(byte &packetSize);
@@ -74,6 +76,8 @@ private:
   bool isIsrInstalled_;
   static volatile bool loraIsrEnabled_;
   volatile bool isRunning_;
+  volatile bool shouldUpdateScreen_;
+  float lastRssi_;
 };
 
 }

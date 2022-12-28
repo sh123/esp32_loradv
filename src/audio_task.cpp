@@ -5,6 +5,9 @@ namespace LoraDv {
 AudioTask::AudioTask()
   : isPttOn_(false)
   , isRunning_(false)
+  , shouldUpdateScreen_(false)
+  , isPlaying_(false)
+  , playTimerTask_(0)
 {
 }
 
@@ -89,6 +92,36 @@ void AudioTask::uninstallAudio() const
   i2s_driver_uninstall(CfgAudioI2sMicId);
 }
 
+void AudioTask::playTimerReset()
+{
+  isPlaying_ = true;
+  shouldUpdateScreen_ = true;
+  if (playTimerTask_ != 0) {
+    playTimer_.cancel(playTimerTask_);
+  }
+  playTimerTask_ = playTimer_.in(CfgPlayCompletedDelayMs, playTimerEnter, this);
+}
+
+bool AudioTask::playTimerEnter(void *param)
+{
+  static_cast<AudioTask*>(param)->playTimer();
+  return false;
+}
+
+void AudioTask::playTimer()
+{
+  isPlaying_ = false;
+  shouldUpdateScreen_ = true;
+}
+
+bool AudioTask::loop() 
+{
+  playTimer_.tick();
+  bool shouldUpdateScreen = shouldUpdateScreen_;
+  shouldUpdateScreen_ = false;
+  return shouldUpdateScreen;
+}
+
 void AudioTask::play() const
 {
   xTaskNotify(audioTaskHandle_, CfgAudioPlayBit, eSetBits);
@@ -146,6 +179,8 @@ void AudioTask::audioTask()
 
 void AudioTask::audioTaskPlay()
 {
+  playTimerReset();
+
   size_t bytesWritten;
   LOG_DEBUG("Playing audio");
   double vol = (double)volume_ / (double)maxVolume_;

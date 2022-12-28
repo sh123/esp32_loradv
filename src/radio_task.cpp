@@ -9,6 +9,8 @@ RadioTask::RadioTask()
   : rigIsImplicitMode_(false)
   , isIsrInstalled_(false)
   , isRunning_(false)
+  , shouldUpdateScreen_(false)
+  , lastRssi_(0)
 {
 }
 
@@ -178,6 +180,13 @@ void RadioTask::rigTask()
   vTaskDelete(NULL);
 }
 
+bool RadioTask::loop() 
+{
+  bool shouldUpdateScreen = shouldUpdateScreen_;
+  shouldUpdateScreen_ = false;
+  return shouldUpdateScreen;
+}
+
 void RadioTask::rigTaskReceive(byte *packetBuf) 
 {
   int packetSize = rig_->getPacketLength();
@@ -194,6 +203,7 @@ void RadioTask::rigTaskReceive(byte *packetBuf)
     } else {
       LOG_ERROR("Read data error: ", state);
     }
+    lastRssi_ = rig_->getRSSI();
     // probably not needed, still in receive
     state = rig_->startReceive();
     if (state != RADIOLIB_ERR_NONE) {

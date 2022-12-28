@@ -20,8 +20,10 @@ public:
 
   void start(std::shared_ptr<Config> config, std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService);
   inline void stop() { isRunning_ = false; }
+  bool loop();
 
   void play() const; 
+  bool isPlaying() const { return isPlaying_; }
   void record() const;
 
   inline void setPtt(bool isPttOn) { isPttOn_ = isPttOn; }
@@ -39,6 +41,7 @@ private:
   const uint32_t CfgAudioRecBit = 0x02;           // task bit for recording
 
   const int CfgAudioTaskStack = 32768;            // audio stack size
+  const int CfgPlayCompletedDelayMs = 500;        // playback stopped status after ms
 
 private:
   void installAudio(int bytesPerSample) const;
@@ -50,12 +53,19 @@ private:
   void audioTaskPlay();
   void audioTaskRecord();
 
+  void playTimerReset();
+  static bool playTimerEnter(void *param);
+  void playTimer();
+
 private:
   std::shared_ptr<Config> config_;
   TaskHandle_t audioTaskHandle_;
 
   std::shared_ptr<RadioTask> radioTask_;
   std::shared_ptr<PmService> pmService_;
+
+  Timer<1> playTimer_;
+  Timer<1>::Task playTimerTask_;
 
   struct CODEC2 *codec_; 
   int16_t *codecSamples_;
@@ -69,6 +79,8 @@ private:
 
   bool isPttOn_;
   volatile bool isRunning_;
+  volatile bool shouldUpdateScreen_;
+  volatile bool isPlaying_;
 };
 
 }

@@ -65,22 +65,27 @@ IRAM_ATTR void Service::isrReadEncoder()
 
 void Service::updateScreen() const
 {
+  bool isPlaying = audioTask_->isPlaying();
   display_->clearDisplay();
   display_->setTextColor(WHITE);
   display_->setCursor(0, 0);
 
+  display_->setTextSize(1);
+  display_->print(audioTask_->getVolume()); display_->print("% "); 
+  display_->print(hwMonitor_->getBatteryVoltage()); display_->print("V ");
+  if (isPlaying)
+    display_->print(radioTask_->getRssi());
+  display_->println();
+
+  display_->setCursor(0, CfgDisplayHeight/2 + 2);
   display_->setTextSize(2);
   if (btnPressed_)
     display_->print((float)config_->LoraFreqTx / 1e6, 3);
   else
     display_->print((float)config_->LoraFreqRx / 1e6, 3);
   display_->print(" "); 
-  display_->print(btnPressed_ ? "TX" : "RX");
+  display_->print(btnPressed_ ? "TX" : isPlaying ? "RX" : "WW");
   display_->println();
-
-  display_->setTextSize(1);
-  display_->print(audioTask_->getVolume()); display_->print("% "); 
-  display_->print(hwMonitor_->getBatteryVoltage()); display_->println("V");
 
   display_->display();
 }
@@ -146,9 +151,11 @@ bool Service::processRotaryEncoder()
 
 void Service::loop() 
 {
-  if (processPttButton() || processRotaryEncoder() || pmService_->loop()) {
-    updateScreen();
-  }
+  if (audioTask_->loop() ||
+      radioTask_->loop() || 
+      pmService_->loop() || 
+      processPttButton() || 
+      processRotaryEncoder()) updateScreen();
 }
 
 } // LoraDv
