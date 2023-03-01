@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include <codec2.h>
+#include <RadioLib.h>
 
 // saved settings version, increment to load new settings
 #define CFG_VERSION  2
