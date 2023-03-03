@@ -78,8 +78,8 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
 #else
     #pragma message("Using SX127X")
     LOG_INFO("Using SX127X module");
-    if (isIsrInstalled_) radio_->clearDio0Action();
-    radio_->setDio0Action(onRigIsrRxPacket);
+    if (isIsrInstalled_) rig_->clearDio0Action();
+    rig_->setDio0Action(onRigIsrRxPacket);
     isIsrInstalled_ = true;
 #endif
 
