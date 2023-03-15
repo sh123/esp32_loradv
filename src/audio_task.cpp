@@ -36,13 +36,13 @@ void AudioTask::installAudio(int bytesPerSample) const
     .sample_rate = CfgAudioSampleRate,
     .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
     .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
-    .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB),
-    .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
+    .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_STAND_I2S),
+    .intr_alloc_flags = 0,
     .dma_buf_count = 8,
     .dma_buf_len = bytesPerSample,
-    .use_apll=0,
-    .tx_desc_auto_clear= true, 
-    .fixed_mclk=-1    
+    .use_apll = false,
+    .tx_desc_auto_clear = true, 
+    .fixed_mclk = -1    
   };
   i2s_pin_config_t i2sSpeakerPinConfig = {
     .bck_io_num = config_->AudioSpkPinBclk_,
@@ -61,14 +61,14 @@ void AudioTask::installAudio(int bytesPerSample) const
     .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX),
     .sample_rate = CfgAudioSampleRate,
     .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
-    .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
-    .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB),
-    .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
+    .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
+    .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_STAND_I2S),
+    .intr_alloc_flags = 0,
     .dma_buf_count = 8,
     .dma_buf_len = bytesPerSample,
-    .use_apll=0,
-    .tx_desc_auto_clear= true,
-    .fixed_mclk=-1
+    .use_apll = false,
+    .tx_desc_auto_clear = true,
+    .fixed_mclk = -1
   };
   i2s_pin_config_t i2sMicPinConfig = {
     .bck_io_num = config_->AudioMicPinSck_,

@@ -8,7 +8,7 @@
 #define CFG_VERSION  2
 
 // Comment out for SX127X module usage
-#define USE_SX126X
+//#define USE_SX126X
 
 // Check your module name at https://github.com/jgromes/RadioLib/wiki/Modules
 #ifdef USE_SX126X
