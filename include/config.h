@@ -56,6 +56,7 @@
 #define CFG_LORA_EXPLICIT           true        // header mode, true - explicit, false - implicit
 #define CFG_LORA_SYNC               0x12        // sync word (0x12 - private used by other trackers, 0x34 - public used by LoRaWAN)
 #define CFG_LORA_PWR                20          // output power in dBm
+#define CFG_LORA_PREAMBLE_LEN       8           // preamble length from 6 to 65535
 
 // ptt button
 #define CFG_PTT_BTN_PIN             39          // pin for ptt button

@@ -68,6 +68,7 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
     LOG_ERROR("Radio start error:", state);
   }
   rig_->setCRC(crcBytes);
+  rig_->setPreambleLength(config_->LoraPreambleLen_);
 #ifdef USE_SX126X
     #pragma message("Using SX126X")
     LOG_INFO("Using SX126X module");
