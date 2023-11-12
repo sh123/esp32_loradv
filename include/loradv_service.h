@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <memory>
+#define DEBUGLOG_DEFAULT_LOG_LEVEL_INFO
 #include <DebugLog.h>
 #include <RadioLib.h>
 #include <Wire.h>
