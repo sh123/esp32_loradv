@@ -84,7 +84,7 @@ void Service::updateScreen() const
   else
     display_->print((float)config_->LoraFreqRx / 1e6, 3);
   display_->print(" "); 
-  display_->print(btnPressed_ ? "TX" : isPlaying ? "RX" : "WW");
+  display_->print(btnPressed_ ? "TX" : isPlaying ? "RX" : "--");
   display_->println();
 
   display_->display();
@@ -94,13 +94,13 @@ bool Service::processPttButton()
 {
   if (digitalRead(config_->PttBtnPin_) == LOW && !btnPressed_) {
     btnPressed_ = true;
-    LOG_DEBUG("PTT pushed, start TX");
+    LOG_INFO("PTT pushed, start TX");
     audioTask_->setPtt(true);
     audioTask_->record();
     return true;
   } else if (digitalRead(config_->PttBtnPin_) == HIGH && btnPressed_) {
     btnPressed_ = false;
-    LOG_DEBUG("PTT released");
+    LOG_INFO("PTT released");
     audioTask_->setPtt(false);
     return true;
   }
