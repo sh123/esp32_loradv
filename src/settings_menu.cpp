@@ -77,7 +77,7 @@ public:
   SettingsLoraSfItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
   void changeValue(int delta) { 
     long newVal = config_->LoraSf + delta;
-    if (newVal >= 6 && newVal <= 12) config_->LoraSf = newVal;
+    if (newVal >= 7 && newVal <= 12) config_->LoraSf = newVal;
   }
   void getName(std::stringstream &s) const { s << "5.Spreading"; }
   void getValue(std::stringstream &s) const { s << config_->LoraSf; }

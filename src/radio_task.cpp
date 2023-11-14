@@ -47,10 +47,8 @@ float RadioTask::getSnrLimit(int sf, long bw)
   return -174 + 10 * log10(bw) + 6 + snrLimit;
 }
 
-void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sync, int crcBytes, bool isExplicit)
+void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sync, int crcBytes)
 {
-  rigIsImplicitMode_ = !isExplicit;
-  rigIsImplicitMode_ = sf == 6;      // must be implicit for SF6
   LOG_INFO("Initializing LoRa");
   LOG_INFO("Frequency:", loraFreq, "Hz");
   LOG_INFO("Bandwidth:", bw, "Hz");
@@ -59,7 +57,6 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
   LOG_INFO("Power:", pwr, "dBm");
   LOG_INFO("Sync:", "0x" + String(sync, HEX));
   LOG_INFO("CRC:", crcBytes);
-  LOG_INFO("Header:", rigIsImplicitMode_ ? "implicit" : "explicit");
   LOG_INFO("Speed:", getSpeed(sf, cr, bw), "bps");
   LOG_INFO("Min level:", getSnrLimit(sf, bw));
   rig_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
@@ -83,12 +80,7 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
     rig_->setDio0Action(onRigIsrRxPacket);
     isIsrInstalled_ = true;
 #endif
-
-  if (rigIsImplicitMode_) {
-    rig_->implicitHeader(0xff);
-  } else {
-    rig_->explicitHeader();
-  }
+  rig_->explicitHeader();
   
   state = rig_->startReceive();
   if (state != RADIOLIB_ERR_NONE) {
@@ -165,7 +157,7 @@ void RadioTask::rigTask()
   isRunning_ = true;
 
   setupRig(config_->LoraFreqRx, config_->LoraBw, config_->LoraSf, 
-    config_->LoraCodingRate, config_->LoraPower, config_->LoraSync_, config_->LoraCrc_, config_->LoraExplicit_);
+    config_->LoraCodingRate, config_->LoraPower, config_->LoraSync_, config_->LoraCrc_);
 
   byte *packetBuf = new byte[CfgRadioPacketBufLen];
 
@@ -256,6 +248,7 @@ void RadioTask::rigTaskTransmit(byte *packetBuf)
         LOG_ERROR("Lora radio transmit failed:", loraRadioState);
     }
     LOG_DEBUG("Transmitted packet", txBytesCnt);
+    vTaskDelay(1);
   }
 }
 

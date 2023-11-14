@@ -33,7 +33,6 @@ public:
   int LoraPower;        // lora power level in dbm, 20
   int LoraSync_;        // lora sync word/packet id, 0x34
   int LoraCrc_;         // lora crc mode, 0 - disabled, 1 - 1 byte, 2 - 2 bytes
-  bool LoraExplicit_;   // lora header mode, true - explicit, false - implicit
   int LoraPreambleLen_; // lora preamble length from 6 to 65535
 
   // lora hardware pinouts and isr

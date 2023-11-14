@@ -26,7 +26,6 @@ void Config::InitializeDefault()
   LoraCodingRate = CFG_LORA_CR;
   LoraSync_ = CFG_LORA_SYNC;
   LoraCrc_ = CFG_LORA_CRC; // set to 0 to disable
-  LoraExplicit_ = CFG_LORA_EXPLICIT;
   LoraPower = CFG_LORA_PWR;
   LoraPreambleLen_ = CFG_LORA_PREAMBLE_LEN;
 

@@ -256,7 +256,7 @@ void AudioTask::audioTaskRecord()
   } // btn_pressed_
   // send remaining tail audio encoded samples
   if (packetSize > 0) {
-      LOG_DEBUG("Recorded packet", packetSize);
+      LOG_DEBUG("Recorded packet tail", packetSize);
       if (radioTask_->writePacketSize(packetSize)) {
         radioTask_->transmit();
         pmService_->lightSleepReset();

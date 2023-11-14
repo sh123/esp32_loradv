@@ -22,7 +22,7 @@
 // USB serial logging
 // set to DebugLogLevel::LVL_TRACE for packet logging
 // set to DebugLogLevel::LVL_NONE to disable logging
-#define CFG_LOG_LEVEL               DebugLogLevel::LVL_TRACE
+#define CFG_LOG_LEVEL               DebugLogLevel::LVL_INFO
 
 // change pinouts if not defined through native board LORA_* definitions
 #ifndef LORA_RST
@@ -53,7 +53,6 @@
 #define CFG_LORA_SF                 8           // spreading factor (6 - 12), 6 requires implicit header mode
 #define CFG_LORA_CR                 7           // coding rate (5 - 8)
 #define CFG_LORA_CRC                1           // 0 - disabled, 1 - 1 byte, 2 - 2 bytes
-#define CFG_LORA_EXPLICIT           true        // header mode, true - explicit, false - implicit
 #define CFG_LORA_SYNC               0x12        // sync word (0x12 - private used by other trackers, 0x34 - public used by LoRaWAN)
 #define CFG_LORA_PWR                20          // output power in dBm (sx1268 with amplifier + 12 dbm)
 #define CFG_LORA_PREAMBLE_LEN       8           // preamble length from 6 to 65535
