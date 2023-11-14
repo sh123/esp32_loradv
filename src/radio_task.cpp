@@ -101,10 +101,6 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
 void RadioTask::setFreq(long loraFreq) const 
 {
   rig_->setFrequency((float)loraFreq / (float)1e6);
-  int state = rig_->startReceive();
-  if (state != RADIOLIB_ERR_NONE) {
-    LOG_ERROR("Start receive error:", state);
-  }
 }
 
 bool RadioTask::hasData() const 
@@ -148,6 +144,16 @@ void RadioTask::task(void *param)
   reinterpret_cast<RadioTask*>(param)->rigTask();
 }
 
+void RadioTask::startTransmit() const
+{
+  xTaskNotify(loraTaskHandle_, CfgRadioTxStartBit, eSetBits);
+}
+
+void RadioTask::startReceive() const
+{
+  xTaskNotify(loraTaskHandle_, CfgRadioRxStartBit, eSetBits);
+}
+
 void RadioTask::transmit() const
 {
   xTaskNotify(loraTaskHandle_, CfgRadioTxBit, eSetBits);
@@ -173,6 +179,12 @@ void RadioTask::rigTask()
     }
     else if (cmdBits & CfgRadioTxBit) {
       rigTaskTransmit(packetBuf);
+    } 
+    if (cmdBits & CfgRadioRxStartBit) {
+      rigTaskStartReceive();
+    }
+    else if (cmdBits & CfgRadioTxStartBit) {
+      rigTaskStartTransmit();
     }
   } 
 
@@ -186,6 +198,25 @@ bool RadioTask::loop()
   bool shouldUpdateScreen = shouldUpdateScreen_;
   shouldUpdateScreen_ = false;
   return shouldUpdateScreen;
+}
+
+void RadioTask::rigTaskStartReceive() 
+{
+  LOG_INFO("Start receive");
+  if (isHalfDuplex()) setFreq(config_->LoraFreqRx);
+  int loraRadioState = rig_->startReceive();
+  if (loraRadioState != RADIOLIB_ERR_NONE) {
+    LOG_ERROR("Start receive error: ", loraRadioState);
+  }
+  vTaskDelay(1);
+  loraIsrEnabled_ = true;
+}
+
+void RadioTask::rigTaskStartTransmit() 
+{
+  LOG_INFO("Start transmit");
+  loraIsrEnabled_ = false;
+  if (isHalfDuplex()) setFreq(config_->LoraFreqTx);
 }
 
 void RadioTask::rigTaskReceive(byte *packetBuf) 
@@ -215,8 +246,6 @@ void RadioTask::rigTaskReceive(byte *packetBuf)
 
 void RadioTask::rigTaskTransmit(byte *packetBuf) 
 {
-  loraIsrEnabled_ = false;
-  if (isHalfDuplex()) setFreq(config_->LoraFreqTx);
   while (loraRadioTxQueueIndex_.size() > 0) {
     int txBytesCnt = loraRadioTxQueueIndex_.shift();
     for (int i = 0; i < txBytesCnt; i++) {
@@ -227,14 +256,7 @@ void RadioTask::rigTaskTransmit(byte *packetBuf)
         LOG_ERROR("Lora radio transmit failed:", loraRadioState);
     }
     LOG_DEBUG("Transmitted packet", txBytesCnt);
-    vTaskDelay(1);
   }
-  if (isHalfDuplex()) setFreq(config_->LoraFreqRx);
-  int loraRadioState = rig_->startReceive();
-  if (loraRadioState != RADIOLIB_ERR_NONE) {
-    LOG_ERROR("Start receive error: ", loraRadioState);
-  }
-  loraIsrEnabled_ = true;
 }
 
 } // LoraDv

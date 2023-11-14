@@ -24,7 +24,7 @@ void AudioTask::start(std::shared_ptr<Config> config, std::shared_ptr<RadioTask>
 void AudioTask::changeVolume(int deltaVolume) 
 {
   int newVolume = volume_ + deltaVolume;
-  if (newVolume >= 0 && newVolume <= config_->AudioMaxVol_)
+  if (newVolume >= 0 && newVolume <= maxVolume_)
     setVolume(newVolume);
 }
 
@@ -122,6 +122,11 @@ bool AudioTask::loop()
   return shouldUpdateScreen;
 }
 
+void AudioTask::setPtt(bool isPttOn) 
+{
+  isPttOn_ = isPttOn;
+}
+
 void AudioTask::play() const
 {
   xTaskNotify(audioTaskHandle_, CfgAudioPlayBit, eSetBits);
@@ -129,6 +134,7 @@ void AudioTask::play() const
 
 void AudioTask::record() const
 {
+  radioTask_->startTransmit();
   xTaskNotify(audioTaskHandle_, CfgAudioRecBit, eSetBits);
 }
 
@@ -183,7 +189,7 @@ void AudioTask::audioTaskPlay()
 
   size_t bytesWritten;
   LOG_DEBUG("Playing audio");
-  double vol = (double)volume_ / (double)maxVolume_;
+  double vol = (double)volume_ / (double)100.0;
   LOG_DEBUG("Volume is", vol);
   while (!isPttOn_ && radioTask_->hasData()) {
     byte packetSize;
@@ -261,6 +267,7 @@ void AudioTask::audioTaskRecord()
   }
   vTaskDelay(1);
   i2s_stop(CfgAudioI2sMicId);
+  radioTask_->startReceive();
 }
 
 } // LoraDv

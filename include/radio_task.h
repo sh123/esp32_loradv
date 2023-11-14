@@ -36,15 +36,20 @@ public:
   bool readNextByte(byte &b);
 
   void transmit() const;
+  void startTransmit() const;
+  void startReceive() const;
+  
   bool writePacketSize(byte packetSize);
   bool writeNextByte(byte b);
 
 private:
-  static const int CfgRadioQueueLen = 512;        // circular buffer length
-  static const int CfgRadioPacketBufLen = 256;    // packet buffer length
+  static const int CfgRadioQueueLen = 512;          // circular buffer length
+  static const int CfgRadioPacketBufLen = 256;      // packet buffer length
 
-  static const uint32_t CfgRadioRxBit = 0x01;     // task bit for rx
-  static const uint32_t CfgRadioTxBit = 0x02;     // task bit for tx
+  static const uint32_t CfgRadioRxBit = 0x01;       // task bit for rx
+  static const uint32_t CfgRadioTxBit = 0x02;       // task bit for tx
+  static const uint32_t CfgRadioRxStartBit = 0x04;  // task bit for start rx
+  static const uint32_t CfgRadioTxStartBit = 0x10;  // task bit for start tx
 
   const int CfgRadioTaskStack = 4096;
 
@@ -58,6 +63,8 @@ private:
   void rigTask();
   void rigTaskReceive(byte *packetBuf);
   void rigTaskTransmit(byte *packetBuf);
+  void rigTaskStartReceive();
+  void rigTaskStartTransmit();
 
 private:
   std::shared_ptr<Config> config_;

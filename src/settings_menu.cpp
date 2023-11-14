@@ -161,7 +161,7 @@ public:
   SettingsAudioVolItem(std::shared_ptr<Config> config) : SettingsItem(config) {}
   void changeValue(int delta) { 
     long newVal = config_->AudioVol + delta;
-    if (newVal >= 0 && newVal <= 100) config_->AudioVol = newVal;
+    if (newVal >= 0 && newVal <= CFG_AUDIO_MAX_VOL) config_->AudioVol = newVal;
   }
   void getName(std::stringstream &s) const { s << "9.Volume"; }
   void getValue(std::stringstream &s) const { s << config_->AudioVol << "%"; }

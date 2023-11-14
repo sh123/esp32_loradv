@@ -26,7 +26,7 @@ public:
   bool isPlaying() const { return isPlaying_; }
   void record() const;
 
-  inline void setPtt(bool isPttOn) { isPttOn_ = isPttOn; }
+  void setPtt(bool isPttOn);
 
   inline void setVolume(int volume) { if (volume <= maxVolume_) volume_ = volume; }
   void changeVolume(int deltaVolume);
