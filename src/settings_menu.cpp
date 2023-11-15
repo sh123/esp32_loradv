@@ -137,7 +137,7 @@ public:
     }
   {
     for (selIndex_ = 0; selIndex_ < CfgItemsCount; selIndex_++)
-      if (config_->AudioCodec2Mode == items_[selIndex_])
+      if (config_->ModType == items_[selIndex_])
         break;
   }
   void changeValue(int delta) {
@@ -148,7 +148,7 @@ public:
   void getName(std::stringstream &s) const { s << index_ << ".Modulation"; }
   void getValue(std::stringstream &s) const { 
     for (int i = 0; i < CfgItemsCount; i++)
-      if (config_->AudioCodec2Mode == map_[i].k) {
+      if (config_->ModType == map_[i].k) {
         s << map_[i].val; 
         break;
       }
