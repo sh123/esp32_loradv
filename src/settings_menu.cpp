@@ -329,6 +329,7 @@ SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraPowerItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioCodec2ModeItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioVolItem(config, ++i)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsModType(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraBwItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraSfItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraCrItem(config, ++i)));
