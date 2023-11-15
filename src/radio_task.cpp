@@ -90,6 +90,44 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
   LOG_INFO("LoRa initialized");
 }
 
+void RadioTask::setupRigFsk(long freq, float bitRate, float freqDev, float rxBw, int pwr)
+{
+  LOG_INFO("Initializing FSK");
+  LOG_INFO("Frequency:", freq, "Hz");
+  LOG_INFO("Bit rate:", bitRate, "kbps");
+  LOG_INFO("Deviation:", freqDev, "kHz");
+  LOG_INFO("Bandwidth:", rxBw, "kHz");
+  LOG_INFO("Power:", pwr, "dBm");
+  rig_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
+  int state = rig_->beginFSK(bitRate, freqDev, rxBw, 16, 0.0, true);
+  if (state != RADIOLIB_ERR_NONE) {
+    LOG_ERROR("Radio start error:", state);
+  }
+  rig_->setOutputPower(pwr);
+  setFreq(freq);
+#ifdef USE_SX126X
+    #pragma message("Using SX126X")
+    LOG_INFO("Using SX126X module");
+    rig_->setRfSwitchPins(config_->LoraPinSwitchRx_, config_->LoraPinSwitchTx_);
+    if (isIsrInstalled_) rig_->clearDio1Action();
+    rig_->setDio1Action(onRigIsrRxPacket);
+    isIsrInstalled_ = true;
+#else
+    #pragma message("Using SX127X")
+    LOG_INFO("Using SX127X module");
+    if (isIsrInstalled_) rig_->clearDio0Action();
+    rig_->setDio0Action(onRigIsrRxPacket);
+    isIsrInstalled_ = true;
+#endif
+  
+  state = rig_->startReceive();
+  if (state != RADIOLIB_ERR_NONE) {
+    LOG_ERROR("Receive start error:", state);
+  }
+
+  LOG_INFO("FSK initialized");
+}
+
 void RadioTask::setFreq(long loraFreq) const 
 {
   rig_->setFrequency((float)loraFreq / (float)1e6);
@@ -153,11 +191,16 @@ void RadioTask::transmit() const
 
 void RadioTask::rigTask() 
 {
-  LOG_INFO("Lora task started");
+  LOG_INFO("Radio task started");
   isRunning_ = true;
 
-  setupRig(config_->LoraFreqRx, config_->LoraBw, config_->LoraSf, 
-    config_->LoraCodingRate, config_->LoraPower, config_->LoraSync_, config_->LoraCrc_);
+  if (config_->ModType == CFG_MOD_TYPE_LORA) {
+    setupRig(config_->LoraFreqRx, config_->LoraBw, config_->LoraSf, 
+      config_->LoraCodingRate, config_->LoraPower, config_->LoraSync_, config_->LoraCrc_);
+  } else {
+    setupRigFsk(config_->LoraFreqRx, config_->FskBitRate, config_->FskFreqDev,
+      config_->FskRxBw, config_->LoraPower);
+  }
 
   byte *packetBuf = new byte[CfgRadioPacketBufLen];
 
@@ -165,7 +208,7 @@ void RadioTask::rigTask()
     uint32_t cmdBits = 0;
     xTaskNotifyWaitIndexed(0, 0x00, ULONG_MAX, &cmdBits, portMAX_DELAY);
 
-    LOG_DEBUG("Lora task bits", cmdBits);
+    LOG_DEBUG("Radio task bits", cmdBits);
     if (cmdBits & CfgRadioRxBit) {
       rigTaskReceive(packetBuf);
     }
@@ -181,7 +224,7 @@ void RadioTask::rigTask()
   } 
 
   delete packetBuf;
-  LOG_INFO("Lora task stopped");
+  LOG_INFO("Radio task stopped");
   vTaskDelete(NULL);
 }
 

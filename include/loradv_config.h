@@ -23,6 +23,9 @@ public:
 
   DebugLogLevel LogLevel;    // log level
 
+  // modulation type
+  int ModType;          // 0 - lora, 1 - fsk
+
   // lora modulation parameters
   long LoraFreqRx;      // lora RX frequency, e.g. 433.775e6
   long LoraFreqTx;      // lora TX frequency, e.g. 433.775e6
@@ -34,6 +37,11 @@ public:
   int LoraSync_;        // lora sync word/packet id, 0x34
   int LoraCrc_;         // lora crc mode, 0 - disabled, 1 - 1 byte, 2 - 2 bytes
   int LoraPreambleLen_; // lora preamble length from 6 to 65535
+
+  // fsk modulation parameters
+  float FskBitRate;     // fsk bit rate, 0.6 - 300.0 Kbps
+  float FskFreqDev;     // fsk frequency deviation 0.6 - 200 kHz
+  float FskRxBw;        // fsk rx bandwidth, discrete from 4.8 to 467 kHz
 
   // lora hardware pinouts and isr
   byte LoraPinSs_;       // lora ss pin

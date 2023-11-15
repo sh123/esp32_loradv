@@ -16,18 +16,28 @@ void Config::InitializeDefault()
   
   // log level
   LogLevel = CFG_LOG_LEVEL;
+
+  // modulation type
+  ModType = CFG_MOD_TYPE;
   
-  // lora parameters, must match on devices
+  // generic parameters
   LoraFreqRx = CFG_LORA_FREQ_RX;
   LoraFreqTx = CFG_LORA_FREQ_TX;
   LoraFreqStep = CFG_LORA_FREQ_STEP;
+  LoraPower = CFG_LORA_PWR;
+
+  // lora parameters, must match on devices
   LoraBw = CFG_LORA_BW;
   LoraSf = CFG_LORA_SF;
   LoraCodingRate = CFG_LORA_CR;
   LoraSync_ = CFG_LORA_SYNC;
   LoraCrc_ = CFG_LORA_CRC; // set to 0 to disable
-  LoraPower = CFG_LORA_PWR;
   LoraPreambleLen_ = CFG_LORA_PREAMBLE_LEN;
+
+  // fsk parameters
+  FskBitRate = CFG_FSK_BIT_RATE;
+  FskFreqDev = CFG_FSK_FREQ_DEV;
+  FskRxBw = CFG_FSK_RX_BW;
 
   // lora pinouts
   LoraPinSs_ = CFG_LORA_PIN_SS;
@@ -155,7 +165,27 @@ void Config::Load()
     PmSleepAfterMs = prefs_.getInt(N(PmSleepAfterMs));
   } else {
     prefs_.putInt(N(PmSleepAfterMs), PmSleepAfterMs);
+  } 
+   if (prefs_.isKey(N(FskBitRate))) {
+    FskBitRate = prefs_.getFloat(N(FskBitRate));
+  } else {
+    prefs_.putFloat(N(FskBitRate), FskBitRate);
   }
+  if (prefs_.isKey(N(FskFreqDev))) {
+    FskFreqDev = prefs_.getFloat(N(FskFreqDev));
+  } else {
+    prefs_.putFloat(N(FskFreqDev), FskFreqDev);
+  }
+  if (prefs_.isKey(N(FskRxBw))) {
+    FskRxBw = prefs_.getFloat(N(FskRxBw));
+  } else {
+    prefs_.putFloat(N(FskRxBw), FskRxBw);
+  }
+  if (prefs_.isKey(N(ModType))) {
+    ModType = prefs_.getInt(N(ModType));
+  } else {
+    prefs_.putInt(N(ModType), ModType);
+  } 
   prefs_.end();
   LOG_INFO("Settings are loaded");
 }
@@ -176,6 +206,10 @@ void Config::Save()
   prefs_.putInt(N(AudioVol), AudioVol);
   prefs_.putFloat(N(BatteryMonCal), BatteryMonCal);
   prefs_.putInt(N(PmSleepAfterMs), PmSleepAfterMs);
+  prefs_.putFloat(N(FskBitRate), FskBitRate);
+  prefs_.putFloat(N(FskFreqDev), FskFreqDev);
+  prefs_.putFloat(N(FskRxBw), FskRxBw);
+  prefs_.putInt(N(ModType), ModType);
   prefs_.end();
   LOG_INFO("Saved settings");
 }
