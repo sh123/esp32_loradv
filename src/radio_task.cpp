@@ -103,6 +103,7 @@ void RadioTask::setupRigFsk(long freq, float bitRate, float freqDev, float rxBw,
   if (state != RADIOLIB_ERR_NONE) {
     LOG_ERROR("Radio start error:", state);
   }
+  rig_->disableAddressFiltering();
 #ifdef USE_SX126X
     #pragma message("Using SX126X")
     LOG_INFO("Using SX126X module");

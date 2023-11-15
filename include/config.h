@@ -67,7 +67,7 @@
 // fsk modem default parameters (they need to match between devices!!!)
 #define CFG_FSK_BIT_RATE            3.2         // bit rate in Kbps from 0.6 to 300.0
 #define CFG_FSK_FREQ_DEV            9.6         // frequency deviation in kHz from 0.6 to 200.0
-#define CFG_FSK_RX_BW               11.7        // rx bandwidth in kHz discrete from 4.8 to 467.0
+#define CFG_FSK_RX_BW               23.4        // rx bandwidth in kHz discrete from 4.8 to 467.0
 
 // ptt button
 #define CFG_PTT_BTN_PIN             39          // pin for ptt button
