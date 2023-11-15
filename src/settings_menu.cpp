@@ -212,7 +212,7 @@ class SettingsFskBitRate : public SettingsItem {
 public:
   SettingsFskBitRate(std::shared_ptr<Config> config, int index) : SettingsItem(config, index) {}
   void changeValue(int delta) { 
-    long newVal = config_->FskBitRate + (float)delta/10;
+    float newVal = config_->FskBitRate + (float)delta/10.0;
     if (newVal >= 0.6 && newVal <= 300.0) config_->FskBitRate = newVal;
   }
   void getName(std::stringstream &s) const { s << index_ << ".FSK Bit Rate"; }
@@ -223,7 +223,7 @@ class SettingsFskFreqDev : public SettingsItem {
 public:
   SettingsFskFreqDev(std::shared_ptr<Config> config, int index) : SettingsItem(config, index) {}
   void changeValue(int delta) { 
-    long newVal = config_->FskFreqDev + (float)delta/10;
+    float newVal = config_->FskFreqDev + (float)delta/10.0;
     if (newVal >= 0.6 && newVal <= 200.0) config_->FskFreqDev = newVal;
   }
   void getName(std::stringstream &s) const { s << index_ << ".FSK Freq Dev"; }

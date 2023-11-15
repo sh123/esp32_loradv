@@ -99,12 +99,10 @@ void RadioTask::setupRigFsk(long freq, float bitRate, float freqDev, float rxBw,
   LOG_INFO("Bandwidth:", rxBw, "kHz");
   LOG_INFO("Power:", pwr, "dBm");
   rig_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
-  int state = rig_->beginFSK(bitRate, freqDev, rxBw, 16, 0.0, true);
+  int state = rig_->beginFSK((float)freq / 1e6, bitRate, freqDev, rxBw, pwr);
   if (state != RADIOLIB_ERR_NONE) {
     LOG_ERROR("Radio start error:", state);
   }
-  rig_->setOutputPower(pwr);
-  setFreq(freq);
 #ifdef USE_SX126X
     #pragma message("Using SX126X")
     LOG_INFO("Using SX126X module");
