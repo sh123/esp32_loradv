@@ -5,7 +5,7 @@
 #include <RadioLib.h>
 
 // saved settings version, increment to load new settings
-#define CFG_VERSION  3
+#define CFG_VERSION  4
 
 // Comment out for SX127X module usage
 //#define USE_SX126X

@@ -121,6 +121,18 @@ public:
   void getValue(std::stringstream &s) const { s << config_->AudioVol << "%"; }
 };
 
+class SettingsAudioMaxPktSizeItem : public SettingsItem {
+public:
+  SettingsAudioMaxPktSizeItem(std::shared_ptr<Config> config, int index) : SettingsItem(config, index) {}
+  void changeValue(int delta) { 
+    long newVal = config_->AudioMaxPktSize + delta;
+    if (newVal >= 8 && newVal <= 240) config_->AudioMaxPktSize = newVal;
+  }
+  void getName(std::stringstream &s) const { s << index_ << ".Max packet size"; }
+  void getValue(std::stringstream &s) const { s << config_->AudioMaxPktSize << "bytes"; }
+};
+
+
 class SettingsModType : public SettingsItem {
 private:
   static const int CfgItemsCount = 2;
@@ -328,6 +340,7 @@ SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraFreqTxItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraPowerItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioCodec2ModeItem(config, ++i)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioMaxPktSizeItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioVolItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsModType(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraBwItem(config, ++i)));

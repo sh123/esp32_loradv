@@ -60,7 +60,7 @@ public:
 
   // audio params
   int AudioCodec2Mode;   // Audio Codec2 mode
-  int AudioMaxPktSize_;  // Aggregated packet maximum size
+  int AudioMaxPktSize;   // Aggregated packet maximum size
 
   // i2s speaker
   byte AudioSpkPinBclk_; // Speaker i2s clk pin

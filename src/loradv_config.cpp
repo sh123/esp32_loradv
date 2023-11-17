@@ -59,7 +59,7 @@ void Config::InitializeDefault()
 
   // audio parameters
   AudioCodec2Mode = CFG_AUDIO_CODEC2_MODE;
-  AudioMaxPktSize_ = CFG_AUDIO_MAX_PKT_SIZE;
+  AudioMaxPktSize = CFG_AUDIO_MAX_PKT_SIZE;
   AudioMaxVol_ = CFG_AUDIO_MAX_VOL;
   AudioVol = CFG_AUDIO_VOL;
 
@@ -156,6 +156,11 @@ void Config::Load()
   } else {
     prefs_.putInt(N(AudioVol), AudioVol);
   }
+    if (prefs_.isKey(N(AudioMaxPktSize))) {
+    AudioMaxPktSize = prefs_.getInt(N(AudioMaxPktSize));
+  } else {
+    prefs_.putInt(N(AudioMaxPktSize), AudioMaxPktSize);
+  }
   if (prefs_.isKey(N(BatteryMonCal))) {
     BatteryMonCal = prefs_.getFloat(N(BatteryMonCal));
   } else {
@@ -204,6 +209,7 @@ void Config::Save()
   prefs_.putInt(N(LoraPower), LoraPower);
   prefs_.putInt(N(AudioCodec2Mode), AudioCodec2Mode);
   prefs_.putInt(N(AudioVol), AudioVol);
+  prefs_.putInt(N(AudioMaxPktSize), AudioMaxPktSize);
   prefs_.putFloat(N(BatteryMonCal), BatteryMonCal);
   prefs_.putInt(N(PmSleepAfterMs), PmSleepAfterMs);
   prefs_.putFloat(N(FskBitRate), FskBitRate);

@@ -230,7 +230,7 @@ void AudioTask::audioTaskRecord()
   i2s_start(CfgAudioI2sMicId);
   while (isPttOn_) {
     // send packet if enough audio encoded frames are accumulated
-    if (packetSize + codecBytesPerFrame_ > config_->AudioMaxPktSize_) {
+    if (packetSize + codecBytesPerFrame_ > config_->AudioMaxPktSize) {
       LOG_DEBUG("Recorded packet", packetSize);
       if (!radioTask_->writePacketSize(packetSize)) {
         LOG_ERROR("Failed to write packet size");
