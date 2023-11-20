@@ -38,6 +38,7 @@ void Config::InitializeDefault()
   FskBitRate = CFG_FSK_BIT_RATE;
   FskFreqDev = CFG_FSK_FREQ_DEV;
   FskRxBw = CFG_FSK_RX_BW;
+  FskShaping = CFG_FSK_SHAPING;
 
   // lora pinouts
   LoraPinSs_ = CFG_LORA_PIN_SS;
@@ -186,6 +187,11 @@ void Config::Load()
   } else {
     prefs_.putFloat(N(FskRxBw), FskRxBw);
   }
+  if (prefs_.isKey(N(FskShaping))) {
+    FskShaping = prefs_.getInt(N(FskShaping));
+  } else {
+    prefs_.putInt(N(FskShaping), FskShaping);
+  }
   if (prefs_.isKey(N(ModType))) {
     ModType = prefs_.getInt(N(ModType));
   } else {
@@ -215,6 +221,7 @@ void Config::Save()
   prefs_.putFloat(N(FskBitRate), FskBitRate);
   prefs_.putFloat(N(FskFreqDev), FskFreqDev);
   prefs_.putFloat(N(FskRxBw), FskRxBw);
+  prefs_.putInt(N(FskShaping), FskShaping);
   prefs_.putInt(N(ModType), ModType);
   prefs_.end();
   LOG_INFO("Saved settings");

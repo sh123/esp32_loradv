@@ -5,7 +5,7 @@
 #include <RadioLib.h>
 
 // saved settings version, increment to load new settings
-#define CFG_VERSION  4
+#define CFG_VERSION  6
 
 // Comment out for SX127X module usage
 //#define USE_SX126X
@@ -68,6 +68,7 @@
 #define CFG_FSK_BIT_RATE            4.8         // bit rate in Kbps from 0.6 to 300.0
 #define CFG_FSK_FREQ_DEV            1.2         // frequency deviation in kHz from 0.6 to 200.0
 #define CFG_FSK_RX_BW               9.7         // rx bandwidth in kHz discrete from 4.8 to 467.0
+#define CFG_FSK_SHAPING             RADIOLIB_SHAPING_NONE
 
 // ptt button
 #define CFG_PTT_BTN_PIN             39          // pin for ptt button

@@ -55,7 +55,7 @@ private:
 
 private:
   void setupRig(long freq, long bw, int sf, int cr, int pwr, int sync, int crcBytes);
-  void setupRigFsk(long freq, float bitRate, float freqDev, float rxBw, int pwr);
+  void setupRigFsk(long freq, float bitRate, float freqDev, float rxBw, int pwr, byte shaping);
 
   static IRAM_ATTR void onRigIsrRxPacket();
 

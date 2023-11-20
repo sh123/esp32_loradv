@@ -42,6 +42,7 @@ public:
   float FskBitRate;     // fsk bit rate, 0.6 - 300.0 Kbps
   float FskFreqDev;     // fsk frequency deviation 0.6 - 200 kHz
   float FskRxBw;        // fsk rx bandwidth, discrete from 4.8 to 467 kHz
+  byte FskShaping;      // fsk gaussian shaping
 
   // lora hardware pinouts and isr
   byte LoraPinSs_;       // lora ss pin

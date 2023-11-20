@@ -267,6 +267,54 @@ private:
   float items_[CfgItemsCount];
 };
 
+class SettingsFskShaping : public SettingsItem {
+private:
+  static const int CfgItemsCount = 5;
+public:
+  SettingsFskShaping(std::shared_ptr<Config> config, int index)
+    : SettingsItem(config, index)
+    , items_{ 
+      RADIOLIB_SHAPING_NONE,
+      RADIOLIB_SHAPING_0_3,
+      RADIOLIB_SHAPING_0_5,
+      RADIOLIB_SHAPING_0_7,
+      RADIOLIB_SHAPING_1_0
+    }
+    , map_{ 
+      { RADIOLIB_SHAPING_NONE, "None" },
+      { RADIOLIB_SHAPING_0_3, "0.3" },
+      { RADIOLIB_SHAPING_0_5, "0.5" },
+      { RADIOLIB_SHAPING_0_7, "0.7" },
+      { RADIOLIB_SHAPING_1_0, "1.0" },
+    }
+  {
+    for (selIndex_ = 0; selIndex_ < CfgItemsCount; selIndex_++)
+      if (config_->FskShaping == items_[selIndex_])
+        break;
+  }
+  void changeValue(int delta) {
+    int newIndex = selIndex_ + delta;
+    if (newIndex >= 0 && newIndex < CfgItemsCount) selIndex_ = newIndex;
+    config_->FskShaping = items_[selIndex_];
+  }
+  void getName(std::stringstream &s) const { s << index_ << ".FSK Shaping"; }
+  void getValue(std::stringstream &s) const { 
+    for (int i = 0; i < CfgItemsCount; i++)
+      if (config_->FskShaping == map_[i].k) {
+        s << map_[i].val; 
+        break;
+      }
+  }
+private:
+  int selIndex_;
+  int items_[CfgItemsCount];
+  struct MapItem { 
+    int k; 
+    const char *val; 
+  } map_[CfgItemsCount];
+};
+
+
 class SettingsBatteryMonCalItem : public SettingsItem {
 public:
   SettingsBatteryMonCalItem(std::shared_ptr<Config> config, int index) : SettingsItem(config, index) {}
@@ -349,6 +397,7 @@ SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsFskBitRate(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsFskFreqDev(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsFskRxBw(config, ++i)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsFskShaping(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsBatteryMonCalItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsPmLightSleepAfterMsItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsSaveItem(config, ++i)));

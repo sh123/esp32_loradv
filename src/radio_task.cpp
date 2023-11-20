@@ -90,7 +90,7 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
   LOG_INFO("LoRa initialized");
 }
 
-void RadioTask::setupRigFsk(long freq, float bitRate, float freqDev, float rxBw, int pwr)
+void RadioTask::setupRigFsk(long freq, float bitRate, float freqDev, float rxBw, int pwr, byte shaping)
 {
   LOG_INFO("Initializing FSK");
   LOG_INFO("Frequency:", freq, "Hz");
@@ -98,12 +98,14 @@ void RadioTask::setupRigFsk(long freq, float bitRate, float freqDev, float rxBw,
   LOG_INFO("Deviation:", freqDev, "kHz");
   LOG_INFO("Bandwidth:", rxBw, "kHz");
   LOG_INFO("Power:", pwr, "dBm");
+  LOG_INFO("Shaping:", shaping);
   rig_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
   int state = rig_->beginFSK((float)freq / 1e6, bitRate, freqDev, rxBw, pwr);
   if (state != RADIOLIB_ERR_NONE) {
     LOG_ERROR("Radio start error:", state);
   }
   rig_->disableAddressFiltering();
+  rig_->setDataShaping(shaping);
 #ifdef USE_SX126X
     #pragma message("Using SX126X")
     LOG_INFO("Using SX126X module");
@@ -198,7 +200,7 @@ void RadioTask::rigTask()
       config_->LoraCodingRate, config_->LoraPower, config_->LoraSync_, config_->LoraCrc_);
   } else {
     setupRigFsk(config_->LoraFreqRx, config_->FskBitRate, config_->FskFreqDev,
-      config_->FskRxBw, config_->LoraPower);
+      config_->FskRxBw, config_->LoraPower, config_->FskShaping);
   }
 
   byte *packetBuf = new byte[CfgRadioPacketBufLen];
