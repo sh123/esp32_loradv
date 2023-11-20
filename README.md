@@ -16,7 +16,7 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 - Uses combined charge + 5v boost controller based on Hotchip HT4928S
 - Goes into ESP32 light sleep when no activity, so all power consumption is around 30-40mA when in RX, wakes up on new data from radio module or when user starts transmitting
 - Settings menu on long encoder button click
-- Supports LoRa and FSK modulation
+- Supports LoRa and FSK modulation with configurable modulation parameters from settings
 
 ## Build instructions
 - Modify `include/config.h` if needed
