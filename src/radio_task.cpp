@@ -77,7 +77,7 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
     #pragma message("Using SX127X")
     LOG_INFO("Using SX127X module");
     if (isIsrInstalled_) rig_->clearDio0Action();
-    rig_->setDio0Action(onRigIsrRxPacket);
+    rig_->setDio0Action(onRigIsrRxPacket, RISING);
     isIsrInstalled_ = true;
 #endif
   rig_->explicitHeader();
@@ -117,7 +117,7 @@ void RadioTask::setupRigFsk(long freq, float bitRate, float freqDev, float rxBw,
     #pragma message("Using SX127X")
     LOG_INFO("Using SX127X module");
     if (isIsrInstalled_) rig_->clearDio0Action();
-    rig_->setDio0Action(onRigIsrRxPacket);
+    rig_->setDio0Action(onRigIsrRxPacket, RISING);
     isIsrInstalled_ = true;
 #endif
   
