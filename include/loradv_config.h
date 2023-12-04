@@ -77,6 +77,10 @@ public:
   int AudioMaxVol_;      // maximum volume
   int AudioVol;          // current volume
 
+  // encryption
+  bool AudioEnPriv;     // enable/disable privacy
+  byte AudioPrivacyKey_[32]; // privacy key
+
   // battery monitor
   byte BatteryMonPin_;   // Battery monitor adc pin
   float BatteryMonCal;   // Battery monitor calibrarion value

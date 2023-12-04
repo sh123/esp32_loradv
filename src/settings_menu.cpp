@@ -132,6 +132,15 @@ public:
   void getValue(std::stringstream &s) const { s << config_->AudioMaxPktSize << "bytes"; }
 };
 
+class SettingsAudioEnablePrivacy : public SettingsItem {
+public:
+  SettingsAudioEnablePrivacy(std::shared_ptr<Config> config, int index) : SettingsItem(config, index) {}
+  void changeValue(int delta) { 
+    config_->AudioEnPriv = !config_->AudioEnPriv;
+  }
+  void getName(std::stringstream &s) const { s << index_ << ".Privacy"; }
+  void getValue(std::stringstream &s) const { s << (config_->AudioEnPriv ? "ON" : "OFF"); }
+};
 
 class SettingsModType : public SettingsItem {
 private:
@@ -372,8 +381,8 @@ public:
   void getValue(std::stringstream &s) const { 
     s << "App:" << LORADV_VERSION << " Conf:" << config_->Version << std::endl;
     s << "Free:" << esp_get_free_heap_size() << "KB" << std::endl;
-    s << "RF:" << RadioTask::getSpeed(config_->LoraSf, config_->LoraCodingRate, config_->LoraBw) << "bps/";
-    s << RadioTask::getSnrLimit(config_->LoraSf, config_->LoraBw);
+    s << "RF:" << Utils::getLoraSpeed(config_->LoraSf, config_->LoraCodingRate, config_->LoraBw) << "bps/";
+    s << Utils::getLoraSnrLimit(config_->LoraSf, config_->LoraBw);
   }
 };
 
@@ -390,6 +399,7 @@ SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioCodec2ModeItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioMaxPktSizeItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioVolItem(config, ++i)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioEnablePrivacy(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsModType(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraBwItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraSfItem(config, ++i)));

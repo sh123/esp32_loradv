@@ -4,6 +4,8 @@ namespace LoraDv {
 
 #define N(v) #v
 
+CFG_AUDIO_PRIVACY_KEY;
+
 Config::Config()
 {
   InitializeDefault();
@@ -63,6 +65,7 @@ void Config::InitializeDefault()
   AudioMaxPktSize = CFG_AUDIO_MAX_PKT_SIZE;
   AudioMaxVol_ = CFG_AUDIO_MAX_VOL;
   AudioVol = CFG_AUDIO_VOL;
+  AudioEnPriv = CFG_AUDIO_ENABLE_PRIVACY;
 
   // i2s speaker
   AudioSpkPinBclk_ = CFG_AUDIO_SPK_PIN_BCLK;
@@ -82,6 +85,9 @@ void Config::InitializeDefault()
   PmSleepAfterMs = CFG_PM_LSLEEP_AFTER_MS;
   PmLightSleepDurationMs_ = CFG_PM_LSLEEP_DURATION_MS;
   PmLightSleepAwakeMs_ = CFG_PM_LSLEEP_AWAKE_MS;
+
+  // encryption key
+  memcpy(AudioPrivacyKey_, AudioPrivacyKey, sizeof(AudioPrivacyKey));
 }
 
 void Config::Reset()
@@ -162,6 +168,11 @@ void Config::Load()
   } else {
     prefs_.putInt(N(AudioMaxPktSize), AudioMaxPktSize);
   }
+  if (prefs_.isKey(N(AudioEnPriv))) {
+    AudioEnPriv = prefs_.getBool(N(AudioEnPriv));
+  } else {
+    prefs_.putBool(N(AudioEnPriv), AudioEnPriv);
+  }
   if (prefs_.isKey(N(BatteryMonCal))) {
     BatteryMonCal = prefs_.getFloat(N(BatteryMonCal));
   } else {
@@ -216,6 +227,7 @@ void Config::Save()
   prefs_.putInt(N(AudioCodec2Mode), AudioCodec2Mode);
   prefs_.putInt(N(AudioVol), AudioVol);
   prefs_.putInt(N(AudioMaxPktSize), AudioMaxPktSize);
+  prefs_.putBool(N(AudioEnPriv), AudioEnPriv);
   prefs_.putFloat(N(BatteryMonCal), BatteryMonCal);
   prefs_.putInt(N(PmSleepAfterMs), PmSleepAfterMs);
   prefs_.putFloat(N(FskBitRate), FskBitRate);

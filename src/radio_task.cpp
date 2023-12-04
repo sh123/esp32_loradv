@@ -11,6 +11,7 @@ RadioTask::RadioTask()
   , isRunning_(false)
   , shouldUpdateScreen_(false)
   , lastRssi_(0)
+  , cipher_(new ChaCha())
 {
 }
 
@@ -18,33 +19,8 @@ void RadioTask::start(std::shared_ptr<Config> config, std::shared_ptr<AudioTask>
 {
   config_ = config;
   audioTask_ = audioTask;
+  cipher_->setKey(config->AudioPrivacyKey_, sizeof(config->AudioPrivacyKey_));
   xTaskCreate(&task, "RadioTask", CfgRadioTaskStack, this, 5, &loraTaskHandle_);
-}
-
-float RadioTask::getSnrLimit(int sf, long bw) 
-{
-  float snrLimit = -7;
-  switch (sf) {
-    case 7:
-        snrLimit = -7.5;
-        break;
-    case 8:
-        snrLimit = -10.0;
-        break;
-    case 9:
-        snrLimit = -12.6;
-        break;
-    case 10:
-        snrLimit = -15.0;
-        break;
-    case 11:
-        snrLimit = -17.5;
-        break;
-    case 12:
-        snrLimit = -20.0;
-        break;
-  }
-  return -174 + 10 * log10(bw) + 6 + snrLimit;
 }
 
 void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sync, int crcBytes)
@@ -57,8 +33,8 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
   LOG_INFO("Power:", pwr, "dBm");
   LOG_INFO("Sync:", "0x" + String(sync, HEX));
   LOG_INFO("CRC:", crcBytes);
-  LOG_INFO("Speed:", getSpeed(sf, cr, bw), "bps");
-  LOG_INFO("Min level:", getSnrLimit(sf, bw));
+  LOG_INFO("Speed:", Utils::getLoraSpeed(sf, cr, bw), "bps");
+  LOG_INFO("Min level:", Utils::getLoraSnrLimit(sf, bw));
   rig_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
   int state = rig_->begin((float)loraFreq / 1e6, (float)bw / 1e3, sf, cr, sync, pwr);
   if (state != RADIOLIB_ERR_NONE) {
@@ -81,12 +57,6 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
     isIsrInstalled_ = true;
 #endif
   rig_->explicitHeader();
-  
-  state = rig_->startReceive();
-  if (state != RADIOLIB_ERR_NONE) {
-    LOG_ERROR("Receive start error:", state);
-  }
-
   LOG_INFO("LoRa initialized");
 }
 
@@ -120,12 +90,6 @@ void RadioTask::setupRigFsk(long freq, float bitRate, float freqDev, float rxBw,
     rig_->setDio0Action(onRigIsrRxPacket, RISING);
     isIsrInstalled_ = true;
 #endif
-  
-  state = rig_->startReceive();
-  if (state != RADIOLIB_ERR_NONE) {
-    LOG_ERROR("Receive start error:", state);
-  }
-
   LOG_INFO("FSK initialized");
 }
 
@@ -202,8 +166,11 @@ void RadioTask::rigTask()
     setupRigFsk(config_->LoraFreqRx, config_->FskBitRate, config_->FskFreqDev,
       config_->FskRxBw, config_->LoraPower, config_->FskShaping);
   }
+  randomSeed(rig_->random(0x7FFFFFFF));
+  rigTaskStartReceive();
 
   byte *packetBuf = new byte[CfgRadioPacketBufLen];
+  byte *tmpBuf = new byte[CfgRadioPacketBufLen];
 
   while (isRunning_) {
     uint32_t cmdBits = 0;
@@ -211,10 +178,10 @@ void RadioTask::rigTask()
 
     LOG_DEBUG("Radio task bits", cmdBits);
     if (cmdBits & CfgRadioRxBit) {
-      rigTaskReceive(packetBuf);
+      rigTaskReceive(packetBuf, tmpBuf);
     }
     else if (cmdBits & CfgRadioTxBit) {
-      rigTaskTransmit(packetBuf);
+      rigTaskTransmit(packetBuf, tmpBuf);
     } 
     if (cmdBits & CfgRadioRxStartBit) {
       rigTaskStartReceive();
@@ -224,6 +191,7 @@ void RadioTask::rigTask()
     }
   } 
 
+  delete tmpBuf;
   delete packetBuf;
   LOG_INFO("Radio task stopped");
   vTaskDelete(NULL);
@@ -255,16 +223,26 @@ void RadioTask::rigTaskStartTransmit()
   if (isHalfDuplex()) setFreq(config_->LoraFreqTx);
 }
 
-void RadioTask::rigTaskReceive(byte *packetBuf) 
+void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf) 
 {
   int packetSize = rig_->getPacketLength();
-  if (packetSize > 0 && packetSize < CfgRadioPacketBufLen) {
+  if (packetSize > 8 && packetSize < CfgRadioPacketBufLen) {
+    // receive packet
     int state = rig_->readData(packetBuf, packetSize);
     if (state == RADIOLIB_ERR_NONE) {
-      // process packet
+      byte *receiveBuf = packetBuf;
+      // if privacy enabled
+      if (config_->AudioEnPriv){
+        // read iv and decrypt packet
+        cipher_->setIV(packetBuf, sizeof(iv_));
+        packetSize -= sizeof(iv_);
+        cipher_->decrypt(tmpBuf, packetBuf + sizeof(iv_), packetSize);
+        receiveBuf = tmpBuf;
+      }
+      // send packet to the queue
       LOG_DEBUG("Received packet, size", packetSize);
       for (int i = 0; i < packetSize; i++) {
-        loraRadioRxQueue_.push(packetBuf[i]);
+        loraRadioRxQueue_.push(receiveBuf[i]);
       }
       loraRadioRxQueueIndex_.push(packetSize);
       audioTask_->play();
@@ -277,17 +255,35 @@ void RadioTask::rigTaskReceive(byte *packetBuf)
     if (state != RADIOLIB_ERR_NONE) {
       LOG_ERROR("Start receive error: ", state);
     }
+  } else {
+    LOG_ERROR("Wrong packet size: ", packetSize);
   }
 }
 
-void RadioTask::rigTaskTransmit(byte *packetBuf) 
+void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf) 
 {
   while (loraRadioTxQueueIndex_.size() > 0) {
+    // fetch packet size and packet from the queue
     int txBytesCnt = loraRadioTxQueueIndex_.shift();
     for (int i = 0; i < txBytesCnt; i++) {
         packetBuf[i] = loraRadioTxQueue_.shift();
     }
-    int loraRadioState = rig_->transmit(packetBuf, txBytesCnt);
+    byte *sendBuf = packetBuf;
+    // if privacy enabled
+    if (config_->AudioEnPriv) {
+      // generate IV
+      for (int i = 0; i < sizeof(iv_); i++) {
+        iv_[i] = random(255);
+        tmpBuf[i] = iv_[i];
+      }
+      // encrypt
+      cipher_->setIV(iv_, sizeof(iv_));
+      cipher_->encrypt(tmpBuf + sizeof(iv_), packetBuf, txBytesCnt);
+      txBytesCnt += sizeof(iv_);
+      sendBuf = tmpBuf;
+    }
+    // transmit
+    int loraRadioState = rig_->transmit(sendBuf, txBytesCnt);
     if (loraRadioState != RADIOLIB_ERR_NONE) {
         LOG_ERROR("Lora radio transmit failed:", loraRadioState);
     }

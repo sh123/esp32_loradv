@@ -5,9 +5,9 @@
 #include <RadioLib.h>
 
 // saved settings version, increment to load new settings
-#define CFG_VERSION  6
+#define CFG_VERSION  7
 
-// Comment out for SX127X module usage
+// Comment out for SX127X module usage, passed from platform.io
 //#define USE_SX126X
 
 // Check your module name at https://github.com/jgromes/RadioLib/wiki/Modules
@@ -80,12 +80,6 @@
 #define CFG_ENCODER_PIN_VCC         -1
 #define CFG_ENCODER_STEPS           4
 
-// audio
-#define CFG_AUDIO_CODEC2_MODE       CODEC2_MODE_1600
-#define CFG_AUDIO_MAX_PKT_SIZE      48
-#define CFG_AUDIO_MAX_VOL           500
-#define CFG_AUDIO_VOL               300
-
 // i2s speaker
 #define CFG_AUDIO_SPK_PIN_BCLK      26
 #define CFG_AUDIO_SPK_PIN_LRC       13
@@ -101,8 +95,20 @@
 #define CFG_AUDIO_BATTERY_MON_CAL   0.25f
 
 // power management
-#define CFG_PM_LSLEEP_AFTER_MS      60000
-#define CFG_PM_LSLEEP_DURATION_MS   3000
-#define CFG_PM_LSLEEP_AWAKE_MS      100
+#define CFG_PM_LSLEEP_AFTER_MS      60000       // how long to wait before going to sleep
+#define CFG_PM_LSLEEP_DURATION_MS   3000        // light sleep duration for polling
+#define CFG_PM_LSLEEP_AWAKE_MS      100         // how long to be awake in light sleep polling
+
+// audio
+#define CFG_AUDIO_CODEC2_MODE       CODEC2_MODE_1600
+#define CFG_AUDIO_MAX_PKT_SIZE      48          // maximum super frame size
+#define CFG_AUDIO_MAX_VOL           500         // maximum volume
+#define CFG_AUDIO_VOL               300         // default volume
+
+// audio, experimental
+#define CFG_AUDIO_ENABLE_PRIVACY    false
+#define CFG_AUDIO_PRIVACY_KEY \
+byte AudioPrivacyKey[32] = {0xe7,0x5c,0xf0,0x43,0x80,0xec,0x45,0x93,0xe8,0x3b,0xfb,0x72,0x22,0x40,0x19,0x57,\
+                            0x6c,0xde,0x05,0x00,0xff,0x88,0x12,0x42,0x20,0xf2,0x89,0x9d,0x7f,0x57,0xee,0xd6}
 
 #endif // CONFIG_H

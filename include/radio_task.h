@@ -6,9 +6,11 @@
 #include <DebugLog.h>
 #include <RadioLib.h>
 #include <CircularBuffer.h>
+#include <ChaCha.h>
 
 #include "loradv_config.h"
 #include "audio_task.h"
+#include "utils.h"
 #include "config.h"
 
 namespace LoraDv {
@@ -26,9 +28,6 @@ public:
 
   void setFreq(long freq) const;
   inline bool isHalfDuplex() const { return config_->LoraFreqTx != config_->LoraFreqRx; }
-
-  static int getSpeed(int sf, int cr, long bw) { return (int)(sf * (4.0 / cr) / (pow(2.0, sf) / bw)); }
-  static float getSnrLimit(int sf, long bw);
   inline float getRssi() const { return lastRssi_; }
 
   bool hasData() const;
@@ -62,8 +61,8 @@ private:
   static void task(void *param);
 
   void rigTask();
-  void rigTaskReceive(byte *packetBuf);
-  void rigTaskTransmit(byte *packetBuf);
+  void rigTaskReceive(byte *packetBuf, byte *tmpBuf);
+  void rigTaskTransmit(byte *packetBuf, byte *tmpBuf);
   void rigTaskStartReceive();
   void rigTaskStartTransmit();
 
@@ -72,6 +71,9 @@ private:
 
   std::shared_ptr<MODULE_NAME> rig_;
   std::shared_ptr<AudioTask> audioTask_;
+
+  uint8_t iv_[8];
+  std::shared_ptr<ChaCha> cipher_;
 
   static TaskHandle_t loraTaskHandle_;
 

@@ -11,6 +11,7 @@
 
 #include "loradv_config.h"
 #include "radio_task.h"
+#include "utils.h"
 
 namespace LoraDv {
 
