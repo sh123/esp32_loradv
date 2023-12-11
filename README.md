@@ -1,7 +1,7 @@
 # ESP32 Codec2 DV Handheld Transceiver
 
 ## Introduction
-This project is amateur radio ESP32 based LoRa/FSK Codec2 DV trasceiver, which is using 1W E22-400M30S (SX1268) radio module.
+This project is amateur/ISM radio ESP32 based LoRa/FSK Codec2 DV handheld trasceiver, which is using 1W E22-400M30S (SX1268) radio module (UHF, 70cm band).
 
 It is interoperable with https://github.com/sh123/codec2_talkie application.
 
