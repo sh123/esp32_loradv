@@ -33,7 +33,6 @@ public:
   inline int getVolume() const { return volume_; }
 
 private:
-  const uint32_t CfgAudioSampleRate = 8000;       // audio sample rate
   const i2s_port_t CfgAudioI2sSpkId = I2S_NUM_0;  // audio i2s speaker number
   const i2s_port_t CfgAudioI2sMicId = I2S_NUM_1;  // audio i2s mic number
 
