@@ -11,12 +11,12 @@ class HwMonitor {
 
 public:
   HwMonitor();
-  void setup(std::shared_ptr<Config> config);
+  void setup(std::shared_ptr<const Config> config);
 
   float getBatteryVoltage() const;
 
 private:
-  std::shared_ptr<Config> config_;
+  std::shared_ptr<const Config> config_;
 
 };
 

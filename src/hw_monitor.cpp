@@ -6,7 +6,7 @@ HwMonitor::HwMonitor()
 {
 }
 
-void HwMonitor::setup(std::shared_ptr<Config> config)
+void HwMonitor::setup(std::shared_ptr<const Config> config)
 {
   config_ = config;
 }

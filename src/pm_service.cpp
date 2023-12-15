@@ -8,7 +8,7 @@ PmService::PmService()
 {
 }   
 
-void PmService::setup(std::shared_ptr<Config> config, std::shared_ptr<Adafruit_SSD1306> display)
+void PmService::setup(std::shared_ptr<const Config> config, std::shared_ptr<Adafruit_SSD1306> display)
 {
   config_ = config;
   display_ = display;

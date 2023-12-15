@@ -15,7 +15,7 @@ RadioTask::RadioTask()
 {
 }
 
-void RadioTask::start(std::shared_ptr<Config> config, std::shared_ptr<AudioTask> audioTask)
+void RadioTask::start(std::shared_ptr<const Config> config, std::shared_ptr<AudioTask> audioTask)
 {
   config_ = config;
   audioTask_ = audioTask;

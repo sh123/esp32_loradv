@@ -22,7 +22,7 @@ class RadioTask {
 public:
   RadioTask();
 
-  void start(std::shared_ptr<Config> config, std::shared_ptr<AudioTask> audioTask);
+  void start(std::shared_ptr<const Config> config, std::shared_ptr<AudioTask> audioTask);
   inline void stop() { isRunning_ = false; }
   bool loop();
 
@@ -67,7 +67,7 @@ private:
   void rigTaskStartTransmit();
 
 private:
-  std::shared_ptr<Config> config_;
+  std::shared_ptr<const Config> config_;
 
   std::shared_ptr<MODULE_NAME> rig_;
   std::shared_ptr<AudioTask> audioTask_;
