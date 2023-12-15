@@ -11,7 +11,7 @@ AudioTask::AudioTask()
 {
 }
 
-void AudioTask::start(std::shared_ptr<Config> config, std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService)
+void AudioTask::start(std::shared_ptr<const Config> config, std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService)
 {
   config_ = config;
   radioTask_ = radioTask;
@@ -33,7 +33,7 @@ void AudioTask::installAudio(int bytesPerSample) const
   // speaker
   i2s_config_t i2sSpeakerConfig = {
     .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
-    .sample_rate = CfgAudioSampleRate,
+    .sample_rate = config_->AudioSampleRate_,
     .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
     .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
     .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_STAND_I2S),
@@ -59,7 +59,7 @@ void AudioTask::installAudio(int bytesPerSample) const
   // mic
   i2s_config_t i2sMicConfig = {
     .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX),
-    .sample_rate = CfgAudioSampleRate,
+    .sample_rate = config_->AudioSampleRate_,
     .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
     .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
     .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_STAND_I2S),

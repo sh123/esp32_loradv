@@ -60,6 +60,7 @@ public:
   byte EncoderSteps_;    // Encoder number of steps
 
   // audio params
+  uint32_t AudioSampleRate_; // Sample rate
   int AudioCodec2Mode;   // Audio Codec2 mode
   int AudioMaxPktSize;   // Aggregated packet maximum size
 
@@ -77,7 +78,7 @@ public:
   int AudioMaxVol_;      // maximum volume
   int AudioVol;          // current volume
 
-  // encryption
+  // privacy
   bool AudioEnPriv;     // enable/disable privacy
   byte AudioPrivacyKey_[32]; // privacy key
 

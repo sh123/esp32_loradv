@@ -100,6 +100,7 @@
 #define CFG_PM_LSLEEP_AWAKE_MS      100         // how long to be awake in light sleep polling
 
 // audio
+#define CFG_AUDIO_SAMPLE_RATE       8000
 #define CFG_AUDIO_CODEC2_MODE       CODEC2_MODE_1600
 #define CFG_AUDIO_MAX_PKT_SIZE      48          // maximum super frame size
 #define CFG_AUDIO_MAX_VOL           500         // maximum volume

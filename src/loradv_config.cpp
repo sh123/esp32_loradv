@@ -61,6 +61,7 @@ void Config::InitializeDefault()
   EncoderSteps_ = CFG_ENCODER_STEPS;
 
   // audio parameters
+  AudioSampleRate_ = CFG_AUDIO_SAMPLE_RATE;
   AudioCodec2Mode = CFG_AUDIO_CODEC2_MODE;
   AudioMaxPktSize = CFG_AUDIO_MAX_PKT_SIZE;
   AudioMaxVol_ = CFG_AUDIO_MAX_VOL;

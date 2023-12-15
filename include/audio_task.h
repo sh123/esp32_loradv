@@ -18,7 +18,7 @@ class AudioTask {
 public:
   AudioTask();
 
-  void start(std::shared_ptr<Config> config, std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService);
+  void start(std::shared_ptr<const Config> config, std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService);
   inline void stop() { isRunning_ = false; }
   bool loop();
 
@@ -58,7 +58,7 @@ private:
   void playTimer();
 
 private:
-  std::shared_ptr<Config> config_;
+  std::shared_ptr<const Config> config_;
   TaskHandle_t audioTaskHandle_;
 
   std::shared_ptr<RadioTask> radioTask_;
