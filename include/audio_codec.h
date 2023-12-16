@@ -14,6 +14,11 @@ public:
 
   virtual int encode(uint8_t *encodedOut, int16_t *pcmIn) = 0;
   virtual int decode(int16_t *pcmOut, uint8_t *encodedIn, uint16_t encodedSize) = 0;
+
+  virtual bool isFixedFrameSize() const = 0;
+  
+  virtual int getBytesPerFrame() const = 0;
+  virtual int getPcmSamplesPerFrame() const = 0;
 };
 
 } // namespace LoraDv

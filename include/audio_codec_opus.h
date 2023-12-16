@@ -15,15 +15,21 @@ public:
   virtual int encode(uint8_t *encodedOut, int16_t *pcmIn) override;
   virtual int decode(int16_t *pcmOut, uint8_t *encodedIn, uint16_t encodedSize) override;
 
+  virtual bool isFixedFrameSize() const override { return false; }
+
+  virtual int getBytesPerFrame() const override { return encodedFrameBufferSize_; }
+  virtual int getPcmSamplesPerFrame() const override { return pcmFrameBufferSize_; };
+
 private:
   const int CfgComplexity = 0;
+  const int CfgEncodedFrameBufferSize = 1024;
 
   OpusEncoder *opusEncoder_;
   OpusDecoder *opusDecoder_;
 
-  int pcmSampleSize_;
-  int pcmSampleOutSize_;
-  int encodedFrameSize_;
+  int pcmFrameSize_;
+  int pcmFrameBufferSize_;
+  int encodedFrameBufferSize_;
 };
 
 }

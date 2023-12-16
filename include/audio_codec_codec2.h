@@ -14,6 +14,11 @@ public:
   virtual int encode(uint8_t *encodedOut, int16_t *pcmIn) override;
   virtual int decode(int16_t *pcmOut, uint8_t *encodedIn, uint16_t encodedSize) override;
 
+  virtual bool isFixedFrameSize() const override { return true; }
+
+  virtual int getBytesPerFrame() const override;
+  virtual int getPcmSamplesPerFrame() const override;
+
 private:
   struct CODEC2 *codec_; 
 
