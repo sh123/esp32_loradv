@@ -17,8 +17,8 @@ public:
 
   virtual bool isFixedFrameSize() const = 0;
   
-  virtual int getBytesPerFrame() const = 0;
-  virtual int getPcmSamplesPerFrame() const = 0;
+  virtual int getFrameBufferSize() const = 0;
+  virtual int getPcmBufferSize() const = 0;
 };
 
 } // namespace LoraDv

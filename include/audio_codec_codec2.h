@@ -16,8 +16,8 @@ public:
 
   virtual bool isFixedFrameSize() const override { return true; }
 
-  virtual int getBytesPerFrame() const override;
-  virtual int getPcmSamplesPerFrame() const override;
+  virtual int getFrameBufferSize() const override;
+  virtual int getPcmBufferSize() const override;
 
 private:
   struct CODEC2 *codec_; 

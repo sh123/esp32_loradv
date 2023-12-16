@@ -17,8 +17,8 @@ public:
 
   virtual bool isFixedFrameSize() const override { return false; }
 
-  virtual int getBytesPerFrame() const override { return encodedFrameBufferSize_; }
-  virtual int getPcmSamplesPerFrame() const override { return pcmFrameBufferSize_; };
+  virtual int getFrameBufferSize() const override { return encodedFrameBufferSize_; }
+  virtual int getPcmBufferSize() const override { return pcmFrameBufferSize_; };
 
 private:
   const int CfgComplexity = 0;
