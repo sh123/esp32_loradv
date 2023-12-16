@@ -39,12 +39,17 @@ int AudioCodecCodec2::decode(int16_t *pcmOut, uint8_t *encodedIn, uint16_t encod
     return codecSamplesPerFrame_;
 }
 
-int AudioCodecCodec2::getFrameBufferSize() const
+int AudioCodecCodec2::getFrameSize() const
 {
   return codec2_bytes_per_frame(codec_);
 }
 
-int AudioCodecCodec2::getPcmBufferSize() const
+int AudioCodecCodec2::getPcmFrameSize() const
+{
+  return codec2_samples_per_frame(codec_);
+}
+
+int AudioCodecCodec2::getPcmFrameBufferSize() const
 {
   return codec2_samples_per_frame(codec_);
 }

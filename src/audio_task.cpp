@@ -11,8 +11,8 @@ AudioTask::AudioTask()
   , radioTask_(nullptr)
   , pmService_(nullptr)
   , audioCodec_(nullptr)
-  , codecSamples_(0)
-  , codecBits_(0)
+  , pcmFrameBuffer_(0)
+  , encodedFrameBuffer_(0)
   , codecSamplesPerFrame_(0)
   , codecBytesPerFrame_(0)
   , volume_(0)
@@ -161,22 +161,20 @@ void AudioTask::audioTask()
   LOG_INFO("Audio task started");
   isRunning_ = true;
 
+  // select and codec
   if (config_->AudioCodec == CFG_AUDIO_CODEC_CODEC2)
     audioCodec_.reset(new AudioCodecCodec2());
   else
     audioCodec_.reset(new AudioCodecOpus());
 
-  // construct codec2
-  codec_ = codec2_create(config_->AudioCodec2Mode);
-  if (codec_ == NULL) {
-    LOG_ERROR("Failed to create codec2");
-    return;
-  }
-  codecSamplesPerFrame_ = codec2_samples_per_frame(codec_);
-  codecBytesPerFrame_ = codec2_bytes_per_frame(codec_);
-  codecSamples_ = new int16_t[codecSamplesPerFrame_];
-  codecBits_ = new uint8_t[codecBytesPerFrame_];
-  LOG_INFO("C2 initialized", config_->AudioCodec2Mode, codecSamplesPerFrame_, codecBytesPerFrame_);
+  audioCodec_->start(config_);
+
+  // construct buffers
+  codecSamplesPerFrame_ = audioCodec_->getPcmFrameSize();
+  codecBytesPerFrame_ = audioCodec_->getFrameSize();
+  pcmFrameBuffer_ = new int16_t[audioCodec_->getPcmFrameBufferSize()];
+  encodedFrameBuffer_ = new uint8_t[codecBytesPerFrame_];
+
   delay(3000);
   installAudio(codecSamplesPerFrame_);
 
@@ -192,9 +190,9 @@ void AudioTask::audioTask()
     }
   }
 
-  delete codecBits_;
-  delete codecSamples_;
-  codec2_destroy(codec_);
+  delete encodedFrameBuffer_;
+  delete pcmFrameBuffer_;
+  audioCodec_->stop();
 
   uninstallAudio();
 
@@ -210,6 +208,8 @@ void AudioTask::audioTaskPlay()
   LOG_DEBUG("Playing audio");
   double vol = (double)volume_ / (double)100.0;
   LOG_DEBUG("Volume is", vol);
+
+  // run till ptt is not pressed and radio has data
   while (!isPttOn_ && radioTask_->hasData()) {
     byte packetSize;
     if (!radioTask_->readPacketSize(packetSize)) {
@@ -221,19 +221,24 @@ void AudioTask::audioTaskPlay()
     LOG_DEBUG("Playing packet", packetSize);
     // split by frame, decode and play
     for (int i = 0; i < packetSize; i++) {
+      // read byte by byte from radio task
       byte b;
       if (!radioTask_->readNextByte(b)) {
         LOG_ERROR("Failed to read next byte");
         vTaskDelay(1);
         continue;
       }
-      codecBits_[i % codecBytesPerFrame_] = b;
-      if (i % codecBytesPerFrame_ == codecBytesPerFrame_ - 1) {
-        codec2_decode(codec_, codecSamples_, codecBits_);
-        for (int j = 0; j < codecSamplesPerFrame_; j++) {
-          codecSamples_[j] *= vol;
+      // split only if codec has fixed frame size, othewise just process complete packet
+      int subFrameSize = audioCodec_->isFixedFrameSize() ? codecBytesPerFrame_ : packetSize;
+      encodedFrameBuffer_[i % subFrameSize] = b;
+      // one encoded audio frame is read, decode and play
+      if (i % subFrameSize == subFrameSize - 1) {
+        int pcmFrameSize = audioCodec_->decode(pcmFrameBuffer_, encodedFrameBuffer_, subFrameSize);
+        // adjust volume
+        for (int j = 0; j < pcmFrameSize; j++) {
+          pcmFrameBuffer_[j] *= vol;
         }
-        i2s_write(CfgAudioI2sSpkId, codecSamples_, sizeof(uint16_t) * codecSamplesPerFrame_, &bytesWritten, portMAX_DELAY);
+        i2s_write(CfgAudioI2sSpkId, pcmFrameBuffer_, sizeof(uint16_t) * pcmFrameSize, &bytesWritten, portMAX_DELAY);
         vTaskDelay(1);
       }
     }
@@ -245,11 +250,12 @@ void AudioTask::audioTaskRecord()
   size_t bytesRead;
   LOG_DEBUG("Recording audio");
   int packetSize = 0;
-  // record while button is pressed
   i2s_start(CfgAudioI2sMicId);
+  // record while ptt button is pressed
   while (isPttOn_) {
-    // send packet if enough audio encoded frames are accumulated
-    if (packetSize + codecBytesPerFrame_ > config_->AudioMaxPktSize) {
+    // send packet if enough audio encoded frames are aggregated for fixed frame codec
+    // .. or send immediately for variable size frame codec
+    if (!audioCodec_->isFixedFrameSize() || packetSize + codecBytesPerFrame_ > config_->AudioMaxPktSize) {
       LOG_DEBUG("Recorded packet", packetSize);
       if (!radioTask_->writePacketSize(packetSize)) {
         LOG_ERROR("Failed to write packet size");
@@ -263,14 +269,15 @@ void AudioTask::audioTaskRecord()
     // read and encode one sample
     if (!isPttOn_) break;
     size_t bytesRead;
-    i2s_read(CfgAudioI2sMicId, codecSamples_, sizeof(uint16_t) * codecSamplesPerFrame_, &bytesRead, portMAX_DELAY);
+    i2s_read(CfgAudioI2sMicId, pcmFrameBuffer_, sizeof(uint16_t) * codecSamplesPerFrame_, &bytesRead, portMAX_DELAY);
     if (!isPttOn_) break;
-    codec2_encode(codec_, codecBits_, codecSamples_);
+    int encodedFrameSize = audioCodec_->encode(encodedFrameBuffer_, pcmFrameBuffer_);
     if (!isPttOn_) break;
-    for (int i = 0; i < codecBytesPerFrame_; i++) {
-      radioTask_->writeNextByte(codecBits_[i]);
+    // transfer data to the radio packet queue
+    for (int i = 0; i < encodedFrameSize; i++) {
+      radioTask_->writeNextByte(encodedFrameBuffer_[i]);
     }
-    packetSize += codecBytesPerFrame_;
+    packetSize += encodedFrameSize;
     vTaskDelay(1);
   } // btn_pressed_
   // send remaining tail audio encoded samples

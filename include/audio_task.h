@@ -68,10 +68,9 @@ private:
   Timer<1>::Task playTimerTask_;
 
   std::shared_ptr<AudioCodec> audioCodec_;
-  
-  struct CODEC2 *codec_; 
-  int16_t *codecSamples_;
-  uint8_t *codecBits_;
+
+  int16_t *pcmFrameBuffer_;
+  uint8_t *encodedFrameBuffer_;
 
   int codecSamplesPerFrame_;
   int codecBytesPerFrame_;
