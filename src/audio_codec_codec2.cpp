@@ -2,6 +2,13 @@
 
 namespace LoraDv {
 
+AudioCodecCodec2::AudioCodecCodec2()
+  : codec_(0)
+  , codecSamplesPerFrame_(0)
+  , codecBytesPerFrame_(0)
+{
+}
+
 bool AudioCodecCodec2::start(std::shared_ptr<const Config> config) 
 {
   codec_ = codec2_create(config->AudioCodec2Mode);

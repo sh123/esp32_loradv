@@ -2,8 +2,18 @@
 
 namespace LoraDv {
 
+  std::shared_ptr<const Config> config_;
+  std::shared_ptr<Adafruit_SSD1306> display_;
+
+  Timer<1> lightSleepTimer_;
+  Timer<1>::Task lightSleepTimerTask_;
+
+  bool isExitFromSleep_;
+
 PmService::PmService() 
-  : lightSleepTimerTask_(0)
+  : config_(nullptr)
+  , display_(nullptr)
+  , lightSleepTimerTask_(0)
   , isExitFromSleep_(false)
 {
 }   

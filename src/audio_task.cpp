@@ -1,9 +1,23 @@
 #include "audio_task.h"
 
+#include "audio_codec_codec2.h"
+#include "audio_codec_opus.h"
+
 namespace LoraDv {
 
 AudioTask::AudioTask()
-  : isPttOn_(false)
+  : config_(nullptr)
+  , audioTaskHandle_(0)
+  , radioTask_(nullptr)
+  , pmService_(nullptr)
+  , audioCodec_(nullptr)
+  , codecSamples_(0)
+  , codecBits_(0)
+  , codecSamplesPerFrame_(0)
+  , codecBytesPerFrame_(0)
+  , volume_(0)
+  , maxVolume_(0)
+  , isPttOn_(false)
   , isRunning_(false)
   , shouldUpdateScreen_(false)
   , isPlaying_(false)
@@ -146,6 +160,11 @@ void AudioTask::audioTask()
 {
   LOG_INFO("Audio task started");
   isRunning_ = true;
+
+  if (config_->AudioCodec == CFG_AUDIO_CODEC_CODEC2)
+    audioCodec_.reset(new AudioCodecCodec2());
+  else
+    audioCodec_.reset(new AudioCodecOpus());
 
   // construct codec2
   codec_ = codec2_create(config_->AudioCodec2Mode);

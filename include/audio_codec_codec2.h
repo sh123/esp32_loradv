@@ -5,9 +5,11 @@
 
 namespace LoraDv {
 
-class AudioCodecCodec2 : AudioCodec {
+class AudioCodecCodec2 : public AudioCodec {
 
 public:
+  AudioCodecCodec2();
+
   virtual bool start(std::shared_ptr<const Config> config) override;
   virtual void stop() override;
 

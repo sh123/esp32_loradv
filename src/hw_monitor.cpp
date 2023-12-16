@@ -3,6 +3,7 @@
 namespace LoraDv {
 
 HwMonitor::HwMonitor() 
+  : config_(nullptr)
 {
 }
 

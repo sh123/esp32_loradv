@@ -6,12 +6,15 @@ volatile bool RadioTask::loraIsrEnabled_ = true;
 TaskHandle_t RadioTask::loraTaskHandle_;
 
 RadioTask::RadioTask()
-  : rigIsImplicitMode_(false)
+  : config_(nullptr)
+  , rig_(nullptr)
+  , audioTask_(nullptr)
+  , cipher_(new ChaCha())
+  , rigIsImplicitMode_(false)
   , isIsrInstalled_(false)
   , isRunning_(false)
   , shouldUpdateScreen_(false)
   , lastRssi_(0)
-  , cipher_(new ChaCha())
 {
 }
 

@@ -2,6 +2,15 @@
 
 namespace LoraDv {
 
+AudioCodecOpus::AudioCodecOpus() 
+  : opusEncoder_(0)
+  , opusDecoder_(0)
+  , pcmFrameSize_(0)
+  , pcmFrameBufferSize_(0)
+  , encodedFrameBufferSize_(0)
+{
+}
+
 bool AudioCodecOpus::start(std::shared_ptr<const Config> config) 
 {
   int encoderError;

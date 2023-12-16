@@ -8,6 +8,7 @@
 #include "radio_task.h"
 #include "loradv_config.h"
 #include "pm_service.h"
+#include "audio_codec.h"
 
 namespace LoraDv {
 
@@ -66,6 +67,8 @@ private:
   Timer<1> playTimer_;
   Timer<1>::Task playTimerTask_;
 
+  std::shared_ptr<AudioCodec> audioCodec_;
+  
   struct CODEC2 *codec_; 
   int16_t *codecSamples_;
   uint8_t *codecBits_;
