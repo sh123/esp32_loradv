@@ -16,6 +16,8 @@ public:
   virtual int decode(int16_t *pcmOut, uint8_t *encodedIn, uint16_t encodedSize) override;
 
 private:
+  const int CfgComplexity = 0;
+
   OpusEncoder *opusEncoder_;
   OpusDecoder *opusDecoder_;
 

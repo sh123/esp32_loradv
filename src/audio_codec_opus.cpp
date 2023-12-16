@@ -15,8 +15,8 @@ bool AudioCodecOpus::start(std::shared_ptr<const Config> config)
     LOG_ERROR("Failed to initialize OPUS encoder, error", encoderError);
     return false;
   }
-  opus_encoder_ctl(opusEncoder_, OPUS_SET_BITRATE(3200));
-  opus_encoder_ctl(opusEncoder_, OPUS_SET_COMPLEXITY(0));
+  opus_encoder_ctl(opusEncoder_, OPUS_SET_BITRATE(config->AudioOpusRate));
+  opus_encoder_ctl(opusEncoder_, OPUS_SET_COMPLEXITY(CfgComplexity));
   opus_encoder_ctl(opusEncoder_, OPUS_SET_SIGNAL(OPUS_SIGNAL_VOICE));
 
   // configure decoder
@@ -27,7 +27,7 @@ bool AudioCodecOpus::start(std::shared_ptr<const Config> config)
     return false;
   } 
 
-  pcmSampleSize_ = (int)(config->AudioSampleRate_ / 1000 * 120);
+  pcmSampleSize_ = (int)(config->AudioSampleRate_ / 1000 * config->AudioOpusPcmLen);
   pcmSampleOutSize_ = 10 * pcmSampleSize_;
   encodedFrameSize_ = 1024;
   return true;

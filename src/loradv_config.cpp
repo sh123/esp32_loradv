@@ -68,6 +68,10 @@ void Config::InitializeDefault()
   AudioVol = CFG_AUDIO_VOL;
   AudioEnPriv = CFG_AUDIO_ENABLE_PRIVACY;
 
+  // audio, opus
+  AudioOpusRate = CFG_AUDIO_OPUS_BITRATE;
+  AudioOpusPcmLen = CFG_AUDIO_OPUS_PCMLEN;
+
   // i2s speaker
   AudioSpkPinBclk_ = CFG_AUDIO_SPK_PIN_BCLK;
   AudioSpkPinLrc_ = CFG_AUDIO_SPK_PIN_LRC;
@@ -209,6 +213,16 @@ void Config::Load()
   } else {
     prefs_.putInt(N(ModType), ModType);
   } 
+  if (prefs_.isKey(N(AudioOpusRate))) {
+    AudioOpusRate = prefs_.getInt(N(AudioOpusRate));
+  } else {
+    prefs_.putInt(N(AudioOpusRate), AudioOpusRate);
+  } 
+  if (prefs_.isKey(N(AudioOpusPcmLen))) {
+    AudioOpusPcmLen = prefs_.getInt(N(AudioOpusPcmLen));
+  } else {
+    prefs_.putInt(N(AudioOpusPcmLen), AudioOpusPcmLen);
+  }
   prefs_.end();
   LOG_INFO("Settings are loaded");
 }
@@ -236,6 +250,8 @@ void Config::Save()
   prefs_.putFloat(N(FskRxBw), FskRxBw);
   prefs_.putInt(N(FskShaping), FskShaping);
   prefs_.putInt(N(ModType), ModType);
+  prefs_.putInt(N(AudioOpusRate), AudioOpusRate);
+  prefs_.putInt(N(AudioOpusPcmLen), AudioOpusPcmLen);
   prefs_.end();
   LOG_INFO("Saved settings");
 }

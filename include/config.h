@@ -106,6 +106,10 @@
 #define CFG_AUDIO_MAX_VOL           500         // maximum volume
 #define CFG_AUDIO_VOL               300         // default volume
 
+// audio, opus
+#define CFG_AUDIO_OPUS_BITRATE      3200
+#define CFG_AUDIO_OPUS_PCMLEN       120
+
 // audio, experimental
 #define CFG_AUDIO_ENABLE_PRIVACY    false
 #define CFG_AUDIO_PRIVACY_KEY \
