@@ -472,6 +472,8 @@ SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraFreqRxItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraFreqTxItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraPowerItem(config, ++i)));
+  // modulation, codec
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsModType(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioCodec(config, ++i)));
   // codec2
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioCodec2ModeItem(config, ++i)));
@@ -482,7 +484,6 @@ SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   // audio
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioVolItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioEnablePrivacy(config, ++i)));
-  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsModType(config, ++i)));
   // lora
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraBwItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraSfItem(config, ++i)));
