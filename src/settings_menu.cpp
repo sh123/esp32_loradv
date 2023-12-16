@@ -59,6 +59,47 @@ public:
   void getValue(std::stringstream &s) const { s << config_->LoraPower << "dBm"; }
 };
 
+class SettingsModType : public SettingsItem {
+private:
+  static const int CfgItemsCount = 2;
+public:
+  SettingsModType(std::shared_ptr<Config> config, int index)
+    : SettingsItem(config, index)
+    , items_{ 
+      CFG_AUDIO_CODEC_CODEC2,
+      CFG_AUDIO_CODEC_OPUS
+    }
+    , map_{ 
+      { CFG_AUDIO_CODEC_CODEC2, "Codec2" },
+      { CFG_AUDIO_CODEC_OPUS, "OPUS" }
+    }
+  {
+    for (selIndex_ = 0; selIndex_ < CfgItemsCount; selIndex_++)
+      if (config_->AudioCodec == items_[selIndex_])
+        break;
+  }
+  void changeValue(int delta) {
+    int newIndex = selIndex_ + delta;
+    if (newIndex >= 0 && newIndex < CfgItemsCount) selIndex_ = newIndex;
+    config_->AudioCodec = items_[selIndex_];
+  }
+  void getName(std::stringstream &s) const { s << index_ << ".Audio Codec"; }
+  void getValue(std::stringstream &s) const { 
+    for (int i = 0; i < CfgItemsCount; i++)
+      if (config_->AudioCodec == map_[i].k) {
+        s << map_[i].val; 
+        break;
+      }
+  }
+private:
+  int selIndex_;
+  int items_[CfgItemsCount];
+  struct MapItem { 
+    int k; 
+    const char *val; 
+  } map_[CfgItemsCount];
+};
+
 class SettingsAudioCodec2ModeItem : public SettingsItem {
 private:
   static const int CfgItemsCount = 8;
@@ -177,11 +218,11 @@ public:
   void getValue(std::stringstream &s) const { s << (config_->AudioEnPriv ? "ON" : "OFF"); }
 };
 
-class SettingsModType : public SettingsItem {
+class SettingsAudioCodec : public SettingsItem {
 private:
   static const int CfgItemsCount = 2;
 public:
-  SettingsModType(std::shared_ptr<Config> config, int index)
+  SettingsAudioCodec(std::shared_ptr<Config> config, int index)
     : SettingsItem(config, index)
     , items_{ 
       CFG_MOD_TYPE_LORA,
@@ -431,6 +472,7 @@ SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraFreqRxItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraFreqTxItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraPowerItem(config, ++i)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioCodec(config, ++i)));
   // codec2
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioCodec2ModeItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioMaxPktSizeItem(config, ++i)));

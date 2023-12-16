@@ -223,6 +223,12 @@ void Config::Load()
   } else {
     prefs_.putInt(N(AudioOpusPcmLen), AudioOpusPcmLen);
   }
+  if (prefs_.isKey(N(AudioCodec))) {
+    AudioCodec = prefs_.getInt(N(AudioCodec));
+  } else {
+    prefs_.putInt(N(AudioCodec), AudioCodec);
+  }
+
   prefs_.end();
   LOG_INFO("Settings are loaded");
 }
@@ -252,6 +258,7 @@ void Config::Save()
   prefs_.putInt(N(ModType), ModType);
   prefs_.putInt(N(AudioOpusRate), AudioOpusRate);
   prefs_.putInt(N(AudioOpusPcmLen), AudioOpusPcmLen);
+  prefs_.putInt(N(AudioCodec), AudioCodec);
   prefs_.end();
   LOG_INFO("Saved settings");
 }

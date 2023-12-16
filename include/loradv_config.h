@@ -60,7 +60,10 @@ public:
   byte EncoderSteps_;    // Encoder number of steps
 
   // audio params
+  int AudioCodec;         // type of audio codec, 0 - Codec2, 1 - OPUS
   uint32_t AudioSampleRate_; // Sample rate
+
+  // codec2
   int AudioCodec2Mode;   // Audio Codec2 mode
   int AudioMaxPktSize;   // Aggregated packet maximum size
 
