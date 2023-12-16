@@ -2,6 +2,8 @@
 
 namespace LoraDv {
 
+std::shared_ptr<AiEsp32RotaryEncoder> Service::rotaryEncoder_;
+
 Service::Service()
   : radioTask_(std::make_shared<RadioTask>())
   , audioTask_(std::make_shared<AudioTask>())
