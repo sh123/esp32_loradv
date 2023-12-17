@@ -5,12 +5,13 @@ namespace LoraDv {
 std::shared_ptr<AiEsp32RotaryEncoder> Service::rotaryEncoder_;
 
 Service::Service()
-  : btnPressed_(false)
-  , radioTask_(std::make_shared<RadioTask>())
+  : radioTask_(std::make_shared<RadioTask>())
   , audioTask_(std::make_shared<AudioTask>())
   , pmService_(std::make_shared<PmService>())
   , hwMonitor_(std::make_shared<HwMonitor>())
+  , display_(nullptr)
   , settingsMenu_(nullptr)
+  , btnPressed_(false)
 {
 }
 

@@ -3,10 +3,11 @@
 namespace LoraDv {
 
 HwMonitor::HwMonitor() 
+  : config_(nullptr)
 {
 }
 
-void HwMonitor::setup(std::shared_ptr<Config> config)
+void HwMonitor::setup(std::shared_ptr<const Config> config)
 {
   config_ = config;
 }

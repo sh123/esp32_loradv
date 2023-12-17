@@ -59,6 +59,47 @@ public:
   void getValue(std::stringstream &s) const { s << config_->LoraPower << "dBm"; }
 };
 
+class SettingsModType : public SettingsItem {
+private:
+  static const int CfgItemsCount = 2;
+public:
+  SettingsModType(std::shared_ptr<Config> config, int index)
+    : SettingsItem(config, index)
+    , items_{ 
+      CFG_AUDIO_CODEC_CODEC2,
+      CFG_AUDIO_CODEC_OPUS
+    }
+    , map_{ 
+      { CFG_AUDIO_CODEC_CODEC2, "Codec2" },
+      { CFG_AUDIO_CODEC_OPUS, "OPUS" }
+    }
+  {
+    for (selIndex_ = 0; selIndex_ < CfgItemsCount; selIndex_++)
+      if (config_->AudioCodec == items_[selIndex_])
+        break;
+  }
+  void changeValue(int delta) {
+    int newIndex = selIndex_ + delta;
+    if (newIndex >= 0 && newIndex < CfgItemsCount) selIndex_ = newIndex;
+    config_->AudioCodec = items_[selIndex_];
+  }
+  void getName(std::stringstream &s) const { s << index_ << ".Audio Codec"; }
+  void getValue(std::stringstream &s) const { 
+    for (int i = 0; i < CfgItemsCount; i++)
+      if (config_->AudioCodec == map_[i].k) {
+        s << map_[i].val; 
+        break;
+      }
+  }
+private:
+  int selIndex_;
+  int items_[CfgItemsCount];
+  struct MapItem { 
+    int k; 
+    const char *val; 
+  } map_[CfgItemsCount];
+};
+
 class SettingsAudioCodec2ModeItem : public SettingsItem {
 private:
   static const int CfgItemsCount = 8;
@@ -110,6 +151,52 @@ private:
   } map_[CfgItemsCount];
 };
 
+class SettingsAudioMaxPktSizeItem : public SettingsItem {
+public:
+  SettingsAudioMaxPktSizeItem(std::shared_ptr<Config> config, int index) : SettingsItem(config, index) {}
+  void changeValue(int delta) { 
+    long newVal = config_->AudioMaxPktSize + delta;
+    if (newVal >= 8 && newVal <= 240) config_->AudioMaxPktSize = newVal;
+  }
+  void getName(std::stringstream &s) const { s << index_ << ".Codec2 pkt size"; }
+  void getValue(std::stringstream &s) const { s << config_->AudioMaxPktSize << "bytes"; }
+};
+
+class SettingsAudioOpusRate : public SettingsItem {
+public:
+  SettingsAudioOpusRate(std::shared_ptr<Config> config, int index) : SettingsItem(config, index) {}
+  void changeValue(int delta) { 
+    int newVal = config_->AudioOpusRate + 100 * delta;
+    if (newVal >= 2400 && newVal <= 512000) config_->AudioOpusRate = newVal;
+  }
+  void getName(std::stringstream &s) const { s << index_ << ".OPUS Rate"; }
+  void getValue(std::stringstream &s) const { s << config_->AudioOpusRate << "bps"; }
+};
+
+class SettingsAudioOpusPcmLen : public SettingsItem {
+private:
+  static const int CfgItemsCount = 9;
+public:
+  SettingsAudioOpusPcmLen(std::shared_ptr<Config> config, int index) 
+    : SettingsItem(config, index)
+    , items_{ 2.5, 5, 10, 20, 40, 60, 80, 100, 120 }
+  {
+    for (selIndex_ = 0; selIndex_ < CfgItemsCount; selIndex_++)
+      if (config_->AudioOpusPcmLen == items_[selIndex_])
+        break;
+  }
+  void changeValue(int delta) {
+    int newIndex = selIndex_ + delta;
+    if (newIndex >= 0 && newIndex < CfgItemsCount) selIndex_ = newIndex;
+    config_->AudioOpusPcmLen = items_[selIndex_];
+  }
+  void getName(std::stringstream &s) const { s << index_ << ".OPUS PCM Len"; }
+  void getValue(std::stringstream &s) const { s << config_->AudioOpusPcmLen << "ms"; }
+private:
+  int selIndex_;
+  float items_[CfgItemsCount];
+};
+
 class SettingsAudioVolItem : public SettingsItem {
 public:
   SettingsAudioVolItem(std::shared_ptr<Config> config, int index) : SettingsItem(config, index) {}
@@ -119,17 +206,6 @@ public:
   }
   void getName(std::stringstream &s) const { s << index_ << ".Volume"; }
   void getValue(std::stringstream &s) const { s << config_->AudioVol << "%"; }
-};
-
-class SettingsAudioMaxPktSizeItem : public SettingsItem {
-public:
-  SettingsAudioMaxPktSizeItem(std::shared_ptr<Config> config, int index) : SettingsItem(config, index) {}
-  void changeValue(int delta) { 
-    long newVal = config_->AudioMaxPktSize + delta;
-    if (newVal >= 8 && newVal <= 240) config_->AudioMaxPktSize = newVal;
-  }
-  void getName(std::stringstream &s) const { s << index_ << ".Max packet size"; }
-  void getValue(std::stringstream &s) const { s << config_->AudioMaxPktSize << "bytes"; }
 };
 
 class SettingsAudioEnablePrivacy : public SettingsItem {
@@ -142,11 +218,11 @@ public:
   void getValue(std::stringstream &s) const { s << (config_->AudioEnPriv ? "ON" : "OFF"); }
 };
 
-class SettingsModType : public SettingsItem {
+class SettingsAudioCodec : public SettingsItem {
 private:
   static const int CfgItemsCount = 2;
 public:
-  SettingsModType(std::shared_ptr<Config> config, int index)
+  SettingsAudioCodec(std::shared_ptr<Config> config, int index)
     : SettingsItem(config, index)
     , items_{ 
       CFG_MOD_TYPE_LORA,
@@ -323,7 +399,6 @@ private:
   } map_[CfgItemsCount];
 };
 
-
 class SettingsBatteryMonCalItem : public SettingsItem {
 public:
   SettingsBatteryMonCalItem(std::shared_ptr<Config> config, int index) : SettingsItem(config, index) {}
@@ -392,22 +467,33 @@ SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   , isValueSelected_(false)
 {
   int i = 0;
+  // frequency
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraFreqStepItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraFreqRxItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraFreqTxItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraPowerItem(config, ++i)));
+  // modulation, codec
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsModType(config, ++i)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioCodec(config, ++i)));
+  // codec2
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioCodec2ModeItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioMaxPktSizeItem(config, ++i)));
+  // opus
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioOpusRate(config, ++i)));
+  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioOpusPcmLen(config, ++i)));
+  // audio
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioVolItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsAudioEnablePrivacy(config, ++i)));
-  items_.push_back(std::shared_ptr<SettingsItem>(new SettingsModType(config, ++i)));
+  // lora
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraBwItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraSfItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsLoraCrItem(config, ++i)));
+  // fsk
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsFskBitRate(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsFskFreqDev(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsFskRxBw(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsFskShaping(config, ++i)));
+  // other
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsBatteryMonCalItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsPmLightSleepAfterMsItem(config, ++i)));
   items_.push_back(std::shared_ptr<SettingsItem>(new SettingsSaveItem(config, ++i)));

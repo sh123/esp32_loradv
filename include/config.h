@@ -5,16 +5,16 @@
 #include <RadioLib.h>
 
 // saved settings version, increment to load new settings
-#define CFG_VERSION  7
+#define CFG_VERSION                 10
 
 // Comment out for SX127X module usage, passed from platform.io
 //#define USE_SX126X
 
 // Check your module name at https://github.com/jgromes/RadioLib/wiki/Modules
 #ifdef USE_SX126X
-#define MODULE_NAME   SX1268
+#define MODULE_NAME                 SX1268
 #else
-#define MODULE_NAME   SX1278
+#define MODULE_NAME                 SX1278
 #endif
 
 #define SERIAL_BAUD_RATE            115200  // USB serial baud rate
@@ -100,10 +100,18 @@
 #define CFG_PM_LSLEEP_AWAKE_MS      100         // how long to be awake in light sleep polling
 
 // audio
+#define CFG_AUDIO_CODEC_CODEC2      0
+#define CFG_AUDIO_CODEC_OPUS        1
+#define CFG_AUDIO_CODEC             CFG_AUDIO_CODEC_CODEC2
+#define CFG_AUDIO_SAMPLE_RATE       8000
 #define CFG_AUDIO_CODEC2_MODE       CODEC2_MODE_1600
 #define CFG_AUDIO_MAX_PKT_SIZE      48          // maximum super frame size
 #define CFG_AUDIO_MAX_VOL           500         // maximum volume
 #define CFG_AUDIO_VOL               300         // default volume
+
+// audio, opus
+#define CFG_AUDIO_OPUS_BITRATE      3200
+#define CFG_AUDIO_OPUS_PCMLEN       120
 
 // audio, experimental
 #define CFG_AUDIO_ENABLE_PRIVACY    false

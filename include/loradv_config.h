@@ -60,8 +60,16 @@ public:
   byte EncoderSteps_;    // Encoder number of steps
 
   // audio params
+  int AudioCodec;         // type of audio codec, 0 - Codec2, 1 - OPUS
+  uint32_t AudioSampleRate_; // Sample rate
+
+  // codec2
   int AudioCodec2Mode;   // Audio Codec2 mode
   int AudioMaxPktSize;   // Aggregated packet maximum size
+
+  // audio opus
+  int AudioOpusRate;  // opus bit rate 2.4 - 512 kbps
+  float AudioOpusPcmLen;   // opus pcm frame length, 2.5, 5, 10, 20, 40, 60, 80, 100, 120 ms  
 
   // i2s speaker
   byte AudioSpkPinBclk_; // Speaker i2s clk pin
@@ -77,7 +85,7 @@ public:
   int AudioMaxVol_;      // maximum volume
   int AudioVol;          // current volume
 
-  // encryption
+  // privacy
   bool AudioEnPriv;     // enable/disable privacy
   byte AudioPrivacyKey_[32]; // privacy key
 

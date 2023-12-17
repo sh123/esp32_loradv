@@ -6,16 +6,19 @@ volatile bool RadioTask::loraIsrEnabled_ = true;
 TaskHandle_t RadioTask::loraTaskHandle_;
 
 RadioTask::RadioTask()
-  : rigIsImplicitMode_(false)
+  : config_(nullptr)
+  , rig_(nullptr)
+  , audioTask_(nullptr)
+  , cipher_(new ChaCha())
+  , rigIsImplicitMode_(false)
   , isIsrInstalled_(false)
   , isRunning_(false)
   , shouldUpdateScreen_(false)
   , lastRssi_(0)
-  , cipher_(new ChaCha())
 {
 }
 
-void RadioTask::start(std::shared_ptr<Config> config, std::shared_ptr<AudioTask> audioTask)
+void RadioTask::start(std::shared_ptr<const Config> config, std::shared_ptr<AudioTask> audioTask)
 {
   config_ = config;
   audioTask_ = audioTask;
@@ -285,9 +288,10 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
     // transmit
     int loraRadioState = rig_->transmit(sendBuf, txBytesCnt);
     if (loraRadioState != RADIOLIB_ERR_NONE) {
-        LOG_ERROR("Lora radio transmit failed:", loraRadioState);
+        LOG_ERROR("Radio transmit failed:", loraRadioState, txBytesCnt);
+    } else {
+      LOG_DEBUG("Transmitted packet", txBytesCnt);
     }
-    LOG_DEBUG("Transmitted packet", txBytesCnt);
     vTaskDelay(1);
   }
 }
