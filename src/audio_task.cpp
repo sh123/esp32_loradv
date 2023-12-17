@@ -259,7 +259,8 @@ void AudioTask::audioTaskRecord()
   while (isPttOn_) {
     // send packet if enough audio encoded frames are aggregated for fixed frame codec
     // .. or send immediately for variable size frame codec
-    if (!audioCodec_->isFixedFrameSize() || packetSize + codecBytesPerFrame_ > config_->AudioMaxPktSize) {
+    if ((!audioCodec_->isFixedFrameSize() && packetSize > 0) || 
+         (audioCodec_->isFixedFrameSize() && packetSize + codecBytesPerFrame_ > config_->AudioMaxPktSize)) {
       LOG_DEBUG("Recorded packet", packetSize);
       if (!radioTask_->writePacketSize(packetSize)) {
         LOG_ERROR("Failed to write packet size");

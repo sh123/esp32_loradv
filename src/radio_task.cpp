@@ -288,9 +288,10 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
     // transmit
     int loraRadioState = rig_->transmit(sendBuf, txBytesCnt);
     if (loraRadioState != RADIOLIB_ERR_NONE) {
-        LOG_ERROR("Lora radio transmit failed:", loraRadioState);
+        LOG_ERROR("Radio transmit failed:", loraRadioState, txBytesCnt);
+    } else {
+      LOG_DEBUG("Transmitted packet", txBytesCnt);
     }
-    LOG_DEBUG("Transmitted packet", txBytesCnt);
     vTaskDelay(1);
   }
 }
