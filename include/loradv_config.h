@@ -69,7 +69,7 @@ public:
 
   // audio opus
   int AudioOpusRate;  // opus bit rate 2.4 - 512 kbps
-  int AudioOpusPcmLen;   // opus pcm frame length, 2.5, 5, 10, 20, 40, 60, 80, 100, 120 ms  
+  float AudioOpusPcmLen;   // opus pcm frame length, 2.5, 5, 10, 20, 40, 60, 80, 100, 120 ms  
 
   // i2s speaker
   byte AudioSpkPinBclk_; // Speaker i2s clk pin
