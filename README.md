@@ -1,7 +1,7 @@
-# ESP32 Codec2 DV Handheld Transceiver
+# ESP32 Codec2/OPUS DV Handheld Transceiver
 
 ## Introduction
-This project is amateur/ISM radio ESP32 based LoRa/FSK Codec2 DV handheld trasceiver, which is using 1W E22-400M30S (SX1268) radio module (UHF, 70cm band).
+This project is amateur/ISM radio ESP32 based LoRa/FSK Codec2/OPUS DV handheld trasceiver, which is using 1W E22-400M30S (SX1268) radio module (UHF, 70cm band).
 
 It is interoperable with https://github.com/sh123/codec2_talkie application.
 
@@ -17,6 +17,7 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 - Goes into ESP32 light sleep when no activity, so all power consumption is around 30-40mA when in RX, wakes up on new data from radio module or when user starts transmitting
 - Settings menu on long encoder button click
 - Supports LoRa and FSK modulation with configurable modulation parameters from settings
+- Supports Codec2 (low bit rate) and OPUS (medium/high bit rate) audio codecs
 - Output power tunable from settings from ~1mW (for ISM) up to 1W (for amateur radio experiments).
 
 ## Build instructions
