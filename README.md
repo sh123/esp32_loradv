@@ -17,7 +17,7 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 - Goes into ESP32 light sleep when no activity, so all power consumption is around 30-40mA when in RX, wakes up on new data from radio module or when user starts transmitting
 - Settings menu on long encoder button click
 - Supports LoRa and FSK modulation with configurable modulation parameters from settings
-- Supports Codec2 (low bit rate) and OPUS (medium/high bit rate) audio codecs, could be select from settings
+- Supports Codec2 (low bit rate) and OPUS (medium/high bit rate) audio codecs, could be selected from settings
 - Output power tunable from settings from ~1mW (for ISM) up to 1W (for amateur radio experiments).
 
 ## Build instructions
