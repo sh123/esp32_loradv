@@ -5,7 +5,7 @@ This project is amateur/ISM radio ESP32 based LoRa/FSK Codec2/OPUS DV handheld t
 
 It is interoperable with https://github.com/sh123/codec2_talkie application.
 
-It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional peripherals/features:
+It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional peripherals:
 - I2S speaker module MAX98357A + 4ohm 3w speaker (40mm diameter)
 - I2S microphone INMP441
 - PTT button
@@ -14,11 +14,13 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 - Battery voltage monitoring
 - Powered from a single commonly avaialble 18650 battery
 - Uses combined charge + 5v boost controller based on Hotchip HT4928S
-- Goes into ESP32 light sleep when no activity, so all power consumption is around 30-40mA when in RX, wakes up on new data from radio module or when user starts transmitting
-- Settings menu on long encoder button click
+Supports next features:
 - Supports LoRa and FSK modulation with configurable modulation parameters from settings
-- Supports Codec2 (low bit rate) and OPUS (medium/high bit rate) audio codecs, could be selected from settings
-- Output power tunable from settings from ~1mW (for ISM) up to 1W (for amateur radio experiments).
+- Supports Codec2 (low bit rate) and OPUS (medium/high bit rate) audio codecs, codec could be selected from settings
+- Goes into ESP32 light sleep when no activity, so all power consumption is around 30-40mA when in RX, wakes up on new data from radio module or when user starts transmitting
+- Settings menu on long encoder button click, allows to change frequency and other parameters
+- Output power tunable from settings from ~1mW (for ISM) up to 1W (for amateur radio experiments)
+- Experimental privacy option for ISM low power usage (check your country regulations if it is allowed by the band plan before enabling!)
 
 ## Build instructions
 - Modify `include/config.h` if needed
