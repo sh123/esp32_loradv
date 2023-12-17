@@ -164,8 +164,12 @@ void AudioTask::audioTask()
   // select and codec
   if (config_->AudioCodec == CFG_AUDIO_CODEC_CODEC2)
     audioCodec_.reset(new AudioCodecCodec2());
-  else
+  else if (config_->AudioCodec == CFG_AUDIO_CODEC_OPUS)
     audioCodec_.reset(new AudioCodecOpus());
+  else {
+    LOG_ERROR("Unknown codec", config_->AudioCodec);
+    return;
+  }
 
   audioCodec_->start(config_);
 
@@ -279,7 +283,7 @@ void AudioTask::audioTaskRecord()
     }
     packetSize += encodedFrameSize;
     vTaskDelay(1);
-  } // btn_pressed_
+  } // while ptt pressed
   // send remaining tail audio encoded samples
   if (packetSize > 0) {
       LOG_DEBUG("Recorded packet tail", packetSize);
