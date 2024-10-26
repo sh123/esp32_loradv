@@ -3,7 +3,7 @@
 
 #include "loradv_service.h"
 
-const int LoopDelayMs = 50;
+const int LoopDelayMs = 10;
 
 LoraDv::Service loraDvService_;
 std::shared_ptr<LoraDv::Config> config_;
