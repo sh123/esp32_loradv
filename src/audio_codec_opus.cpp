@@ -14,12 +14,12 @@ AudioCodecOpus::AudioCodecOpus()
 bool AudioCodecOpus::start(std::shared_ptr<const Config> config) 
 {
   int encoderError;
-  opusEncoder_ = opus_encoder_create(config->AudioSampleRate_, 1, OPUS_APPLICATION_VOIP, &encoderError);
+  opusEncoder_ = opus_encoder_create(config->AudioCodecSampleRate_, 1, OPUS_APPLICATION_VOIP, &encoderError);
   if (encoderError != OPUS_OK) {
     LOG_ERROR("Failed to create OPUS encoder, error", encoderError);
     return false;
   }
-  encoderError = opus_encoder_init(opusEncoder_, config->AudioSampleRate_, 1, OPUS_APPLICATION_VOIP);
+  encoderError = opus_encoder_init(opusEncoder_, config->AudioCodecSampleRate_, 1, OPUS_APPLICATION_VOIP);
   if (encoderError != OPUS_OK) {
     LOG_ERROR("Failed to initialize OPUS encoder, error", encoderError);
     return false;
@@ -30,13 +30,13 @@ bool AudioCodecOpus::start(std::shared_ptr<const Config> config)
 
   // configure decoder
   int decoderError;
-  opusDecoder_ = opus_decoder_create(config->AudioSampleRate_, 1, &decoderError);
+  opusDecoder_ = opus_decoder_create(config->AudioCodecSampleRate_, 1, &decoderError);
   if (decoderError != OPUS_OK) {
     LOG_ERROR("Failed to create OPUS decoder, error", decoderError);
     return false;
   } 
 
-  pcmFrameSize_ = (int)(config->AudioSampleRate_ / 1000 * config->AudioOpusPcmLen);
+  pcmFrameSize_ = (int)(config->AudioCodecSampleRate_ / 1000 * config->AudioOpusPcmLen);
   pcmFrameBufferSize_ = 10 * pcmFrameSize_;
   encodedFrameBufferSize_ = CfgEncodedFrameBufferSize;
   return true;

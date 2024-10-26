@@ -103,7 +103,9 @@
 #define CFG_AUDIO_CODEC_CODEC2      0
 #define CFG_AUDIO_CODEC_OPUS        1
 #define CFG_AUDIO_CODEC             CFG_AUDIO_CODEC_CODEC2
-#define CFG_AUDIO_SAMPLE_RATE       8000
+#define CFG_AUDIO_SAMPLE_RATE       16000       // 8000 or 16000, i2s mic/spk have poor quality at 8000
+#define CFG_AUDIO_CODEC_SAMPLE_RATE 8000        // 8000
+#define CFG_AUDIO_RESAMPLE_COEFF    2           // 1 or 2 only
 #define CFG_AUDIO_CODEC2_MODE       CODEC2_MODE_1600
 #define CFG_AUDIO_MAX_PKT_SIZE      48          // maximum super frame size
 #define CFG_AUDIO_MAX_VOL           500         // maximum volume

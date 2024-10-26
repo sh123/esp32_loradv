@@ -11,6 +11,7 @@ AudioTask::AudioTask()
   , radioTask_(nullptr)
   , pmService_(nullptr)
   , audioCodec_(nullptr)
+  , pcmResampleBuffer_(0)
   , pcmFrameBuffer_(0)
   , encodedFrameBuffer_(0)
   , codecSamplesPerFrame_(0)
@@ -177,6 +178,7 @@ void AudioTask::audioTask()
   codecSamplesPerFrame_ = audioCodec_->getPcmFrameSize();
   codecBytesPerFrame_ = audioCodec_->getFrameSize();
   pcmFrameBuffer_ = new int16_t[audioCodec_->getPcmFrameBufferSize()];
+  pcmResampleBuffer_ = new int16_t[audioCodec_->getPcmFrameBufferSize() * config_->AudioResampleCoeff_];
   encodedFrameBuffer_ = new uint8_t[codecBytesPerFrame_];
 
   delay(3000);
@@ -242,7 +244,14 @@ void AudioTask::audioTaskPlay()
         for (int j = 0; j < pcmFrameSize; j++) {
           pcmFrameBuffer_[j] *= vol;
         }
-        i2s_write(CfgAudioI2sSpkId, pcmFrameBuffer_, sizeof(uint16_t) * pcmFrameSize, &bytesWritten, portMAX_DELAY);
+        int16_t *pcmBuffer = pcmFrameBuffer_;
+        int writeDataSize = pcmFrameSize;
+        // upsample if codec rate is lower than speaker rate
+        if (config_->AudioResampleCoeff_ == 2) {
+          writeDataSize = Utils::audio_upsample_2x(pcmFrameBuffer_, pcmResampleBuffer_, pcmFrameSize);
+          pcmBuffer = pcmResampleBuffer_;
+        }
+        i2s_write(CfgAudioI2sSpkId, pcmBuffer, sizeof(int16_t) * writeDataSize, &bytesWritten, portMAX_DELAY);
         vTaskDelay(1);
       }
     }
@@ -271,12 +280,19 @@ void AudioTask::audioTaskRecord()
       pmService_->lightSleepReset();
       packetSize = 0;
     }
+    if (!isPttOn_) break;
     // read and encode one sample
-    if (!isPttOn_) break;
     size_t bytesRead;
-    i2s_read(CfgAudioI2sMicId, pcmFrameBuffer_, sizeof(uint16_t) * codecSamplesPerFrame_, &bytesRead, portMAX_DELAY);
+    int16_t *pcmReadBuffer = pcmResampleBuffer_;
+    int readDataSize = codecSamplesPerFrame_ * config_->AudioResampleCoeff_;
+    i2s_read(CfgAudioI2sMicId, pcmReadBuffer, sizeof(uint16_t) * readDataSize, &bytesRead, portMAX_DELAY);
+    // downsample if mic sample rate is higher than codec rate
+    if (config_->AudioResampleCoeff_ == 2) {
+      Utils::audio_downsample_2x(pcmReadBuffer, pcmFrameBuffer_, readDataSize);
+      pcmReadBuffer = pcmFrameBuffer_;
+    }
     if (!isPttOn_) break;
-    int encodedFrameSize = audioCodec_->encode(encodedFrameBuffer_, pcmFrameBuffer_);
+    int encodedFrameSize = audioCodec_->encode(encodedFrameBuffer_, pcmReadBuffer);
     if (!isPttOn_) break;
     // transfer data to the radio packet queue
     for (int i = 0; i < encodedFrameSize; i++) {

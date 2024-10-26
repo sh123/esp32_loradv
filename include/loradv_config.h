@@ -61,7 +61,9 @@ public:
 
   // audio params
   int AudioCodec;         // type of audio codec, 0 - Codec2, 1 - OPUS
-  uint32_t AudioSampleRate_; // Sample rate
+  int AudioResampleCoeff_; // resample coefficient when audio rate is not equal code rate
+  uint32_t AudioSampleRate_; // sample rate for mic and speaker
+  uint32_t AudioCodecSampleRate_; // sammple rate for codec
 
   // codec2
   int AudioCodec2Mode;   // Audio Codec2 mode

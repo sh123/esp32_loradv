@@ -28,4 +28,24 @@ float Utils::getLoraSnrLimit(int sf, long bw)
   return -174 + 10 * log10(bw) + 6 + snrLimit;
 }
 
+int Utils::audio_downsample_2x(int16_t *input, int16_t *output, int input_size)
+{
+    for (int i = 0; i < input_size / 2; i++)
+    {
+        // downsample by averaging
+        output[i] = input[i * 2] / 2 + input[(i * 2) + 1] / 2;
+    }
+    return input_size / 2;
+}
+
+int Utils::audio_upsample_2x(int16_t* input, int16_t* output, int input_size)
+{
+    for (int i = 0; i < input_size * 2; i++)
+    {
+        // upsample by copying
+        output[i] = input[i / 2];
+    }
+    return input_size * 2;
+}
+
 } // LoraDv

@@ -62,7 +62,9 @@ void Config::InitializeDefault()
 
   // audio parameters
   AudioCodec = CFG_AUDIO_CODEC_CODEC2;
+  AudioResampleCoeff_ = CFG_AUDIO_RESAMPLE_COEFF;
   AudioSampleRate_ = CFG_AUDIO_SAMPLE_RATE;
+  AudioCodecSampleRate_ = CFG_AUDIO_CODEC_SAMPLE_RATE;
   AudioCodec2Mode = CFG_AUDIO_CODEC2_MODE;
   AudioMaxPktSize = CFG_AUDIO_MAX_PKT_SIZE;
   AudioMaxVol_ = CFG_AUDIO_MAX_VOL;

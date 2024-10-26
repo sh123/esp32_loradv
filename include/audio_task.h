@@ -70,6 +70,7 @@ private:
   std::shared_ptr<AudioCodec> audioCodec_;
 
   int16_t *pcmFrameBuffer_;
+  int16_t *pcmResampleBuffer_;
   uint8_t *encodedFrameBuffer_;
 
   int codecSamplesPerFrame_;
