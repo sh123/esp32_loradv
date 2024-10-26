@@ -20,7 +20,7 @@ Supports next features:
 - Supports Codec2 (low bit rate) and OPUS (medium/high bit rate) audio codecs, codec could be selected from settings
 - Goes into ESP32 light sleep when no activity, so all power consumption is around 30-40mA when in RX, wakes up on new data from radio module or when user starts transmitting
 - Settings menu on long encoder button click, allows to change frequency and other parameters
-- Output power tunable from settings from ~1mW (for ISM) up to 1W (for amateur radio experiments)
+- Output power tunable from settings from ~1mW (for ISM toy usage) up to 1W (for amateur radio experiments)
 - Experimental privacy option for ISM low power usage (check your country regulations if it is allowed by the ISM band plan before experimenting!)
 
 ## Build instructions
