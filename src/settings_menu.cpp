@@ -456,8 +456,8 @@ public:
   void getValue(std::stringstream &s) const { 
     s << "App:" << LORADV_VERSION << " Conf:" << config_->Version << std::endl;
     s << "Free:" << esp_get_free_heap_size() << "KB" << std::endl;
-    s << "RF:" << Utils::getLoraSpeed(config_->LoraSf, config_->LoraCodingRate, config_->LoraBw) << "bps/";
-    s << Utils::getLoraSnrLimit(config_->LoraSf, config_->LoraBw);
+    s << "RF:" << Utils::loraGetSpeed(config_->LoraSf, config_->LoraCodingRate, config_->LoraBw) << "bps/";
+    s << Utils::loraGetSnrLimit(config_->LoraSf, config_->LoraBw);
   }
 };
 

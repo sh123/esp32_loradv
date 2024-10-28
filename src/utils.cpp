@@ -2,7 +2,7 @@
 
 namespace LoraDv {
 
-float Utils::getLoraSnrLimit(int sf, long bw) 
+float Utils::loraGetSnrLimit(int sf, long bw) 
 {
   float snrLimit = -7;
   switch (sf) {

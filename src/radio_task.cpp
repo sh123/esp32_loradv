@@ -36,8 +36,8 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
   LOG_INFO("Power:", pwr, "dBm");
   LOG_INFO("Sync:", "0x" + String(sync, HEX));
   LOG_INFO("CRC:", crcBytes);
-  LOG_INFO("Speed:", Utils::getLoraSpeed(sf, cr, bw), "bps");
-  LOG_INFO("Min level:", Utils::getLoraSnrLimit(sf, bw));
+  LOG_INFO("Speed:", Utils::loraGetSpeed(sf, cr, bw), "bps");
+  LOG_INFO("Min level:", Utils::loraGetSnrLimit(sf, bw));
   rig_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
   int state = rig_->begin((float)loraFreq / 1e6, (float)bw / 1e3, sf, cr, sync, pwr);
   if (state != RADIOLIB_ERR_NONE) {
