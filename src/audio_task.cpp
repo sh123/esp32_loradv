@@ -239,11 +239,11 @@ void AudioTask::audioTaskPlay()
       encodedFrameBuffer_[i % subFrameSize] = b;
       // one encoded audio frame is read, decode and play
       if (i % subFrameSize == subFrameSize - 1) {
+        // decode
         int pcmFrameSize = audioCodec_->decode(pcmFrameBuffer_, encodedFrameBuffer_, subFrameSize);
         // adjust volume
-        for (int j = 0; j < pcmFrameSize; j++) {
-          pcmFrameBuffer_[j] *= vol;
-        }
+        Utils::audio_adjust_gain(pcmFrameBuffer_, pcmFrameSize, vol);
+        // upsample and playback
         int16_t *pcmBuffer = pcmFrameBuffer_;
         int writeDataSize = pcmFrameSize;
         // upsample if codec rate is lower than speaker rate

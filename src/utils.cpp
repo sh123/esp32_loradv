@@ -51,4 +51,12 @@ int Utils::audio_upsample_2x(int16_t* input, int16_t* output, int input_size)
     return input_size * 2;
 }
 
+void Utils::audio_adjust_gain(int16_t* input, int input_size, double gain) 
+{
+    for (int i = 0; i < input_size; i++) 
+    {
+        input[i] *= gain;
+    }
+}
+
 } // LoraDv
