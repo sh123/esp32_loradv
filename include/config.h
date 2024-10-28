@@ -108,8 +108,8 @@
 #define CFG_AUDIO_RESAMPLE_COEFF    2           // 1 or 2 only
 #define CFG_AUDIO_CODEC2_MODE       CODEC2_MODE_1600
 #define CFG_AUDIO_MAX_PKT_SIZE      48          // maximum super frame size
-#define CFG_AUDIO_MAX_VOL           500         // maximum volume
-#define CFG_AUDIO_VOL               300         // default volume
+#define CFG_AUDIO_MAX_VOL           2000        // maximum volume
+#define CFG_AUDIO_VOL               500         // default volume
 
 // audio, opus
 #define CFG_AUDIO_OPUS_BITRATE      3200

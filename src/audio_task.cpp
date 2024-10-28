@@ -38,7 +38,7 @@ void AudioTask::start(std::shared_ptr<const Config> config, std::shared_ptr<Radi
 
 void AudioTask::changeVolume(int deltaVolume) 
 {
-  int newVolume = volume_ + deltaVolume;
+  int newVolume = volume_ + 10 * deltaVolume;
   if (newVolume >= 0 && newVolume <= maxVolume_)
     setVolume(newVolume);
 }
@@ -280,7 +280,6 @@ void AudioTask::audioTaskRecord()
       pmService_->lightSleepReset();
       packetSize = 0;
     }
-    if (!isPttOn_) break;
     // read and encode one sample
     size_t bytesRead;
     int16_t *pcmReadBuffer = pcmResampleBuffer_;
@@ -291,9 +290,7 @@ void AudioTask::audioTaskRecord()
       Utils::audio_downsample_2x(pcmReadBuffer, pcmFrameBuffer_, readDataSize);
       pcmReadBuffer = pcmFrameBuffer_;
     }
-    if (!isPttOn_) break;
     int encodedFrameSize = audioCodec_->encode(encodedFrameBuffer_, pcmReadBuffer);
-    if (!isPttOn_) break;
     // transfer data to the radio packet queue
     for (int i = 0; i < encodedFrameSize; i++) {
       radioTask_->writeNextByte(encodedFrameBuffer_[i]);
