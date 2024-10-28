@@ -3,7 +3,7 @@
 ## Introduction
 This project is hobby/amateur/toy/educational radio ESP32 based LoRa/FSK Codec2/OPUS DV handheld trasceiver a.k.a. walkie-talkie, which is using 1W E22-400M30S (SX1268) radio module (UHF, 70cm band). 
 
-It mimics ordinary FM walkie-talkie, does not use any digital protocol for simplicity, just sends codec frames with pre-condigured radio modulation.
+It mimics ordinary FM walkie-talkie, does not use any digital protocol for simplicity, just sends codec frames with pre-configured radio modulation.
 
 Overall component cost for this project is about 15-20$.
 
