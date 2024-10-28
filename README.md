@@ -12,7 +12,7 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 - Rotary encoder with push button
 - Small OLED display SSD1306 128x32
 - Battery voltage monitoring
-- Powered from a single commonly avaialble 18650 battery
+- Powered from a single commonly avaialble 18650 cell (for example from old laptop battery)
 - Uses combined charge + 5v boost controller based on Hotchip HT4928S
 
 Supports next features:
