@@ -30,33 +30,33 @@ float Utils::getLoraSnrLimit(int sf, long bw)
 
 int Utils::audio_downsample_2x(int16_t *input, int16_t *output, int input_size)
 {
-    for (int i = 0; i < input_size / 2; i++)
-    {
-        output[i] = input[i * 2] / 2 + input[(i * 2) + 1] / 2;
-    }
-    return input_size / 2;
+  for (int i = 0; i < input_size / 2; i++)
+  {
+    output[i] = input[i * 2] / 2 + input[(i * 2) + 1] / 2;
+  }
+  return input_size / 2;
 }
 
 int Utils::audio_upsample_2x(int16_t* input, int16_t* output, int input_size)
 {
-    for (int i = 0; i < input_size; i++)
-    {
-        output[2 * i] = input[i];
-    }
-    for (int i = 0; i < input_size - 1; i++)
-    {
-        output[2 * i + 1] =  output[2 * i] + (output[2 * i + 2] - output[2 * i]) / 2;
-    }
-    output[2 * input_size - 1] = input[input_size - 1];
-    return input_size * 2;
+  for (int i = 0; i < input_size; i++)
+  {
+    output[2 * i] = input[i];
+  }
+  for (int i = 0; i < input_size - 1; i++)
+  {
+    output[2 * i + 1] =  output[2 * i] + (output[2 * i + 2] - output[2 * i]) / 2;
+  }
+  output[2 * input_size - 1] = input[input_size - 1];
+  return input_size * 2;
 }
 
 void Utils::audio_adjust_gain(int16_t* input, int input_size, double gain) 
 {
-    for (int i = 0; i < input_size; i++) 
-    {
-        input[i] *= gain;
-    }
+  for (int i = 0; i < input_size; i++) 
+  {
+    input[i] *= gain;
+  }
 }
 
 } // LoraDv
