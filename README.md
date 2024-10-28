@@ -1,7 +1,11 @@
 # ESP32 Codec2/OPUS DV Handheld Transceiver
 
 ## Introduction
-This project is amateur/ISM radio ESP32 based LoRa/FSK Codec2/OPUS DV handheld trasceiver, which is using 1W E22-400M30S (SX1268) radio module (UHF, 70cm band).
+This project is hobby/amateur/toy/educational radio ESP32 based LoRa/FSK Codec2/OPUS DV handheld trasceiver a.k.a. walkie-talkie, which is using 1W E22-400M30S (SX1268) radio module (UHF, 70cm band). 
+
+It mimics ordinary FM walkie-talkie, does not use any digital protocol for simplicity, just sends codec frames with pre-configured radio modulation.
+
+Overall component cost for this project is about 15-20$.
 
 It is interoperable with https://github.com/sh123/codec2_talkie application.
 
@@ -12,7 +16,7 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 - Rotary encoder with push button
 - Small OLED display SSD1306 128x32
 - Battery voltage monitoring
-- Powered from a single commonly avaialble 18650 battery
+- Powered from a single commonly avaialble 18650 cell (for example from old laptop battery)
 - Uses combined charge + 5v boost controller based on Hotchip HT4928S
 
 Supports next features:
