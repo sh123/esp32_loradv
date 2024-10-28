@@ -22,6 +22,7 @@ void PmService::setup(std::shared_ptr<const Config> config, std::shared_ptr<Adaf
 {
   config_ = config;
   display_ = display;
+  lightSleepReset();
 }
 
 void PmService::lightSleepReset() 
@@ -53,7 +54,6 @@ void PmService::lightSleepEnter(void)
   }
 
   LOG_INFO("Exiting light sleep");
-  lightSleepReset();
   isExitFromSleep_ = true;
 }
 
@@ -76,6 +76,8 @@ bool PmService::loop()
   lightSleepTimer_.tick();
   bool isExitFromSleep = isExitFromSleep_;
   isExitFromSleep_ = false;
+  if (isExitFromSleep)
+    lightSleepReset();
   return isExitFromSleep;
 }
 
