@@ -51,9 +51,9 @@ int Utils::audioUpsample2x(int16_t* input, int16_t* output, int inputSize)
   return inputSize * 2;
 }
 
-void Utils::audioAdjustGain(int16_t* input, int input_size, double gain) 
+void Utils::audioAdjustGain(int16_t* input, int inputSize, double gain) 
 {
-  for (int i = 0; i < input_size; i++) 
+  for (int i = 0; i < inputSize; i++) 
   {
     input[i] *= gain;
   }
