@@ -242,13 +242,13 @@ void AudioTask::audioTaskPlay()
         // decode
         int pcmFrameSize = audioCodec_->decode(pcmFrameBuffer_, encodedFrameBuffer_, subFrameSize);
         // adjust volume
-        Utils::audio_adjust_gain(pcmFrameBuffer_, pcmFrameSize, vol);
+        Utils::audioAdjustGain(pcmFrameBuffer_, pcmFrameSize, vol);
         // upsample and playback
         int16_t *pcmBuffer = pcmFrameBuffer_;
         int writeDataSize = pcmFrameSize;
         // upsample if codec rate is lower than speaker rate
         if (config_->AudioResampleCoeff_ == 2) {
-          writeDataSize = Utils::audio_upsample_2x(pcmFrameBuffer_, pcmResampleBuffer_, pcmFrameSize);
+          writeDataSize = Utils::audioUpsample2x(pcmFrameBuffer_, pcmResampleBuffer_, pcmFrameSize);
           pcmBuffer = pcmResampleBuffer_;
         }
         i2s_write(CfgAudioI2sSpkId, pcmBuffer, sizeof(int16_t) * writeDataSize, &bytesWritten, portMAX_DELAY);
@@ -287,7 +287,7 @@ void AudioTask::audioTaskRecord()
     i2s_read(CfgAudioI2sMicId, pcmReadBuffer, sizeof(uint16_t) * readDataSize, &bytesRead, portMAX_DELAY);
     // downsample if mic sample rate is higher than codec rate
     if (config_->AudioResampleCoeff_ == 2) {
-      Utils::audio_downsample_2x(pcmReadBuffer, pcmFrameBuffer_, readDataSize);
+      Utils::audioDownsample2x(pcmReadBuffer, pcmFrameBuffer_, readDataSize);
       pcmReadBuffer = pcmFrameBuffer_;
     }
     int encodedFrameSize = audioCodec_->encode(encodedFrameBuffer_, pcmReadBuffer);
