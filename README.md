@@ -1,7 +1,7 @@
 # ESP32 Codec2/OPUS DV Handheld Transceiver
 
 ## Introduction
-This project is hobby/amateur/ISM/toy radio ESP32 based LoRa/FSK Codec2/OPUS DV handheld trasceiver, which is using 1W E22-400M30S (SX1268) radio module (UHF, 70cm band). Overall component cost for this project is about 15-20$.
+This project is hobby/amateur/ISM/toy radio ESP32 based LoRa/FSK Codec2/OPUS DV handheld trasceiver a.k.a. walkie-talkie, which is using 1W E22-400M30S (SX1268) radio module (UHF, 70cm band). Overall component cost for this project is about 15-20$.
 
 It is interoperable with https://github.com/sh123/codec2_talkie application.
 
