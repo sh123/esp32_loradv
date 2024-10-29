@@ -5,7 +5,7 @@ This project is hobby/amateur/toy/educational radio ESP32 based LoRa/FSK Codec2/
 
 It mimics ordinary FM walkie-talkie, does not use any digital protocol for simplicity, just sends codec frames with pre-configured radio modulation.
 
-Overall component cost for this project is about 15-20$.
+Overall components cost for this project is about 15-20$.
 
 It is interoperable with https://github.com/sh123/codec2_talkie application.
 
