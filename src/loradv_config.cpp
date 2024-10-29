@@ -168,10 +168,14 @@ void Config::Load()
   }
   if (prefs_.isKey(N(AudioVol))) {
     AudioVol = prefs_.getInt(N(AudioVol));
+    if (AudioVol > CFG_AUDIO_MAX_VOL) {
+      AudioVol = CFG_AUDIO_VOL;
+      prefs_.putInt(N(AudioVol), AudioVol);
+    }
   } else {
     prefs_.putInt(N(AudioVol), AudioVol);
   }
-    if (prefs_.isKey(N(AudioMaxPktSize))) {
+  if (prefs_.isKey(N(AudioMaxPktSize))) {
     AudioMaxPktSize = prefs_.getInt(N(AudioMaxPktSize));
   } else {
     prefs_.putInt(N(AudioMaxPktSize), AudioMaxPktSize);

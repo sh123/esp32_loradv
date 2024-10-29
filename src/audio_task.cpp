@@ -38,7 +38,7 @@ void AudioTask::start(std::shared_ptr<const Config> config, std::shared_ptr<Radi
 
 void AudioTask::changeVolume(int deltaVolume) 
 {
-  int newVolume = volume_ + 10 * deltaVolume;
+  int newVolume = volume_ + deltaVolume;
   if (newVolume >= 0 && newVolume <= maxVolume_)
     setVolume(newVolume);
 }
@@ -212,8 +212,8 @@ void AudioTask::audioTaskPlay()
 
   size_t bytesWritten;
   LOG_DEBUG("Playing audio");
-  double vol = (double)volume_ / (double)100.0;
-  LOG_DEBUG("Volume is", vol);
+  int16_t targetLevel = volume_ * 100;
+  LOG_DEBUG("Target level is", targetLevel);
 
   // run till ptt is not pressed and radio has data
   while (!isPttOn_ && radioTask_->hasData()) {
@@ -242,7 +242,7 @@ void AudioTask::audioTaskPlay()
         // decode
         int pcmFrameSize = audioCodec_->decode(pcmFrameBuffer_, encodedFrameBuffer_, subFrameSize);
         // adjust volume
-        Utils::audioAdjustGain(pcmFrameBuffer_, pcmFrameSize, vol);
+        Utils::audioAdjustGainAgc(pcmFrameBuffer_, pcmFrameSize, targetLevel);
         // upsample and playback
         int16_t *pcmBuffer = pcmFrameBuffer_;
         int writeDataSize = pcmFrameSize;

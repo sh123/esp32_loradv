@@ -72,7 +72,7 @@ void Service::updateScreen() const
   display_->setCursor(0, 0);
 
   display_->setTextSize(1);
-  display_->print(audioTask_->getVolume()); display_->print("% "); 
+  display_->print("["); display_->print(audioTask_->getVolume()); display_->print("] "); 
   display_->print(hwMonitor_->getBatteryVoltage()); display_->print("V ");
   if (isPlaying)
     display_->print(radioTask_->getRssi());

@@ -59,4 +59,22 @@ void Utils::audioAdjustGain(int16_t* input, int inputSize, double gain)
   }
 }
 
+void Utils::audioAdjustGainAgc(int16_t* input, int inputSize, int16_t targetLevel)
+{
+  static double currentGain_ = 1.0;
+  for (int i = 0; i < inputSize; i++) 
+  {
+    int16_t sample = input[i];
+    int16_t newSample = sample * currentGain_;
+
+    if (abs(newSample) > targetLevel) currentGain_ -= CfgAgcStep;
+    else currentGain_ += CfgAgcStep;
+
+    if (currentGain_ < CfgAgcMinGain) currentGain_ = CfgAgcMinGain;
+    if (currentGain_ > CfgAgcMaxGain) currentGain_ = CfgAgcMaxGain;
+
+    input[i] = newSample;
+  }
+}
+
 } // LoraDv
