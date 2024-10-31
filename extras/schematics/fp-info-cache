@@ -1,4 +1,4 @@
-20907435877378894
+20914357366424815
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -87535,6 +87535,27 @@ E22-400M30S
 22
 22
 lora_tracker
+MAX98357A
+
+
+0
+7
+7
+lora_tracker
+SSD1306
+
+
+0
+4
+4
+lora_tracker
+ec11
+
+
+0
+7
+6
+lora_tracker
 esp32 devkit
 
 
@@ -87556,9 +87577,16 @@ esp32-devkit-wide
 38
 38
 lora_tracker
-esp32-devkit-wide_copy
+esp32-devkit-wide_30pin
 
 
 0
 30
 30
+lora_tracker
+inp441
+
+
+0
+6
+6
