@@ -32,6 +32,11 @@ Supports next features:
 - Upload with platformio
 
 ## Picture
+
+Two prototypes were built  
+
 ![Device](extras/images/device.png)
+
+List of peripherals used
 
 ![Device](extras/images/peripherals.png)
