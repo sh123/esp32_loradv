@@ -288,7 +288,7 @@ void AudioTask::audioTaskRecord()
     int readDataSize = codecSamplesPerFrame_ * config_->AudioResampleCoeff_;
     i2s_read(CfgAudioI2sMicId, pcmReadBuffer, sizeof(uint16_t) * readDataSize, &bytesRead, portMAX_DELAY);
     // apply high pass filter
-    //dsp_->audioFilterHpf(pcmReadBuffer, readDataSize);
+    dsp_->audioFilterHpf(pcmReadBuffer, readDataSize);
     // downsample if mic sample rate is higher than codec rate
     if (config_->AudioResampleCoeff_ == 2) {
       dsp_->audioDownsample2x(pcmReadBuffer, pcmFrameBuffer_, readDataSize);
