@@ -10,6 +10,7 @@ AudioTask::AudioTask()
   , audioTaskHandle_(0)
   , radioTask_(nullptr)
   , pmService_(nullptr)
+  , dsp_(nullptr)
   , audioCodec_(nullptr)
   , pcmResampleBuffer_(0)
   , pcmFrameBuffer_(0)
@@ -33,6 +34,7 @@ void AudioTask::start(std::shared_ptr<const Config> config, std::shared_ptr<Radi
   pmService_ = pmService;
   volume_ = config->AudioVol;
   maxVolume_ = config->AudioMaxVol_;
+  dsp_ = std::make_shared<Dsp>(config->AudioHpfCutoffHz_, config->AudioSampleRate_);
   xTaskCreate(&task, "AudioTask", CfgAudioTaskStack, this, 5, &audioTaskHandle_);
 }
 
@@ -242,13 +244,13 @@ void AudioTask::audioTaskPlay()
         // decode
         int pcmFrameSize = audioCodec_->decode(pcmFrameBuffer_, encodedFrameBuffer_, subFrameSize);
         // adjust volume
-        Utils::audioAdjustGainAgc(pcmFrameBuffer_, pcmFrameSize, targetLevel);
+        dsp_->audioAdjustGainAgc(pcmFrameBuffer_, pcmFrameSize, targetLevel);
         // upsample and playback
         int16_t *pcmBuffer = pcmFrameBuffer_;
         int writeDataSize = pcmFrameSize;
         // upsample if codec rate is lower than speaker rate
         if (config_->AudioResampleCoeff_ == 2) {
-          writeDataSize = Utils::audioUpsample2x(pcmFrameBuffer_, pcmResampleBuffer_, pcmFrameSize);
+          writeDataSize = dsp_->audioUpsample2x(pcmFrameBuffer_, pcmResampleBuffer_, pcmFrameSize);
           pcmBuffer = pcmResampleBuffer_;
         }
         i2s_write(CfgAudioI2sSpkId, pcmBuffer, sizeof(int16_t) * writeDataSize, &bytesWritten, portMAX_DELAY);
@@ -285,9 +287,11 @@ void AudioTask::audioTaskRecord()
     int16_t *pcmReadBuffer = pcmResampleBuffer_;
     int readDataSize = codecSamplesPerFrame_ * config_->AudioResampleCoeff_;
     i2s_read(CfgAudioI2sMicId, pcmReadBuffer, sizeof(uint16_t) * readDataSize, &bytesRead, portMAX_DELAY);
+    // apply high pass filter
+    //dsp_->audioFilterHpf(pcmReadBuffer, readDataSize);
     // downsample if mic sample rate is higher than codec rate
     if (config_->AudioResampleCoeff_ == 2) {
-      Utils::audioDownsample2x(pcmReadBuffer, pcmFrameBuffer_, readDataSize);
+      dsp_->audioDownsample2x(pcmReadBuffer, pcmFrameBuffer_, readDataSize);
       pcmReadBuffer = pcmFrameBuffer_;
     }
     int encodedFrameSize = audioCodec_->encode(encodedFrameBuffer_, pcmReadBuffer);

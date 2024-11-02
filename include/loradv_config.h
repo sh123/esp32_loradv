@@ -64,6 +64,7 @@ public:
   int AudioResampleCoeff_; // resample coefficient when audio rate is not equal code rate
   uint32_t AudioSampleRate_; // sample rate for mic and speaker
   uint32_t AudioCodecSampleRate_; // sammple rate for codec
+  int AudioHpfCutoffHz_;  // high pass fitler cutoff frequency
 
   // codec2
   int AudioCodec2Mode;   // Audio Codec2 mode

@@ -9,6 +9,7 @@
 #include "loradv_config.h"
 #include "pm_service.h"
 #include "audio_codec.h"
+#include "dsp.h"
 
 namespace LoraDv {
 
@@ -67,6 +68,7 @@ private:
   Timer<1> playTimer_;
   Timer<1>::Task playTimerTask_;
 
+  std::shared_ptr<Dsp> dsp_;
   std::shared_ptr<AudioCodec> audioCodec_;
 
   int16_t *pcmFrameBuffer_;
