@@ -33,7 +33,7 @@ Supports next features:
 
 ## Picture
 
-Two prototypes were built  
+Two fully 3d printed prototypes were built  
 
 ![Device](extras/images/device.png)
 
