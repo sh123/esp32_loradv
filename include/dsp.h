@@ -27,7 +27,7 @@ private:
   // agc
   float currentAgcGain_;
   
-  // low pass filter
+  // high pass filter
   float hpfX1_, hpfX2_, hpfY1_, hpfY2_;
   float hpfA0_, hpfA1_, hpfA2_, hpfB1_, hpfB2_;      
 };
