@@ -8,7 +8,7 @@ namespace LoraDv {
 class Dsp {
 
 public:
-  Dsp(int lpfCutoffFreqHz, int lpfSampleRate);
+  Dsp(int hpfCutoffFreqHz, int hpfSampleRate);
 
   int audioDownsample2x(int16_t *pcmInput, int16_t *pcmOutput, int pcmInputSize);
   int audioUpsample2x(int16_t *pcmInput, int16_t *pcmOutput, int pcmInputSize);
