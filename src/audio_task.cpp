@@ -241,7 +241,7 @@ void AudioTask::audioTaskPlay()
       encodedFrameBuffer_[i % subFrameSize] = b;
       // one encoded audio frame is read, decode and play
       if (i % subFrameSize == subFrameSize - 1) {
-        // decode
+        // decode in current codec
         int pcmFrameSize = audioCodec_->decode(pcmFrameBuffer_, encodedFrameBuffer_, subFrameSize);
         // adjust volume
         dsp_->audioAdjustGainAgc(pcmFrameBuffer_, pcmFrameSize, targetLevel);
@@ -294,6 +294,7 @@ void AudioTask::audioTaskRecord()
       dsp_->audioDownsample2x(pcmReadBuffer, pcmFrameBuffer_, readDataSize);
       pcmReadBuffer = pcmFrameBuffer_;
     }
+    // encode in selected codec
     int encodedFrameSize = audioCodec_->encode(encodedFrameBuffer_, pcmReadBuffer);
     // transfer data to the radio packet queue
     for (int i = 0; i < encodedFrameSize; i++) {
