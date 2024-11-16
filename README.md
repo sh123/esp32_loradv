@@ -43,6 +43,6 @@ List of peripherals used
 
 New board design with all components integrated into the board (except battery and charging circuit)
 
-![Device](extras/schematics/images/peripherals.png)
+![Device](extras/schematics/images/board.png)
 
 
