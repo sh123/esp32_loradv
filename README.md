@@ -7,6 +7,8 @@ It mimics ordinary FM walkie-talkie, does not use any complex protocol for simpl
 
 Overall components cost for this project is about 15-20$.
 
+Schematics for new board design with integrated components on the board is available under `extras/schematics`.
+
 It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional peripherals:
 - I2S speaker module MAX98357A + 4ohm 3w speaker (40mm diameter)
 - I2S microphone INMP441
@@ -43,6 +45,6 @@ List of peripherals used
 
 New board design with all components integrated into the board (except battery and charging circuit)
 
-![Device](extras/schematics/images/peripherals.png)
+![Device](extras/schematics/images/board.png)
 
 
