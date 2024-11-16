@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name "lora_tracker")(type "KiCad")(uri "${KIPRJMOD}/lora_tracker.kicad_sym")(options "")(descr ""))
+  (lib (name "lora_tracker-rescue")(type "KiCad")(uri "${KIPRJMOD}/lora_tracker-rescue.kicad_sym")(options "")(descr ""))
+)
