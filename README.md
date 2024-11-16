@@ -40,3 +40,9 @@ Two fully 3d printed prototypes were built
 List of peripherals used
 
 ![Device](extras/images/peripherals.png)
+
+New board design with all components integrated into the board (except battery and charging circuit)
+
+![Device](extras/schematics/images/peripherals.png)
+
+
