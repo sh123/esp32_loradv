@@ -7,7 +7,7 @@ It mimics ordinary FM walkie-talkie, does not use any complex protocol for simpl
 
 Overall components cost for this project is about 15-20$.
 
-Schematics for new board design with integrated components on the board is available under `extras/schematics`. New board design is in alpha stage, not fully tested yet.
+Schematics for new board design with integrated components on the board is available under `extras/schematics`. New board design is in alpha stage, not fully tested yet. Pinouts are compatible with first prototype version.
 
 It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional peripherals:
 - I2S speaker module MAX98357A + 4ohm 3w speaker (40mm diameter)
@@ -22,7 +22,7 @@ It is based on https://github.com/sh123/esp32_loraprs modem, but uses additional
 Supports next features:
 - Supports LoRa and FSK modulation with configurable modulation parameters from settings
 - Supports Codec2 (low bit rate) and OPUS (medium/high bit rate) audio codecs, codec could be selected from settings
-- Goes into ESP32 light sleep when no activity, so all power consumption is around 30-40mA when in sleep RX, wakes up on new data from radio module or when user starts transmitting, consumes about 90-100mA in active receive
+- Goes into ESP32 light sleep when no activity, so all power consumption is around 30-40mA when in sleep RX, wakes up on new data from radio module or when user starts transmitting, consumes about 90-100mA in active receive and about 700-800mA in full power 1W transmit
 - Settings menu on long encoder button click, allows to change frequency and other parameters
 - Output power tunable from settings from ~1mW (for ISM toy usage) up to 1W (for amateur radio experiments)
 - Experimental privacy option for ISM low power usage (check your country regulations if it is allowed by the ISM band plan before experimenting!)
