@@ -47,4 +47,7 @@ New board design with all components integrated into the board (except battery a
 
 ![Device](extras/schematics/images/board.png)
 
+Assembed board with new design
 
+
+![Device](extras/schematics/images/board_assembled.png)
