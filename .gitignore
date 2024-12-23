@@ -1,2 +1,6 @@
 .pio
 .vscode
+*.FCStd1
+gerber.zip
+*.bak
+*-backups
