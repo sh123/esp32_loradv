@@ -1,4 +1,4 @@
-# CAD models for the transceiver cas
+# CAD models for the transceiver case
 - `base.FCStd, base.stl` - model for the base part of the case where board is inserted.
 - `upper.FCStd, upper.stl` - upper part of the case with battery compartment.
 - `knob.FCStd, knob.stl` - rotary encoder knob.
