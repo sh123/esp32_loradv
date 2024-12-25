@@ -5,3 +5,5 @@
 - `ptt.FCStd, ptt.stl` - PTT button cover.
 - `battery_lid.FCStd, battery_lid.stl` - battery compartment lid.
 
+![CAD](images/board_assembled.png)
+
