@@ -35,22 +35,22 @@ Supports next features:
 
 ## Pictures
 
-Two fully 3d printed prototypes were built  
+Two fully 3d printed prototypes were built based on `esp32_loraprs` modem board.
 
 ![Device](extras/images/device.png)
 
-List of peripherals used
+List of peripherals used.
 
 ![Device](extras/images/peripherals.png)
 
-New board design with all components integrated into the board (except battery and charging circuit)
+New board design with all components integrated into the board (except battery and charging circuit).
 
 ![Device](extras/schematics/images/board.png)
 
-Case for the new board version
+Case for the new board version with battery compartment.
 
 ![CAD](extras/cad/images/base.png)
 
-Assembed board with new design
+Assembled board with new design.
 
 ![Device](extras/schematics/images/board_assembled.png)
