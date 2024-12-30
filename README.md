@@ -33,7 +33,7 @@ Supports next features:
 - Build with platformio
 - Upload with platformio
 
-## Picture
+## Pictures
 
 Two fully 3d printed prototypes were built  
 
