@@ -35,7 +35,7 @@ void AudioTask::start(std::shared_ptr<const Config> config, std::shared_ptr<Radi
   volume_ = config->AudioVol;
   maxVolume_ = config->AudioMaxVol_;
   dsp_ = std::make_shared<Dsp>(config->AudioHpfCutoffHz_, config->AudioSampleRate_);
-  xTaskCreate(&task, "AudioTask", CfgAudioTaskStack, this, 5, &audioTaskHandle_);
+  xTaskCreatePinnedToCore(&task, "AudioTask", CfgAudioTaskStack, this, 2, &audioTaskHandle_, 0);
 }
 
 void AudioTask::changeVolume(int deltaVolume) 
