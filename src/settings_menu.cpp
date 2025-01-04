@@ -436,7 +436,7 @@ public:
   void changeValue(int delta) { }
   void getName(std::stringstream &s) const { s << index_ << ".Reset Settings"; }
   void getValue(std::stringstream &s) const { s << "Click to reset"; }
-  void select() { config_->Reset(); }
+  void select() { config_->Reset(); ESP.restart(); }
 };
 
 class SettingsRebootItem : public SettingsItem {
