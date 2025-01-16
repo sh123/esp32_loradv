@@ -7,7 +7,7 @@ It mimics ordinary FM walkie-talkie, does not use any complex protocol for simpl
 
 Overall components cost for this project is about 15-20$.
 
-Schematics for new board design with integrated components on the board is available under `extras/schematics`. Pinouts are compatible with first prototype version.
+Schematics for new board design with integrated components on the board is available under `extras/schematics`. Pinouts are compatible with first prototype version. There is place for GPS module, but do not solder it as there is no support for it, it just there for future experiments.
 
 First prototype is based on https://github.com/sh123/esp32_loraprs modem, but uses additional peripherals:
 - I2S speaker module MAX98357A + 4ohm 3w speaker (40mm diameter)
