@@ -3,7 +3,7 @@
 - `antenna_cover_short.*` - antenna cover for 433 MHz (TPU plastic is preferred).
 - `base.*` - model for the base part of the case where board is inserted.
 - `upper.*` - upper part of the case with 18650 battery compartment and combined charge 5v boost up converter.
-- `upper_no_battery.*` - upper part of the case without battery compartment.
+- `upper_no_battery.*` - upper part of the case without battery compartment, e.g. when planning to power using ESP32 USB port only.
 - `knob.*` - rotary encoder knob (TPU plastic is preferred).
 - `ptt.*` - PTT button cover (TPU plastic is preferred).
 - `battery_lid.*` - battery compartment lid.
