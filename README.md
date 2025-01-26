@@ -15,7 +15,7 @@ First prototype is based on https://github.com/sh123/esp32_loraprs modem, but us
 - PTT button
 - Rotary encoder with push button
 - Small OLED display SSD1306 128x32
-- Battery voltage monitoring
+- Battery voltage monitoring (just voltage divider fed into ADC pin, see schematics)
 - Powered from a single commonly avaialble 18650 cell (for example from old laptop battery)
 - Uses combined charge + 5v boost controller based on Hotchip HT4928S (it usually used in low capacity single cell USB power banks).
 
