@@ -427,7 +427,7 @@ public:
   void changeValue(int delta) { }
   void getName(std::stringstream &s) const { s << index_ << ".Save Settings"; }
   void getValue(std::stringstream &s) const { s << "Click to save"; }
-  void select() { config_->Save(); }
+  void select() { config_->Save(); ESP.restart(); }
 };
 
 class SettingsResetItem : public SettingsItem {
