@@ -25,7 +25,7 @@ Supports next features:
 - Goes into ESP32 light sleep when no activity, so all power consumption is around 30-40mA when in sleep RX, wakes up on new data from radio module or when user starts transmitting, consumes about 90-100mA in active receive and about 700-800mA in full power 1W transmit
 - Settings menu on long encoder button click, allows to change frequency and other parameters
 - Output power tunable from settings from ~1mW (for ISM toy usage) up to 1W (for amateur radio experiments)
-- Experimental no warranty privacy option for ISM low power usage (check your country regulations if it is allowed by the ISM band plan before experimenting as it might be illegal in some countries), it is based on [ChaCha20-Poly1305](https://en.wikipedia.org/wiki/ChaCha20-Poly1305) stream cypher provided by [rwheater/Crypto](https://github.com/rweather/arduinolibs) library, it is comparable to AES256, uses 256 bits key, but has lower CPU requirements and power usage.
+- Experimental no warranty privacy option for ISM low power usage (check your country regulations if it is allowed by the ISM band plan before experimenting as it might be illegal in some countries), it is based on [ChaCha20](https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant) stream cypher provided by [rwheater/Crypto](https://github.com/rweather/arduinolibs) library, it is comparable to AES256, uses 256 bits key, but has lower CPU requirements and power usage.
 
 ## Build instructions
 - Modify `include/config.h` if needed
