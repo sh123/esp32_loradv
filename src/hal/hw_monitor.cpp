@@ -1,4 +1,4 @@
-#include "hw_monitor.h"
+#include "hal/hw_monitor.h"
 
 namespace LoraDv {
 

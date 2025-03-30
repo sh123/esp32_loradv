@@ -10,8 +10,8 @@
 #include <iostream>
 
 #include "settings/loradv_config.h"
-#include "radio_task.h"
-#include "utils.h"
+#include "hal/radio_task.h"
+#include "utils/utils.h"
 
 namespace LoraDv {
 

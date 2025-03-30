@@ -16,10 +16,10 @@
 #include <arduino-timer.h>
 
 #include "settings/loradv_config.h"
-#include "radio_task.h"
+#include "hal/radio_task.h"
 #include "audio/audio_task.h"
-#include "pm_service.h"
-#include "hw_monitor.h"
+#include "hal/pm_service.h"
+#include "hal/hw_monitor.h"
 #include "settings/settings_menu.h"
 
 namespace LoraDv {

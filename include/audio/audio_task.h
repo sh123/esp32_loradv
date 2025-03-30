@@ -5,11 +5,11 @@
 #include <memory>
 #include <codec2.h>
 
-#include "radio_task.h"
+#include "hal/radio_task.h"
 #include "settings/loradv_config.h"
-#include "pm_service.h"
+#include "hal/pm_service.h"
 #include "audio/audio_codec.h"
-#include "dsp.h"
+#include "utils/dsp.h"
 
 namespace LoraDv {
 

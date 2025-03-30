@@ -1,4 +1,4 @@
-#include "pm_service.h"
+#include "hal/pm_service.h"
 
 namespace LoraDv {
 
