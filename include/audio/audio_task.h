@@ -8,7 +8,7 @@
 #include "radio_task.h"
 #include "loradv_config.h"
 #include "pm_service.h"
-#include "audio_codec.h"
+#include "audio/audio_codec.h"
 #include "dsp.h"
 
 namespace LoraDv {

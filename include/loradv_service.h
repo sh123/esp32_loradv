@@ -17,7 +17,7 @@
 
 #include "loradv_config.h"
 #include "radio_task.h"
-#include "audio_task.h"
+#include "audio/audio_task.h"
 #include "pm_service.h"
 #include "hw_monitor.h"
 #include "settings_menu.h"

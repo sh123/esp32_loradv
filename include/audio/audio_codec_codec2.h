@@ -1,7 +1,7 @@
 #ifndef AUDIO_CODEC2_H
 #define AUDIO_CODEC2_H
 
-#include "audio_codec.h"
+#include "audio/audio_codec.h"
 
 namespace LoraDv {
 

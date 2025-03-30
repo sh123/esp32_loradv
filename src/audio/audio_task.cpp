@@ -1,7 +1,7 @@
-#include "audio_task.h"
+#include "audio/audio_task.h"
 
-#include "audio_codec_codec2.h"
-#include "audio_codec_opus.h"
+#include "audio/audio_codec_codec2.h"
+#include "audio/audio_codec_opus.h"
 
 namespace LoraDv {
 

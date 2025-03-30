@@ -9,7 +9,7 @@
 #include <ChaCha.h>
 
 #include "loradv_config.h"
-#include "audio_task.h"
+#include "audio/audio_task.h"
 #include "utils.h"
 #include "config.h"
 
