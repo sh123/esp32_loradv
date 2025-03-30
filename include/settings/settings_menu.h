@@ -9,7 +9,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "loradv_config.h"
+#include "settings/loradv_config.h"
 #include "radio_task.h"
 #include "utils.h"
 

@@ -12,7 +12,7 @@
 #include "/tmp/esp32_loradv_config.h"
 #else
 #pragma message("Using default built-in config")
-#include "config.h"
+#include "settings/config.h"
 #endif
 
 namespace LoraDv {

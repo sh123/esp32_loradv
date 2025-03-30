@@ -6,7 +6,7 @@
 #include <codec2.h>
 
 #include "radio_task.h"
-#include "loradv_config.h"
+#include "settings/loradv_config.h"
 #include "pm_service.h"
 #include "audio/audio_codec.h"
 #include "dsp.h"

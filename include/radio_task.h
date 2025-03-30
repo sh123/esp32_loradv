@@ -8,10 +8,10 @@
 #include <CircularBuffer.h>
 #include <ChaCha.h>
 
-#include "loradv_config.h"
+#include "settings/loradv_config.h"
 #include "audio/audio_task.h"
 #include "utils.h"
-#include "config.h"
+#include "settings/settings_menu.h"
 
 namespace LoraDv {
 
