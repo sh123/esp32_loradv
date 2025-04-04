@@ -54,8 +54,6 @@ private:
   static constexpr size_t CfgIvSize = 8;
 
 private:
-  uint8_t iv_[CfgIvSize];
-
   void setupRig(long freq, long bw, int sf, int cr, int pwr, int sync, int crcBytes);
   void setupRigFsk(long freq, float bitRate, float freqDev, float rxBw, int pwr, byte shaping);
 
@@ -75,6 +73,7 @@ private:
   std::shared_ptr<MODULE_NAME> rig_;
   std::shared_ptr<AudioTask> audioTask_;
 
+  uint8_t iv_[CfgIvSize];
   std::shared_ptr<ChaCha> cipher_;
 
   static TaskHandle_t loraTaskHandle_;
