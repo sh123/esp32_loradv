@@ -22,7 +22,7 @@ void RadioTask::start(shared_ptr<AudioTask> audioTask)
 {
   audioTask_ = audioTask;
   cipher_->setKey(config_->AudioPrivacyKey_, sizeof(config_->AudioPrivacyKey_));
-  xTaskCreatePinnedToCore(&task, "RadioTask", CfgRadioTaskStack, this, 2, &loraTaskHandle_, 1);
+  xTaskCreatePinnedToCore(&task, "RadioTask", CfgRadioTaskStack, this, CfgTaskPriority, &loraTaskHandle_, CfgCoreId);
 }
 
 void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sync, int crcBytes)

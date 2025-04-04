@@ -30,7 +30,7 @@ AudioTask::AudioTask(shared_ptr<const Config> config, shared_ptr<PmService> pmSe
 void AudioTask::start(shared_ptr<RadioTask> radioTask)
 {
   radioTask_ = radioTask;
-  xTaskCreatePinnedToCore(&task, "AudioTask", CfgAudioTaskStack, this, 2, &audioTaskHandle_, 0);
+  xTaskCreatePinnedToCore(&task, "AudioTask", CfgAudioTaskStack, this, CfgTaskPriority, &audioTaskHandle_, CfgCoreId);
 }
 
 void AudioTask::changeVolume(int deltaVolume) 
