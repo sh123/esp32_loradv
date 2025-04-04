@@ -9,7 +9,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "settings/loradv_config.h"
+#include "settings/config.h"
 #include "settings/settings_menu_item.h"
 #include "hal/radio_task.h"
 #include "utils/utils.h"

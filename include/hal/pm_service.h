@@ -6,7 +6,7 @@
 #include <arduino-timer.h>
 #include <Adafruit_SSD1306.h>
 
-#include "settings/loradv_config.h"
+#include "settings/config.h"
 
 namespace LoraDv {
 

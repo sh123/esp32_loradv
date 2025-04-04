@@ -15,7 +15,7 @@
 #include <CircularBuffer.h>
 #include <arduino-timer.h>
 
-#include "settings/loradv_config.h"
+#include "settings/config.h"
 #include "hal/radio_task.h"
 #include "audio/audio_task.h"
 #include "hal/pm_service.h"

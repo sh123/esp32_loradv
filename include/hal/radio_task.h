@@ -8,7 +8,7 @@
 #include <CircularBuffer.hpp>
 #include <ChaCha.h>
 
-#include "settings/loradv_config.h"
+#include "settings/config.h"
 #include "audio/audio_task.h"
 #include "utils/utils.h"
 #include "settings/settings_menu.h"

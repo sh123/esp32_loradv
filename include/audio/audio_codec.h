@@ -2,7 +2,7 @@
 #define AUDIO_CODEC_H
 
 #include <memory>
-#include "settings/loradv_config.h"
+#include "settings/config.h"
 
 namespace LoraDv {
 

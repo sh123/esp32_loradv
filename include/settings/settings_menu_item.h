@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "settings/loradv_config.h"
+#include "settings/config.h"
 #include "utils/utils.h"
 
 namespace LoraDv {

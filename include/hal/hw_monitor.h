@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <memory>
-#include "settings/loradv_config.h"
+#include "settings/config.h"
 
 namespace LoraDv {
 
