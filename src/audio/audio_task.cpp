@@ -5,20 +5,20 @@
 
 namespace LoraDv {
 
-AudioTask::AudioTask(std::shared_ptr<const Config> config)
+AudioTask::AudioTask(std::shared_ptr<const Config> config, std::shared_ptr<PmService> pmService)
   : config_(config)
   , audioTaskHandle_(0)
   , radioTask_(nullptr)
-  , pmService_(nullptr)
-  , dsp_(nullptr)
+  , pmService_(pmService)
+  , dsp_(std::make_shared<Dsp>(config->AudioHpfCutoffHz_, config->AudioSampleRate_))
   , audioCodec_(nullptr)
   , pcmResampleBuffer_(0)
   , pcmFrameBuffer_(0)
   , encodedFrameBuffer_(0)
   , codecSamplesPerFrame_(0)
   , codecBytesPerFrame_(0)
-  , volume_(0)
-  , maxVolume_(0)
+  , volume_(config->AudioVol)
+  , maxVolume_(config->AudioMaxVol_)
   , isPttOn_(false)
   , isRunning_(false)
   , shouldUpdateScreen_(false)
@@ -27,13 +27,9 @@ AudioTask::AudioTask(std::shared_ptr<const Config> config)
 {
 }
 
-void AudioTask::start(std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService)
+void AudioTask::start(std::shared_ptr<RadioTask> radioTask)
 {
   radioTask_ = radioTask;
-  pmService_ = pmService;
-  volume_ = config_->AudioVol;
-  maxVolume_ = config_->AudioMaxVol_;
-  dsp_ = std::make_shared<Dsp>(config_->AudioHpfCutoffHz_, config_->AudioSampleRate_);
   xTaskCreatePinnedToCore(&task, "AudioTask", CfgAudioTaskStack, this, 2, &audioTaskHandle_, 0);
 }
 

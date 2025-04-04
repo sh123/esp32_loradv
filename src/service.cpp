@@ -7,10 +7,10 @@ std::shared_ptr<AiEsp32RotaryEncoder> Service::rotaryEncoder_;
 Service::Service(std::shared_ptr<Config> config)
   : config_(config)
   , display_(std::make_shared<Adafruit_SSD1306>(CfgDisplayWidth, CfgDisplayHeight, &Wire, -1))
-  , radioTask_(std::make_shared<RadioTask>(config))
-  , audioTask_(std::make_shared<AudioTask>(config))
   , pmService_(std::make_shared<PmService>(config, display_))
   , hwMonitor_(std::make_shared<HwMonitor>(config))
+  , radioTask_(std::make_shared<RadioTask>(config))
+  , audioTask_(std::make_shared<AudioTask>(config, pmService_))
   , settingsMenu_(nullptr)
   , btnPressed_(false)
 {
@@ -29,7 +29,7 @@ void Service::setup()
   setupScreen();
   setupPttButton();
 
-  audioTask_->start(radioTask_, pmService_);
+  audioTask_->start(radioTask_);
   radioTask_->start(audioTask_);
 
   updateScreen();
