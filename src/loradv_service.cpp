@@ -152,11 +152,17 @@ bool Service::processRotaryEncoder()
 
 void Service::loop() 
 {
-  if (audioTask_->loop() ||
-      radioTask_->loop() || 
-      pmService_->loop() || 
-      processPttButton() || 
-      processRotaryEncoder()) updateScreen();
+  bool screenNeedsUpdate = false;
+
+  screenNeedsUpdate |= audioTask_->loop();
+  screenNeedsUpdate |= radioTask_->loop();
+  screenNeedsUpdate |= pmService_->loop();
+  screenNeedsUpdate |= processPttButton();
+  screenNeedsUpdate |= processRotaryEncoder();
+
+  if (screenNeedsUpdate) {
+    updateScreen();
+  }
 }
 
 } // LoraDv
