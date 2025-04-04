@@ -5,7 +5,7 @@
 #include <memory>
 #include <DebugLog.h>
 #include <RadioLib.h>
-#include <CircularBuffer.h>
+#include <CircularBuffer.hpp>
 #include <ChaCha.h>
 
 #include "settings/loradv_config.h"
@@ -79,10 +79,13 @@ private:
 
   static TaskHandle_t loraTaskHandle_;
 
-  CircularBuffer<uint8_t, CfgRadioQueueLen> loraRadioRxQueue_;
-  CircularBuffer<uint8_t, CfgRadioQueueLen> loraRadioRxQueueIndex_;
-  CircularBuffer<uint8_t, CfgRadioQueueLen> loraRadioTxQueue_;
-  CircularBuffer<uint8_t, CfgRadioQueueLen> loraRadioTxQueueIndex_;
+  struct RadioQueue {
+    CircularBuffer<uint8_t, CfgRadioQueueLen> data;
+    CircularBuffer<uint8_t, CfgRadioQueueLen> index;
+  };
+
+  RadioQueue loraRadioRxQueue_;
+  RadioQueue loraRadioTxQueue_;
 
   bool rigIsImplicitMode_;
   bool isIsrInstalled_;

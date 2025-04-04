@@ -103,31 +103,31 @@ void RadioTask::setFreq(long loraFreq) const
 
 bool RadioTask::hasData() const 
 {
-  return loraRadioRxQueueIndex_.size() > 0;
+  return loraRadioRxQueue_.index.size() > 0;
 }
 
 bool RadioTask::readPacketSize(byte &packetSize)
 {
   if (!hasData()) return false;
-  packetSize = loraRadioRxQueueIndex_.shift();
+  packetSize = loraRadioRxQueue_.index.shift();
   return true;
 }
 
 bool RadioTask::readNextByte(byte &b)
 {
-  if (loraRadioRxQueue_.size() == 0) return false;
-  b = loraRadioRxQueue_.shift();
+  if (loraRadioRxQueue_.data.size() == 0) return false;
+  b = loraRadioRxQueue_.data.shift();
   return true;
 }
 
 bool RadioTask::writePacketSize(byte packetSize)
 {
-  return loraRadioTxQueueIndex_.push(packetSize);
+  return loraRadioTxQueue_.index.push(packetSize);
 }
 
 bool RadioTask::writeNextByte(byte b) 
 {
-  return loraRadioTxQueue_.push(b);
+  return loraRadioTxQueue_.data.push(b);
 }
 
 IRAM_ATTR void RadioTask::onRigIsrRxPacket() 
@@ -245,9 +245,9 @@ void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf)
       // send packet to the queue
       LOG_DEBUG("Received packet, size", packetSize);
       for (int i = 0; i < packetSize; i++) {
-        loraRadioRxQueue_.push(receiveBuf[i]);
+        loraRadioRxQueue_.data.push(receiveBuf[i]);
       }
-      loraRadioRxQueueIndex_.push(packetSize);
+      loraRadioRxQueue_.index.push(packetSize);
       audioTask_->play();
     } else {
       LOG_ERROR("Read data error: ", state);
@@ -265,11 +265,11 @@ void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf)
 
 void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf) 
 {
-  while (loraRadioTxQueueIndex_.size() > 0) {
+  while (loraRadioTxQueue_.index.size() > 0) {
     // fetch packet size and packet from the queue
-    int txBytesCnt = loraRadioTxQueueIndex_.shift();
+    int txBytesCnt = loraRadioTxQueue_.index.shift();
     for (int i = 0; i < txBytesCnt; i++) {
-        packetBuf[i] = loraRadioTxQueue_.shift();
+        packetBuf[i] = loraRadioTxQueue_.data.shift();
     }
     byte *sendBuf = packetBuf;
     // if privacy enabled
