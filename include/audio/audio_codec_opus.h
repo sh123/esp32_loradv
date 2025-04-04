@@ -4,6 +4,8 @@
 #include <opus.h>
 #include "audio/audio_codec.h"
 
+using namespace std;
+
 namespace LoraDv {
 
 class AudioCodecOpus : public AudioCodec {
@@ -11,7 +13,7 @@ class AudioCodecOpus : public AudioCodec {
 public:
   AudioCodecOpus();
 
-  virtual bool start(std::shared_ptr<const Config> config) override;
+  virtual bool start(shared_ptr<const Config> config) override;
   virtual void stop() override;
 
   virtual int encode(uint8_t *encodedOut, int16_t *pcmIn) override;

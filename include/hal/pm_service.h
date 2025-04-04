@@ -8,12 +8,14 @@
 
 #include "settings/config.h"
 
+using namespace std;
+
 namespace LoraDv {
 
 class PmService {
 
 public:
-  PmService(std::shared_ptr<const Config> config, std::shared_ptr<Adafruit_SSD1306> display);
+  PmService(shared_ptr<const Config> config, shared_ptr<Adafruit_SSD1306> display);
 
   void setup();
   bool loop();
@@ -26,8 +28,8 @@ private:
   esp_sleep_wakeup_cause_t lightSleepWait(uint64_t sleepTimeUs) const;
 
 private:
-  std::shared_ptr<const Config> config_;
-  std::shared_ptr<Adafruit_SSD1306> display_;
+  shared_ptr<const Config> config_;
+  shared_ptr<Adafruit_SSD1306> display_;
 
   Timer<1> lightSleepTimer_;
   Timer<1>::Task lightSleepTimerTask_;

@@ -14,13 +14,15 @@
 #include "hal/radio_task.h"
 #include "utils/utils.h"
 
+using namespace std;
+
 namespace LoraDv {
 
 class SettingsMenu {
 public:
-  SettingsMenu(std::shared_ptr<Config> config);
+  SettingsMenu(shared_ptr<Config> config);
 
-  void draw(std::shared_ptr<Adafruit_SSD1306> display);
+  void draw(shared_ptr<Adafruit_SSD1306> display);
 
   void onEncoderPositionChanged(int delta);
   void onEncoderButtonClicked();
@@ -28,8 +30,8 @@ public:
 private:
   bool isValueSelected_;
   int selectedMenuItemIndex_;
-  std::shared_ptr<Config> config_;
-  std::vector<std::shared_ptr<SettingsMenuItem>> items_; // Updated type
+  shared_ptr<Config> config_;
+  vector<shared_ptr<SettingsMenuItem>> items_; // Updated type
 };
 
 } // LoraDv

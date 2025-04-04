@@ -3,19 +3,22 @@
 
 #include "service.h"
 
+using namespace std;
+using namespace LoraDv;
+
 static constexpr int LoopDelayMs = 10;
 
-std::shared_ptr<LoraDv::Config> config_;
-std::shared_ptr<LoraDv::Service> service_;
+shared_ptr<Config> config_;
+shared_ptr<Service> service_;
 
 void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
   while (!Serial);
 
-  config_ = std::make_shared<LoraDv::Config>();
+  config_ = make_shared<Config>();
   config_->Load();
   
-  service_ = std::make_shared<LoraDv::Service>(config_);
+  service_ = make_shared<Service>(config_);
   service_->setup();
 }
 

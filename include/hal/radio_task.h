@@ -13,6 +13,8 @@
 #include "utils/utils.h"
 #include "settings/settings_menu.h"
 
+using namespace std;
+
 namespace LoraDv {
 
 class AudioTask;
@@ -20,9 +22,9 @@ class AudioTask;
 class RadioTask {
 
 public:
-  explicit RadioTask(std::shared_ptr<const Config> config);
+  explicit RadioTask(shared_ptr<const Config> config);
 
-  void start(std::shared_ptr<AudioTask> audioTask);
+  void start(shared_ptr<AudioTask> audioTask);
   inline void stop() { isRunning_ = false; }
   bool loop();
 
@@ -68,13 +70,13 @@ private:
   void rigTaskStartTransmit();
 
 private:
-  std::shared_ptr<const Config> config_;
+  shared_ptr<const Config> config_;
 
-  std::shared_ptr<MODULE_NAME> radioModule_;
-  std::shared_ptr<AudioTask> audioTask_;
+  shared_ptr<MODULE_NAME> radioModule_;
+  shared_ptr<AudioTask> audioTask_;
 
   uint8_t iv_[CfgIvSize];
-  std::shared_ptr<ChaCha> cipher_;
+  shared_ptr<ChaCha> cipher_;
 
   static TaskHandle_t loraTaskHandle_;
 
