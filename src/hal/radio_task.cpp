@@ -7,7 +7,7 @@ TaskHandle_t RadioTask::loraTaskHandle_;
 
 RadioTask::RadioTask()
   : config_(nullptr)
-  , rig_(nullptr)
+  , radioModule_(nullptr)
   , audioTask_(nullptr)
   , cipher_(new ChaCha())
   , isRigImplicitMode_(false)
@@ -38,28 +38,28 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
   LOG_INFO("CRC:", crcBytes);
   LOG_INFO("Speed:", Utils::loraGetSpeed(sf, cr, bw), "bps");
   LOG_INFO("Min level:", Utils::loraGetSnrLimit(sf, bw));
-  rig_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
-  int state = rig_->begin((float)loraFreq / 1e6, (float)bw / 1e3, sf, cr, sync, pwr);
+  radioModule_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
+  int state = radioModule_->begin((float)loraFreq / 1e6, (float)bw / 1e3, sf, cr, sync, pwr);
   if (state != RADIOLIB_ERR_NONE) {
     LOG_ERROR("Radio start error:", state);
   }
-  rig_->setCRC(crcBytes);
-  rig_->setPreambleLength(config_->LoraPreambleLen_);
+  radioModule_->setCRC(crcBytes);
+  radioModule_->setPreambleLength(config_->LoraPreambleLen_);
 #ifdef USE_SX126X
     #pragma message("Using SX126X")
     LOG_INFO("Using SX126X module");
-    rig_->setRfSwitchPins(config_->LoraPinSwitchRx_, config_->LoraPinSwitchTx_);
-    if (isIsrInstalled_) rig_->clearDio1Action();
-    rig_->setDio1Action(onRigIsrRxPacket);
+    radioModule_->setRfSwitchPins(config_->LoraPinSwitchRx_, config_->LoraPinSwitchTx_);
+    if (isIsrInstalled_) radioModule_->clearDio1Action();
+    radioModule_->setDio1Action(onRigIsrRxPacket);
     isIsrInstalled_ = true;
 #else
     #pragma message("Using SX127X")
     LOG_INFO("Using SX127X module");
-    if (isIsrInstalled_) rig_->clearDio0Action();
-    rig_->setDio0Action(onRigIsrRxPacket, RISING);
+    if (isIsrInstalled_) radioModule_->clearDio0Action();
+    radioModule_->setDio0Action(onRigIsrRxPacket, RISING);
     isIsrInstalled_ = true;
 #endif
-  rig_->explicitHeader();
+  radioModule_->explicitHeader();
   LOG_INFO("LoRa initialized");
 }
 
@@ -72,25 +72,25 @@ void RadioTask::setupRigFsk(long freq, float bitRate, float freqDev, float rxBw,
   LOG_INFO("Bandwidth:", rxBw, "kHz");
   LOG_INFO("Power:", pwr, "dBm");
   LOG_INFO("Shaping:", shaping);
-  rig_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
-  int state = rig_->beginFSK((float)freq / 1e6, bitRate, freqDev, rxBw, pwr);
+  radioModule_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
+  int state = radioModule_->beginFSK((float)freq / 1e6, bitRate, freqDev, rxBw, pwr);
   if (state != RADIOLIB_ERR_NONE) {
     LOG_ERROR("Radio start error:", state);
   }
-  rig_->disableAddressFiltering();
-  rig_->setDataShaping(shaping);
+  radioModule_->disableAddressFiltering();
+  radioModule_->setDataShaping(shaping);
 #ifdef USE_SX126X
     #pragma message("Using SX126X")
     LOG_INFO("Using SX126X module");
-    rig_->setRfSwitchPins(config_->LoraPinSwitchRx_, config_->LoraPinSwitchTx_);
-    if (isIsrInstalled_) rig_->clearDio1Action();
-    rig_->setDio1Action(onRigIsrRxPacket);
+    radioModule_->setRfSwitchPins(config_->LoraPinSwitchRx_, config_->LoraPinSwitchTx_);
+    if (isIsrInstalled_) radioModule_->clearDio1Action();
+    radioModule_->setDio1Action(onRigIsrRxPacket);
     isIsrInstalled_ = true;
 #else
     #pragma message("Using SX127X")
     LOG_INFO("Using SX127X module");
-    if (isIsrInstalled_) rig_->clearDio0Action();
-    rig_->setDio0Action(onRigIsrRxPacket, RISING);
+    if (isIsrInstalled_) radioModule_->clearDio0Action();
+    radioModule_->setDio0Action(onRigIsrRxPacket, RISING);
     isIsrInstalled_ = true;
 #endif
   LOG_INFO("FSK initialized");
@@ -98,7 +98,7 @@ void RadioTask::setupRigFsk(long freq, float bitRate, float freqDev, float rxBw,
 
 void RadioTask::setFreq(long loraFreq) const 
 {
-  rig_->setFrequency((float)loraFreq / (float)1e6);
+  radioModule_->setFrequency((float)loraFreq / (float)1e6);
 }
 
 bool RadioTask::hasData() const 
@@ -169,7 +169,7 @@ void RadioTask::rigTask()
     setupRigFsk(config_->LoraFreqRx, config_->FskBitRate, config_->FskFreqDev,
       config_->FskRxBw, config_->LoraPower, config_->FskShaping);
   }
-  randomSeed(rig_->random(0x7FFFFFFF));
+  randomSeed(radioModule_->random(0x7FFFFFFF));
   rigTaskStartReceive();
 
   byte *packetBuf = new byte[CfgRadioPacketBufLen];
@@ -211,7 +211,7 @@ void RadioTask::rigTaskStartReceive()
 {
   LOG_INFO("Start receive");
   if (isHalfDuplex()) setFreq(config_->LoraFreqRx);
-  int loraRadioState = rig_->startReceive();
+  int loraRadioState = radioModule_->startReceive();
   if (loraRadioState != RADIOLIB_ERR_NONE) {
     LOG_ERROR("Start receive error: ", loraRadioState);
   }
@@ -228,10 +228,10 @@ void RadioTask::rigTaskStartTransmit()
 
 void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf) 
 {
-  int packetSize = rig_->getPacketLength();
+  int packetSize = radioModule_->getPacketLength();
   if (packetSize > 8 && packetSize < CfgRadioPacketBufLen) {
     // receive packet
-    int state = rig_->readData(packetBuf, packetSize);
+    int state = radioModule_->readData(packetBuf, packetSize);
     if (state == RADIOLIB_ERR_NONE) {
       byte *receiveBuf = packetBuf;
       // if privacy enabled
@@ -252,9 +252,9 @@ void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf)
     } else {
       LOG_ERROR("Read data error: ", state);
     }
-    lastRssi_ = rig_->getRSSI();
+    lastRssi_ = radioModule_->getRSSI();
     // probably not needed, still in receive
-    state = rig_->startReceive();
+    state = radioModule_->startReceive();
     if (state != RADIOLIB_ERR_NONE) {
       LOG_ERROR("Start receive error: ", state);
     }
@@ -286,7 +286,7 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
       sendBuf = tmpBuf;
     }
     // transmit
-    int loraRadioState = rig_->transmit(sendBuf, txBytesCnt);
+    int loraRadioState = radioModule_->transmit(sendBuf, txBytesCnt);
     if (loraRadioState != RADIOLIB_ERR_NONE) {
         LOG_ERROR("Radio transmit failed:", loraRadioState, txBytesCnt);
     } else {

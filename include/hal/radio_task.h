@@ -70,7 +70,7 @@ private:
 private:
   std::shared_ptr<const Config> config_;
 
-  std::shared_ptr<MODULE_NAME> rig_;
+  std::shared_ptr<MODULE_NAME> radioModule_;
   std::shared_ptr<AudioTask> audioTask_;
 
   uint8_t iv_[CfgIvSize];
@@ -88,7 +88,7 @@ private:
 
   bool isRigImplicitMode_;
   bool isIsrInstalled_;
-  static volatile bool loraIsrEnabled_;
+  static volatile bool isIsrEnabled_;
   volatile bool isRunning_;
   volatile bool shouldUpdateScreen_;
   float lastRssi_;
