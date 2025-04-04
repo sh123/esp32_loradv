@@ -5,8 +5,8 @@
 
 static constexpr int LoopDelayMs = 10;
 
-std::shared_ptr<LoraDv::Service> loraDvService_;
 std::shared_ptr<LoraDv::Config> config_;
+std::shared_ptr<LoraDv::Service> loraDvService_;
 
 void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
