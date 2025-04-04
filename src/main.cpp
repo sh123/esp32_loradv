@@ -6,7 +6,7 @@
 static constexpr int LoopDelayMs = 10;
 
 std::shared_ptr<LoraDv::Config> config_;
-std::shared_ptr<LoraDv::Service> loraDvService_;
+std::shared_ptr<LoraDv::Service> service_;
 
 void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
@@ -15,12 +15,12 @@ void setup() {
   config_ = std::make_shared<LoraDv::Config>();
   config_->Load();
   
-  loraDvService_ = std::make_shared<LoraDv::Service>(config_);
-  loraDvService_->setup();
+  service_ = std::make_shared<LoraDv::Service>(config_);
+  service_->setup();
 }
 
 void loop() {
-  loraDvService_->loop();
+  service_->loop();
   delay(LoopDelayMs);
 }
 
