@@ -10,25 +10,11 @@
 #include <iostream>
 
 #include "settings/loradv_config.h"
+#include "settings/settings_menu_item.h"
 #include "hal/radio_task.h"
 #include "utils/utils.h"
 
 namespace LoraDv {
-
-class SettingsMenuItem {
-public:
-  SettingsMenuItem(std::shared_ptr<Config> config, int index) 
-  : index_(index)
-  , config_(config) {}
-  virtual void changeValue(int delta) = 0;
-  virtual void getName(std::stringstream &s) const = 0;
-  virtual void getValue(std::stringstream &s) const = 0;
-  virtual void select() {} 
-
-protected:
-  int index_;
-  std::shared_ptr<Config> config_;
-};
 
 class SettingsMenu {
 public:
