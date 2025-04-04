@@ -83,10 +83,10 @@ private:
     CircularBuffer<uint8_t, CfgRadioQueueLen> index;
   };
 
-  RadioQueue loraRadioRxQueue_;
-  RadioQueue loraRadioTxQueue_;
+  RadioQueue radioRxQueue_;
+  RadioQueue radioTxQueue_;
 
-  bool isRigImplicitMode_;
+  bool isImplicitMode_;
   bool isIsrInstalled_;
   static volatile bool isIsrEnabled_;
   volatile bool isRunning_;

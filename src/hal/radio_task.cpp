@@ -10,7 +10,7 @@ RadioTask::RadioTask()
   , radioModule_(nullptr)
   , audioTask_(nullptr)
   , cipher_(new ChaCha())
-  , isRigImplicitMode_(false)
+  , isImplicitMode_(false)
   , isIsrInstalled_(false)
   , isRunning_(false)
   , shouldUpdateScreen_(false)
@@ -103,31 +103,31 @@ void RadioTask::setFreq(long loraFreq) const
 
 bool RadioTask::hasData() const 
 {
-  return loraRadioRxQueue_.index.size() > 0;
+  return radioRxQueue_.index.size() > 0;
 }
 
 bool RadioTask::readPacketSize(byte &packetSize)
 {
   if (!hasData()) return false;
-  packetSize = loraRadioRxQueue_.index.shift();
+  packetSize = radioRxQueue_.index.shift();
   return true;
 }
 
 bool RadioTask::readNextByte(byte &b)
 {
-  if (loraRadioRxQueue_.data.size() == 0) return false;
-  b = loraRadioRxQueue_.data.shift();
+  if (radioRxQueue_.data.size() == 0) return false;
+  b = radioRxQueue_.data.shift();
   return true;
 }
 
 bool RadioTask::writePacketSize(byte packetSize)
 {
-  return loraRadioTxQueue_.index.push(packetSize);
+  return radioTxQueue_.index.push(packetSize);
 }
 
 bool RadioTask::writeNextByte(byte b) 
 {
-  return loraRadioTxQueue_.data.push(b);
+  return radioTxQueue_.data.push(b);
 }
 
 IRAM_ATTR void RadioTask::onRigIsrRxPacket() 
@@ -245,9 +245,9 @@ void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf)
       // send packet to the queue
       LOG_DEBUG("Received packet, size", packetSize);
       for (int i = 0; i < packetSize; i++) {
-        loraRadioRxQueue_.data.push(receiveBuf[i]);
+        radioRxQueue_.data.push(receiveBuf[i]);
       }
-      loraRadioRxQueue_.index.push(packetSize);
+      radioRxQueue_.index.push(packetSize);
       audioTask_->play();
     } else {
       LOG_ERROR("Read data error: ", state);
@@ -265,11 +265,11 @@ void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf)
 
 void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf) 
 {
-  while (loraRadioTxQueue_.index.size() > 0) {
+  while (radioTxQueue_.index.size() > 0) {
     // fetch packet size and packet from the queue
-    int txBytesCnt = loraRadioTxQueue_.index.shift();
+    int txBytesCnt = radioTxQueue_.index.shift();
     for (int i = 0; i < txBytesCnt; i++) {
-        packetBuf[i] = loraRadioTxQueue_.data.shift();
+        packetBuf[i] = radioTxQueue_.data.shift();
     }
     byte *sendBuf = packetBuf;
     // if privacy enabled
