@@ -112,41 +112,42 @@ bool Service::processRotaryEncoder()
 {
   bool shouldUpdateScreen = false;
   long encoderDelta = rotaryEncoder_->encoderChanged();
-  if (encoderDelta != 0)
-  {
+
+  if (encoderDelta != 0) {
     LOG_INFO("Encoder changed:", rotaryEncoder_->readEncoder(), encoderDelta);
-    if (settingsMenu_ == nullptr) {
-      audioTask_->changeVolume(encoderDelta);
-      shouldUpdateScreen = true;
-    } else {
+    if (settingsMenu_) {
       settingsMenu_->onEncoderPositionChanged(encoderDelta);
       settingsMenu_->draw(display_);
+    } else {
+      audioTask_->changeVolume(encoderDelta);
+      shouldUpdateScreen = true;
     }
     pmService_->lightSleepReset();
   }
-  if (rotaryEncoder_->isEncoderButtonClicked())
-  {
+
+  if (rotaryEncoder_->isEncoderButtonClicked()) {
     LOG_INFO("Encoder button clicked", esp_get_free_heap_size());
-    if (settingsMenu_ == nullptr) {
-      shouldUpdateScreen = true;
-    } else {
+    if (settingsMenu_) {
       settingsMenu_->onEncoderButtonClicked();
       settingsMenu_->draw(display_);
-    }
-    pmService_->lightSleepReset();
-  }
-  if (rotaryEncoder_->isEncoderButtonClicked(CfgEncoderBtnLongMs))
-  {
-    LOG_INFO("Encoder button long clicked");
-    if (settingsMenu_ == nullptr) {
-      settingsMenu_ = std::make_shared<SettingsMenu>(config_);
-      settingsMenu_->draw(display_);
     } else {
-      settingsMenu_.reset();
       shouldUpdateScreen = true;
     }
     pmService_->lightSleepReset();
   }
+
+  if (rotaryEncoder_->isEncoderButtonClicked(CfgEncoderBtnLongMs)) {
+    LOG_INFO("Encoder button long clicked");
+    if (settingsMenu_) {
+      settingsMenu_.reset();
+      shouldUpdateScreen = true;
+    } else {
+      settingsMenu_ = std::make_shared<SettingsMenu>(config_);
+      settingsMenu_->draw(display_);
+    }
+    pmService_->lightSleepReset();
+  }
+
   return shouldUpdateScreen;
 }
 
