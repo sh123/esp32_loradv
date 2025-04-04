@@ -15,9 +15,9 @@
 
 namespace LoraDv {
 
-class SettingsItem {
+class SettingsMenuItem {
 public:
-  SettingsItem(std::shared_ptr<Config> config, int index) 
+  SettingsMenuItem(std::shared_ptr<Config> config, int index) 
   : index_(index)
   , config_(config) {}
   virtual void changeValue(int delta) = 0;
@@ -43,7 +43,7 @@ private:
   bool isValueSelected_;
   int selectedMenuItemIndex_;
   std::shared_ptr<Config> config_;
-  std::vector<std::shared_ptr<SettingsItem>> items_;
+  std::vector<std::shared_ptr<SettingsMenuItem>> items_; // Updated type
 };
 
 } // LoraDv
