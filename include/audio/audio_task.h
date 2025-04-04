@@ -18,7 +18,7 @@ class RadioTask;
 class AudioTask {
 
 public:
-  AudioTask();
+  explicit AudioTask();
 
   void start(std::shared_ptr<const Config> config, std::shared_ptr<RadioTask> radioTask, std::shared_ptr<PmService> pmService);
   inline void stop() { isRunning_ = false; }
@@ -30,20 +30,24 @@ public:
 
   void setPtt(bool isPttOn);
 
-  inline void setVolume(int volume) { if (volume <= maxVolume_) volume_ = volume; }
+  inline void setVolume(int volume) { 
+    if (volume >= 0 && volume <= maxVolume_) {
+      volume_ = volume; 
+    }
+  }
   void changeVolume(int deltaVolume);
   inline int getVolume() const { return volume_; }
 
 private:
-  const i2s_port_t CfgAudioI2sSpkId = I2S_NUM_0;  // audio i2s speaker number
-  const i2s_port_t CfgAudioI2sMicId = I2S_NUM_1;  // audio i2s mic number
+  constexpr static i2s_port_t CfgAudioI2sSpkId = I2S_NUM_0;  // audio i2s speaker number
+  constexpr static i2s_port_t CfgAudioI2sMicId = I2S_NUM_1;  // audio i2s mic number
 
-  const uint32_t CfgAudioPlayBit = 0x01;          // task bit for playback
-  const uint32_t CfgAudioRecBit = 0x02;           // task bit for recording
+  constexpr static uint32_t CfgAudioPlayBit = 0x01;          // task bit for playback
+  constexpr static uint32_t CfgAudioRecBit = 0x02;           // task bit for recording
 
-  const int CfgStartupDelayMs = 3000;             // startup delay
-  const int CfgAudioTaskStack = 32768;            // audio stack size
-  const int CfgPlayCompletedDelayMs = 500;        // playback stopped status after ms
+  constexpr static int CfgStartupDelayMs = 3000;             // startup delay
+  constexpr static int CfgAudioTaskStack = 32768;            // audio stack size
+  constexpr static int CfgPlayCompletedDelayMs = 500;        // playback stopped status after ms
 
 private:
   void installAudio(int bytesPerSample) const;
