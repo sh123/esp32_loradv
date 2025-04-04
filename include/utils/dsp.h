@@ -8,7 +8,7 @@ namespace LoraDv {
 class Dsp {
 
 public:
-  Dsp(int hpfCutoffFreqHz, int hpfSampleRate);
+  explicit Dsp(int hpfCutoffFreqHz, int hpfSampleRate);
 
   int audioDownsample2x(int16_t *pcmInput, int16_t *pcmOutput, int pcmInputSize);
   int audioUpsample2x(int16_t *pcmInput, int16_t *pcmOutput, int pcmInputSize);
@@ -19,10 +19,10 @@ public:
   void audioFilterHpf(int16_t *pcmBuffer, int pcmBufferSize);
 
 private:
-  // agc
-  const float CfgAgcMaxGain = 20.0;
-  const float CfgAgcMinGain = 0.1;
-  const float CfgAgcStep = 0.1;
+  // AGC configuration
+  static constexpr float CfgAgcMaxGain = 20.0;
+  static constexpr float CfgAgcMinGain = 0.1;
+  static constexpr float CfgAgcStep = 0.1;
 
   // agc
   float currentAgcGain_;
