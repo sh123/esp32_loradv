@@ -45,13 +45,13 @@ private:
   static constexpr int CfgRadioQueueLen = 512;          // circular buffer length
   static constexpr int CfgRadioPacketBufLen = 256;      // packet buffer length
 
-  static const uint32_t CfgRadioRxBit = 0x01;       // task bit for rx
-  static const uint32_t CfgRadioTxBit = 0x02;       // task bit for tx
-  static const uint32_t CfgRadioRxStartBit = 0x04;  // task bit for start rx
-  static const uint32_t CfgRadioTxStartBit = 0x10;  // task bit for start tx
+  static constexpr uint32_t CfgRadioRxBit = 0x01;       // task bit for rx
+  static constexpr uint32_t CfgRadioTxBit = 0x02;       // task bit for tx
+  static constexpr uint32_t CfgRadioRxStartBit = 0x04;  // task bit for start rx
+  static constexpr uint32_t CfgRadioTxStartBit = 0x10;  // task bit for start tx
 
-  const int CfgRadioTaskStack = 4096;
-  static constexpr size_t CfgIvSize = 8;
+  static constexpr int CfgRadioTaskStack = 4096;        // task stack size
+  static constexpr size_t CfgIvSize = 8;                // IV, initialization vector size
 
 private:
   void setupRig(long freq, long bw, int sf, int cr, int pwr, int sync, int crcBytes);
@@ -86,7 +86,7 @@ private:
   RadioQueue loraRadioRxQueue_;
   RadioQueue loraRadioTxQueue_;
 
-  bool rigIsImplicitMode_;
+  bool isRigImplicitMode_;
   bool isIsrInstalled_;
   static volatile bool loraIsrEnabled_;
   volatile bool isRunning_;

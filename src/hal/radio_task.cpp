@@ -2,7 +2,7 @@
 
 namespace LoraDv {
 
-volatile bool RadioTask::loraIsrEnabled_ = true;
+volatile bool RadioTask::isIsrEnabled_ = true;
 TaskHandle_t RadioTask::loraTaskHandle_;
 
 RadioTask::RadioTask()
@@ -10,7 +10,7 @@ RadioTask::RadioTask()
   , rig_(nullptr)
   , audioTask_(nullptr)
   , cipher_(new ChaCha())
-  , rigIsImplicitMode_(false)
+  , isRigImplicitMode_(false)
   , isIsrInstalled_(false)
   , isRunning_(false)
   , shouldUpdateScreen_(false)
@@ -132,7 +132,7 @@ bool RadioTask::writeNextByte(byte b)
 
 IRAM_ATTR void RadioTask::onRigIsrRxPacket() 
 {
-  if (!loraIsrEnabled_) return;
+  if (!isIsrEnabled_) return;
   BaseType_t xHigherPriorityTaskWoken;
   xTaskNotifyFromISR(loraTaskHandle_, CfgRadioRxBit, eSetBits, &xHigherPriorityTaskWoken);
 }
@@ -216,13 +216,13 @@ void RadioTask::rigTaskStartReceive()
     LOG_ERROR("Start receive error: ", loraRadioState);
   }
   vTaskDelay(1);
-  loraIsrEnabled_ = true;
+  isIsrEnabled_ = true;
 }
 
 void RadioTask::rigTaskStartTransmit() 
 {
   LOG_INFO("Start transmit");
-  loraIsrEnabled_ = false;
+  isIsrEnabled_ = false;
   if (isHalfDuplex()) setFreq(config_->LoraFreqTx);
 }
 
