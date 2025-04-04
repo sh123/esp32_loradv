@@ -41,6 +41,7 @@ private:
 private:
   void setupEncoder();
   void setupScreen();
+  void setupPttButton();
 
   static IRAM_ATTR void isrReadEncoder();
 

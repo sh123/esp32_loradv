@@ -9,26 +9,26 @@ Service::Service(std::shared_ptr<Config> config)
   , display_(std::make_shared<Adafruit_SSD1306>(CfgDisplayWidth, CfgDisplayHeight, &Wire, -1))
   , radioTask_(std::make_shared<RadioTask>(config))
   , audioTask_(std::make_shared<AudioTask>(config))
-  , pmService_(std::make_shared<PmService>(config))
+  , pmService_(std::make_shared<PmService>(config, display_))
   , hwMonitor_(std::make_shared<HwMonitor>(config))
   , settingsMenu_(nullptr)
   , btnPressed_(false)
 {
+  rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config->EncoderPinA_, config->EncoderPinB_, 
+    config->EncoderPinBtn_, config->EncoderPinVcc_, config->EncoderSteps_);
 }
 
 void Service::setup()
 {
   LOG_SET_LEVEL(config_->LogLevel);
   LOG_SET_OPTION(false, false, true);  // disable file, line, enable func
-  
+
+  LOG_INFO("Board setup started");
+ 
   setupEncoder();
   setupScreen();
+  setupPttButton();
 
-  LOG_INFO("PTT setup started");
-  pinMode(config_->PttBtnPin_, INPUT);
-  LOG_INFO("PTT setup completed");
-
-  pmService_->setup(display_);
   audioTask_->start(radioTask_, pmService_);
   radioTask_->start(audioTask_);
 
@@ -40,8 +40,6 @@ void Service::setup()
 void Service::setupEncoder() 
 {
   LOG_INFO("Encoder setup started");
-  rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config_->EncoderPinA_, config_->EncoderPinB_, 
-    config_->EncoderPinBtn_, config_->EncoderPinVcc_, config_->EncoderSteps_);
   rotaryEncoder_->begin();
   rotaryEncoder_->setup(isrReadEncoder);
   LOG_INFO("Encoder setup completed");
@@ -54,6 +52,13 @@ void Service::setupScreen()
   } else {
     LOG_ERROR("Display init failed");
   }
+}
+
+void Service::setupPttButton() 
+{
+  LOG_INFO("PTT setup started");
+  pinMode(config_->PttBtnPin_, INPUT);
+  LOG_INFO("PTT setup completed");
 }
 
 IRAM_ATTR void Service::isrReadEncoder()
