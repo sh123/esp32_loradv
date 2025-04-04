@@ -86,7 +86,7 @@ private:
   long volume_;
   long maxVolume_;
 
-  bool isPttOn_;
+  volatile bool isPttOn_;
   volatile bool isRunning_;
   volatile bool shouldUpdateScreen_;
   volatile bool isPlaying_;
