@@ -6,11 +6,11 @@ std::shared_ptr<AiEsp32RotaryEncoder> Service::rotaryEncoder_;
 
 Service::Service(std::shared_ptr<Config> config)
   : config_(config)
-  , radioTask_(std::make_shared<RadioTask>())
-  , audioTask_(std::make_shared<AudioTask>())
-  , pmService_(std::make_shared<PmService>())
-  , hwMonitor_(std::make_shared<HwMonitor>())
-  , display_(nullptr)
+  , display_(std::make_shared<Adafruit_SSD1306>(CfgDisplayWidth, CfgDisplayHeight, &Wire, -1))
+  , radioTask_(std::make_shared<RadioTask>(config))
+  , audioTask_(std::make_shared<AudioTask>(config))
+  , pmService_(std::make_shared<PmService>(config))
+  , hwMonitor_(std::make_shared<HwMonitor>(config))
   , settingsMenu_(nullptr)
   , btnPressed_(false)
 {
@@ -28,10 +28,9 @@ void Service::setup()
   pinMode(config_->PttBtnPin_, INPUT);
   LOG_INFO("PTT setup completed");
 
-  hwMonitor_->setup(config_);
-  pmService_->setup(config_, display_);
-  audioTask_->start(config_, radioTask_, pmService_);
-  radioTask_->start(config_, audioTask_);
+  pmService_->setup(display_);
+  audioTask_->start(radioTask_, pmService_);
+  radioTask_->start(audioTask_);
 
   updateScreen();
 
@@ -50,7 +49,6 @@ void Service::setupEncoder()
 
 void Service::setupScreen() 
 {
-  display_ = std::make_shared<Adafruit_SSD1306>(CfgDisplayWidth, CfgDisplayHeight, &Wire, -1);
   if(display_->begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
     LOG_INFO("Display setup completed");
   } else {

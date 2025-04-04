@@ -5,8 +5,8 @@ namespace LoraDv {
 volatile bool RadioTask::isIsrEnabled_ = true;
 TaskHandle_t RadioTask::loraTaskHandle_;
 
-RadioTask::RadioTask()
-  : config_(nullptr)
+RadioTask::RadioTask(std::shared_ptr<const Config> config)
+  : config_(config)
   , radioModule_(nullptr)
   , audioTask_(nullptr)
   , cipher_(new ChaCha())
@@ -18,11 +18,10 @@ RadioTask::RadioTask()
 {
 }
 
-void RadioTask::start(std::shared_ptr<const Config> config, std::shared_ptr<AudioTask> audioTask)
+void RadioTask::start(std::shared_ptr<AudioTask> audioTask)
 {
-  config_ = config;
   audioTask_ = audioTask;
-  cipher_->setKey(config->AudioPrivacyKey_, sizeof(config->AudioPrivacyKey_));
+  cipher_->setKey(config_->AudioPrivacyKey_, sizeof(config_->AudioPrivacyKey_));
   xTaskCreatePinnedToCore(&task, "RadioTask", CfgRadioTaskStack, this, 2, &loraTaskHandle_, 1);
 }
 

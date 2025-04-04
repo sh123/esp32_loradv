@@ -20,9 +20,9 @@ class AudioTask;
 class RadioTask {
 
 public:
-  RadioTask();
+  explicit RadioTask(std::shared_ptr<const Config> config);
 
-  void start(std::shared_ptr<const Config> config, std::shared_ptr<AudioTask> audioTask);
+  void start(std::shared_ptr<AudioTask> audioTask);
   inline void stop() { isRunning_ = false; }
   bool loop();
 

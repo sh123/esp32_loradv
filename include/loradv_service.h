@@ -52,14 +52,14 @@ private:
 private:
   std::shared_ptr<Config> config_;
 
-  std::shared_ptr<RadioTask> radioTask_;
-  std::shared_ptr<AudioTask> audioTask_;
+  std::shared_ptr<Adafruit_SSD1306> display_;
+  static std::shared_ptr<AiEsp32RotaryEncoder> rotaryEncoder_;
 
   std::shared_ptr<PmService> pmService_;
   std::shared_ptr<HwMonitor> hwMonitor_;
-  
-  std::shared_ptr<Adafruit_SSD1306> display_;
-  static std::shared_ptr<AiEsp32RotaryEncoder> rotaryEncoder_;
+
+  std::shared_ptr<RadioTask> radioTask_;
+  std::shared_ptr<AudioTask> audioTask_;
 
   std::shared_ptr<SettingsMenu> settingsMenu_;
 

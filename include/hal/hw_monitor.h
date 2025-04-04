@@ -10,9 +10,8 @@ namespace LoraDv {
 class HwMonitor {
 
 public:
-  HwMonitor();
-  void setup(std::shared_ptr<const Config> config);
-
+  HwMonitor(std::shared_ptr<const Config> config);
+  
   float getBatteryVoltage() const;
 
 private:

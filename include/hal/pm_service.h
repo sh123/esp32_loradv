@@ -13,9 +13,9 @@ namespace LoraDv {
 class PmService {
 
 public:
-  PmService();
+  PmService(std::shared_ptr<const Config> config);
 
-  void setup(std::shared_ptr<const Config> config, std::shared_ptr<Adafruit_SSD1306> display);
+  void setup(std::shared_ptr<Adafruit_SSD1306> display);
   bool loop();
 
   void lightSleepReset();

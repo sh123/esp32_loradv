@@ -2,14 +2,9 @@
 
 namespace LoraDv {
 
-HwMonitor::HwMonitor() 
-  : config_(nullptr)
+HwMonitor::HwMonitor(std::shared_ptr<const Config> config) 
+  : config_(config)
 {
-}
-
-void HwMonitor::setup(std::shared_ptr<const Config> config)
-{
-  config_ = config;
 }
 
 float HwMonitor::getBatteryVoltage() const
