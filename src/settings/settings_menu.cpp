@@ -9,38 +9,38 @@ SettingsMenu::SettingsMenu(shared_ptr<Config> config)
 {
   int i = 0;
   // frequency
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsLoraFreqStepItem(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsLoraFreqRxItem(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsLoraFreqTxItem(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsLoraPowerItem(config, ++i)));
+  items_.push_back(make_shared<SettingsLoraFreqStepItem>(config, ++i));
+  items_.push_back(make_shared<SettingsLoraFreqRxItem>(config, ++i));
+  items_.push_back(make_shared<SettingsLoraFreqTxItem>(config, ++i));
+  items_.push_back(make_shared<SettingsLoraPowerItem>(config, ++i));
   // modulation, codec
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsModType(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsAudioCodec(config, ++i)));
+  items_.push_back(make_shared<SettingsModType>(config, ++i));
+  items_.push_back(make_shared<SettingsAudioCodec>(config, ++i));
   // codec2
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsAudioCodec2ModeItem(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsAudioMaxPktSizeItem(config, ++i)));
+  items_.push_back(make_shared<SettingsAudioCodec2ModeItem>(config, ++i));
+  items_.push_back(make_shared<SettingsAudioMaxPktSizeItem>(config, ++i));
   // opus
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsAudioOpusRate(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsAudioOpusPcmLen(config, ++i)));
+  items_.push_back(make_shared<SettingsAudioOpusRate>(config, ++i));
+  items_.push_back(make_shared<SettingsAudioOpusPcmLen>(config, ++i));
   // audio
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsAudioVolItem(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsAudioEnablePrivacy(config, ++i)));
+  items_.push_back(make_shared<SettingsAudioVolItem>(config, ++i));
+  items_.push_back(make_shared<SettingsAudioEnablePrivacy>(config, ++i));
   // lora
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsLoraBwItem(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsLoraSfItem(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsLoraCrItem(config, ++i)));
+  items_.push_back(make_shared<SettingsLoraBwItem>(config, ++i));
+  items_.push_back(make_shared<SettingsLoraSfItem>(config, ++i));
+  items_.push_back(make_shared<SettingsLoraCrItem>(config, ++i));
   // fsk
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsFskBitRate(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsFskFreqDev(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsFskRxBw(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsFskShaping(config, ++i)));
+  items_.push_back(make_shared<SettingsFskBitRate>(config, ++i));
+  items_.push_back(make_shared<SettingsFskFreqDev>(config, ++i));
+  items_.push_back(make_shared<SettingsFskRxBw>(config, ++i));
+  items_.push_back(make_shared<SettingsFskShaping>(config, ++i));
   // other
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsBatteryMonCalItem(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsPmLightSleepAfterMsItem(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsSaveItem(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsResetItem(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsRebootItem(config, ++i)));
-  items_.push_back(shared_ptr<SettingsMenuItem>(new SettingsInfoItem(config, ++i)));
+  items_.push_back(make_shared<SettingsBatteryMonCalItem>(config, ++i));
+  items_.push_back(make_shared<SettingsPmLightSleepAfterMsItem>(config, ++i));
+  items_.push_back(make_shared<SettingsSaveItem>(config, ++i));
+  items_.push_back(make_shared<SettingsResetItem>(config, ++i));
+  items_.push_back(make_shared<SettingsRebootItem>(config, ++i));
+  items_.push_back(make_shared<SettingsInfoItem>(config, ++i));
 }
 
 void SettingsMenu::draw(shared_ptr<Adafruit_SSD1306> display) 
