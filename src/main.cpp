@@ -5,7 +5,7 @@
 
 const int LoopDelayMs = 10;
 
-LoraDv::Service loraDvService_;
+std::shared_ptr<LoraDv::Service> loraDvService_;
 std::shared_ptr<LoraDv::Config> config_;
 
 void setup() {
@@ -15,11 +15,12 @@ void setup() {
   config_ = std::make_shared<LoraDv::Config>();
   config_->Load();
   
-  loraDvService_.setup(config_);
+  loraDvService_ = std::make_shared<LoraDv::Service>(config_);
+  loraDvService_->setup();
 }
 
 void loop() {
-  loraDvService_.loop();
+  loraDvService_->loop();
   delay(LoopDelayMs);
 }
 

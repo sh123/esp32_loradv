@@ -4,8 +4,9 @@ namespace LoraDv {
 
 std::shared_ptr<AiEsp32RotaryEncoder> Service::rotaryEncoder_;
 
-Service::Service()
-  : radioTask_(std::make_shared<RadioTask>())
+Service::Service(std::shared_ptr<Config> config)
+  : config_(config)
+  , radioTask_(std::make_shared<RadioTask>())
   , audioTask_(std::make_shared<AudioTask>())
   , pmService_(std::make_shared<PmService>())
   , hwMonitor_(std::make_shared<HwMonitor>())
@@ -15,10 +16,8 @@ Service::Service()
 {
 }
 
-void Service::setup(std::shared_ptr<Config> config)
+void Service::setup()
 {
-  config_ = config;
-
   LOG_SET_LEVEL(config_->LogLevel);
   LOG_SET_OPTION(false, false, true);  // disable file, line, enable func
   
@@ -29,10 +28,10 @@ void Service::setup(std::shared_ptr<Config> config)
   pinMode(config_->PttBtnPin_, INPUT);
   LOG_INFO("PTT setup completed");
 
-  hwMonitor_->setup(config);
-  pmService_->setup(config, display_);
-  audioTask_->start(config, radioTask_, pmService_);
-  radioTask_->start(config, audioTask_);
+  hwMonitor_->setup(config_);
+  pmService_->setup(config_, display_);
+  audioTask_->start(config_, radioTask_, pmService_);
+  radioTask_->start(config_, audioTask_);
 
   updateScreen();
 

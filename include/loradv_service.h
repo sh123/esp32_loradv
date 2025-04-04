@@ -27,9 +27,9 @@ namespace LoraDv {
 class Service {
 
 public:
-  Service();
+  Service(std::shared_ptr<Config> conf);
 
-  void setup(std::shared_ptr<Config> conf);
+  void setup();
   void loop();
 
 private:
