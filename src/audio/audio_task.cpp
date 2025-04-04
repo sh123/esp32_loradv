@@ -183,7 +183,7 @@ void AudioTask::audioTask()
   pcmResampleBuffer_ = new int16_t[audioCodec_->getPcmFrameBufferSize() * config_->AudioResampleCoeff_];
   encodedFrameBuffer_ = new uint8_t[codecBytesPerFrame_];
 
-  delay(3000);
+  delay(CfgStartupDelayMs);
   installAudio(codecSamplesPerFrame_);
 
   while(isRunning_) {
@@ -211,7 +211,7 @@ void AudioTask::audioTask()
 void AudioTask::audioTaskPlay()
 {
   playTimerReset();
-
+  
   size_t bytesWritten;
   LOG_DEBUG("Playing audio");
   int16_t targetLevel = volume_ * 100;
@@ -253,7 +253,10 @@ void AudioTask::audioTaskPlay()
           writeDataSize = dsp_->audioUpsample2x(pcmFrameBuffer_, pcmResampleBuffer_, pcmFrameSize);
           pcmBuffer = pcmResampleBuffer_;
         }
-        i2s_write(CfgAudioI2sSpkId, pcmBuffer, sizeof(int16_t) * writeDataSize, &bytesWritten, portMAX_DELAY);
+        if (i2s_write(CfgAudioI2sSpkId, pcmBuffer, sizeof(int16_t) * writeDataSize, &bytesWritten, portMAX_DELAY) != ESP_OK) {
+          LOG_ERROR("Failed to write to I2S speaker");
+          continue;
+        }
         vTaskDelay(1);
       }
     }
@@ -286,7 +289,10 @@ void AudioTask::audioTaskRecord()
     size_t bytesRead;
     int16_t *pcmReadBuffer = pcmResampleBuffer_;
     int readDataSize = codecSamplesPerFrame_ * config_->AudioResampleCoeff_;
-    i2s_read(CfgAudioI2sMicId, pcmReadBuffer, sizeof(uint16_t) * readDataSize, &bytesRead, portMAX_DELAY);
+    if (i2s_read(CfgAudioI2sMicId, pcmReadBuffer, sizeof(uint16_t) * readDataSize, &bytesRead, portMAX_DELAY) != ESP_OK) {
+      LOG_ERROR("Failed to read from I2S microphone");
+      continue;
+    }
     // apply high pass filter
     dsp_->audioFilterHpf(pcmReadBuffer, readDataSize);
     // downsample if mic sample rate is higher than codec rate

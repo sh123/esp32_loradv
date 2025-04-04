@@ -41,6 +41,7 @@ private:
   const uint32_t CfgAudioPlayBit = 0x01;          // task bit for playback
   const uint32_t CfgAudioRecBit = 0x02;           // task bit for recording
 
+  const int CfgStartupDelayMs = 3000;             // startup delay
   const int CfgAudioTaskStack = 32768;            // audio stack size
   const int CfgPlayCompletedDelayMs = 500;        // playback stopped status after ms
 
