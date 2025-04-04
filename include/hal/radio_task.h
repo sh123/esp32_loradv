@@ -42,8 +42,8 @@ public:
   bool writeNextByte(byte b);
 
 private:
-  static const int CfgRadioQueueLen = 512;          // circular buffer length
-  static const int CfgRadioPacketBufLen = 256;      // packet buffer length
+  static constexpr int CfgRadioQueueLen = 512;          // circular buffer length
+  static constexpr int CfgRadioPacketBufLen = 256;      // packet buffer length
 
   static const uint32_t CfgRadioRxBit = 0x01;       // task bit for rx
   static const uint32_t CfgRadioTxBit = 0x02;       // task bit for tx
