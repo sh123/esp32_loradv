@@ -39,18 +39,18 @@ public:
   inline int getVolume() const { return volume_; }
 
 private:
-  constexpr static int CfgCoreId = 0;                        // core id where task will run
-  constexpr static int CfgTaskPriority = 2;                  // task priority
+  static constexpr CfgCoreId = 0;                            // core id where task will run
+  static constexpr int CfgTaskPriority = 2;                  // task priority
 
-  constexpr static i2s_port_t CfgAudioI2sSpkId = I2S_NUM_0;  // audio i2s speaker number
-  constexpr static i2s_port_t CfgAudioI2sMicId = I2S_NUM_1;  // audio i2s mic number
+  static constexpr i2s_port_t CfgAudioI2sSpkId = I2S_NUM_0;  // audio i2s speaker number
+  static constexpr i2s_port_t CfgAudioI2sMicId = I2S_NUM_1;  // audio i2s mic number
 
-  constexpr static uint32_t CfgAudioPlayBit = 0x01;          // task bit for playback
-  constexpr static uint32_t CfgAudioRecBit = 0x02;           // task bit for recording
+  static constexpr uint32_t CfgAudioPlayBit = 0x01;          // task bit for playback
+  static constexpr uint32_t CfgAudioRecBit = 0x02;           // task bit for recording
 
-  constexpr static int CfgStartupDelayMs = 3000;             // startup delay
-  constexpr static int CfgAudioTaskStack = 32768;            // audio stack size
-  constexpr static int CfgPlayCompletedDelayMs = 500;        // playback stopped status after ms
+  static constexpr int CfgStartupDelayMs = 3000;             // startup delay
+  static constexpr int CfgAudioTaskStack = 32768;            // audio stack size
+  static constexpr int CfgPlayCompletedDelayMs = 500;        // playback stopped status after ms
 
 private:
   void installAudio(int bytesPerSample) const;

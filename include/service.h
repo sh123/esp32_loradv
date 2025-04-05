@@ -33,10 +33,10 @@ public:
   void loop();
 
 private:
-  constexpr static int CfgDisplayWidth = 128;                // display width
-  constexpr static int CfgDisplayHeight = 32;                // display height
+  static constexpr int CfgDisplayWidth = 128;                // display width
+  static constexpr int CfgDisplayHeight = 32;                // display height
 
-  constexpr static int CfgEncoderBtnLongMs = 2000;           // encoder long button press
+  static constexpr int CfgEncoderBtnLongMs = 2000;           // encoder long button press
 
 private:
   void setupEncoder();

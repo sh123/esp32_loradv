@@ -5,19 +5,17 @@
 #include <memory>
 #include "settings/config.h"
 
-using namespace std;
-
 namespace LoraDv {
 
 class HwMonitor {
 
 public:
-  HwMonitor(shared_ptr<const Config> config);
+  HwMonitor(std::shared_ptr<const Config> config);
   
   float getBatteryVoltage() const;
 
 private:
-  shared_ptr<const Config> config_;
+  std::shared_ptr<const Config> config_;
 
 };
 

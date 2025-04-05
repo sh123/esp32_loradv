@@ -42,8 +42,8 @@ public:
   bool writeNextByte(byte b);
 
 private:
-  constexpr static int CfgCoreId = 1;                   // core id where task will run
-  constexpr static int CfgTaskPriority = 2;             // task priority
+  static constexpr int CfgCoreId = 1;                   // core id where task will run
+  static constexpr int CfgTaskPriority = 2;             // task priority
 
   static constexpr int CfgRadioQueueLen = 512;          // circular buffer length
   static constexpr int CfgRadioPacketBufLen = 256;      // packet buffer length
