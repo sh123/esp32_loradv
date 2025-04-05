@@ -22,14 +22,12 @@
 #include "hal/hw_monitor.h"
 #include "settings/settings_menu.h"
 
-using namespace std;
-
 namespace LoraDv {
 
 class Service {
 
 public:
-  Service(shared_ptr<Config> conf);
+  Service(std::shared_ptr<Config> conf);
 
   void setup();
   void loop();
@@ -53,18 +51,18 @@ private:
   bool processRotaryEncoder();
 
 private:
-  shared_ptr<Config> config_;
+  std::shared_ptr<Config> config_;
 
-  shared_ptr<Adafruit_SSD1306> display_;
-  static shared_ptr<AiEsp32RotaryEncoder> rotaryEncoder_;
+  std::shared_ptr<Adafruit_SSD1306> display_;
+  static std::shared_ptr<AiEsp32RotaryEncoder> rotaryEncoder_;
 
-  shared_ptr<PmService> pmService_;
-  shared_ptr<HwMonitor> hwMonitor_;
+  std::shared_ptr<PmService> pmService_;
+  std::shared_ptr<HwMonitor> hwMonitor_;
 
-  shared_ptr<RadioTask> radioTask_;
-  shared_ptr<AudioTask> audioTask_;
+  std::shared_ptr<RadioTask> radioTask_;
+  std::shared_ptr<AudioTask> audioTask_;
 
-  shared_ptr<SettingsMenu> settingsMenu_;
+  std::shared_ptr<SettingsMenu> settingsMenu_;
 
   // other
   volatile bool btnPressed_;

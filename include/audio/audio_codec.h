@@ -4,14 +4,14 @@
 #include <memory>
 #include "settings/config.h"
 
-using namespace std;
-
 namespace LoraDv {
 
 class AudioCodec {
 
 public:
-  virtual bool start(shared_ptr<const Config> config) = 0;
+  virtual ~AudioCodec() = default;
+  
+  virtual bool start(std::shared_ptr<const Config> config) = 0;
   virtual void stop() = 0;
 
   virtual int encode(uint8_t *encodedOut, int16_t *pcmIn) = 0;

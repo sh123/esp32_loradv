@@ -11,7 +11,7 @@ AudioCodecOpus::AudioCodecOpus()
 {
 }
 
-bool AudioCodecOpus::start(shared_ptr<const Config> config) 
+bool AudioCodecOpus::start(std::shared_ptr<const Config> config) 
 {
   int encoderError;
   opusEncoder_ = opus_encoder_create(config->AudioCodecSampleRate_, 1, OPUS_APPLICATION_VOIP, &encoderError);

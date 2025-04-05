@@ -2,7 +2,7 @@
 
 namespace LoraDv {
 
-HwMonitor::HwMonitor(shared_ptr<const Config> config) 
+HwMonitor::HwMonitor(std::shared_ptr<const Config> config) 
   : config_(config)
 {
 }

@@ -2,19 +2,19 @@
 
 namespace LoraDv {
 
-shared_ptr<AiEsp32RotaryEncoder> Service::rotaryEncoder_;
+std::shared_ptr<AiEsp32RotaryEncoder> Service::rotaryEncoder_;
 
-Service::Service(shared_ptr<Config> config)
+Service::Service(std::shared_ptr<Config> config)
   : config_(config)
-  , display_(make_shared<Adafruit_SSD1306>(CfgDisplayWidth, CfgDisplayHeight, &Wire, -1))
-  , pmService_(make_shared<PmService>(config, display_))
-  , hwMonitor_(make_shared<HwMonitor>(config))
-  , radioTask_(make_shared<RadioTask>(config))
-  , audioTask_(make_shared<AudioTask>(config, pmService_))
+  , display_(std::make_shared<Adafruit_SSD1306>(CfgDisplayWidth, CfgDisplayHeight, &Wire, -1))
+  , pmService_(std::make_shared<PmService>(config, display_))
+  , hwMonitor_(std::make_shared<HwMonitor>(config))
+  , radioTask_(std::make_shared<RadioTask>(config))
+  , audioTask_(std::make_shared<AudioTask>(config, pmService_))
   , settingsMenu_(nullptr)
   , btnPressed_(false)
 {
-  rotaryEncoder_ = make_shared<AiEsp32RotaryEncoder>(config->EncoderPinA_, config->EncoderPinB_, 
+  rotaryEncoder_ = std::make_shared<AiEsp32RotaryEncoder>(config->EncoderPinA_, config->EncoderPinB_, 
     config->EncoderPinBtn_, config->EncoderPinVcc_, config->EncoderSteps_);
 }
 
@@ -144,7 +144,7 @@ bool Service::processRotaryEncoder()
       settingsMenu_.reset();
       shouldUpdateScreen = true;
     } else {
-      settingsMenu_ = make_shared<SettingsMenu>(config_);
+      settingsMenu_ = std::make_shared<SettingsMenu>(config_);
       settingsMenu_->draw(display_);
     }
     pmService_->lightSleepReset();

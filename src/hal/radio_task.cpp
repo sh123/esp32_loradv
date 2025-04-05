@@ -5,7 +5,7 @@ namespace LoraDv {
 volatile bool RadioTask::isIsrEnabled_ = true;
 TaskHandle_t RadioTask::loraTaskHandle_;
 
-RadioTask::RadioTask(shared_ptr<const Config> config)
+RadioTask::RadioTask(std::shared_ptr<const Config> config)
   : config_(config)
   , radioModule_(nullptr)
   , audioTask_(nullptr)
@@ -18,7 +18,7 @@ RadioTask::RadioTask(shared_ptr<const Config> config)
 {
 }
 
-void RadioTask::start(shared_ptr<AudioTask> audioTask)
+void RadioTask::start(std::shared_ptr<AudioTask> audioTask)
 {
   audioTask_ = audioTask;
   cipher_->setKey(config_->AudioPrivacyKey_, sizeof(config_->AudioPrivacyKey_));
@@ -37,7 +37,7 @@ void RadioTask::setupRig(long loraFreq, long bw, int sf, int cr, int pwr, int sy
   LOG_INFO("CRC:", crcBytes);
   LOG_INFO("Speed:", Utils::loraGetSpeed(sf, cr, bw), "bps");
   LOG_INFO("Min level:", Utils::loraGetSnrLimit(sf, bw));
-  radioModule_ = make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
+  radioModule_ = std::make_shared<MODULE_NAME>(new Module(config_->LoraPinSs_, config_->LoraPinA_, config_->LoraPinRst_, config_->LoraPinB_));
   int state = radioModule_->begin((float)loraFreq / 1e6, (float)bw / 1e3, sf, cr, sync, pwr);
   if (state != RADIOLIB_ERR_NONE) {
     LOG_ERROR("Radio start error:", state);

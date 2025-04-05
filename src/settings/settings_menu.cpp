@@ -2,48 +2,48 @@
 
 namespace LoraDv {
 
-SettingsMenu::SettingsMenu(shared_ptr<Config> config)
+SettingsMenu::SettingsMenu(std::shared_ptr<Config> config)
   : config_(config)
   , selectedMenuItemIndex_(0)
   , isValueSelected_(false)
 {
   int i = 0;
   // frequency
-  items_.push_back(make_shared<SettingsLoraFreqStepItem>(config, ++i));
-  items_.push_back(make_shared<SettingsLoraFreqRxItem>(config, ++i));
-  items_.push_back(make_shared<SettingsLoraFreqTxItem>(config, ++i));
-  items_.push_back(make_shared<SettingsLoraPowerItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsLoraFreqStepItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsLoraFreqRxItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsLoraFreqTxItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsLoraPowerItem>(config, ++i));
   // modulation, codec
-  items_.push_back(make_shared<SettingsModType>(config, ++i));
-  items_.push_back(make_shared<SettingsAudioCodec>(config, ++i));
+  items_.push_back(std::make_shared<SettingsModType>(config, ++i));
+  items_.push_back(std::make_shared<SettingsAudioCodec>(config, ++i));
   // codec2
-  items_.push_back(make_shared<SettingsAudioCodec2ModeItem>(config, ++i));
-  items_.push_back(make_shared<SettingsAudioMaxPktSizeItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsAudioCodec2ModeItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsAudioMaxPktSizeItem>(config, ++i));
   // opus
-  items_.push_back(make_shared<SettingsAudioOpusRate>(config, ++i));
-  items_.push_back(make_shared<SettingsAudioOpusPcmLen>(config, ++i));
+  items_.push_back(std::make_shared<SettingsAudioOpusRate>(config, ++i));
+  items_.push_back(std::make_shared<SettingsAudioOpusPcmLen>(config, ++i));
   // audio
-  items_.push_back(make_shared<SettingsAudioVolItem>(config, ++i));
-  items_.push_back(make_shared<SettingsAudioEnablePrivacy>(config, ++i));
+  items_.push_back(std::make_shared<SettingsAudioVolItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsAudioEnablePrivacy>(config, ++i));
   // lora
-  items_.push_back(make_shared<SettingsLoraBwItem>(config, ++i));
-  items_.push_back(make_shared<SettingsLoraSfItem>(config, ++i));
-  items_.push_back(make_shared<SettingsLoraCrItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsLoraBwItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsLoraSfItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsLoraCrItem>(config, ++i));
   // fsk
-  items_.push_back(make_shared<SettingsFskBitRate>(config, ++i));
-  items_.push_back(make_shared<SettingsFskFreqDev>(config, ++i));
-  items_.push_back(make_shared<SettingsFskRxBw>(config, ++i));
-  items_.push_back(make_shared<SettingsFskShaping>(config, ++i));
+  items_.push_back(std::make_shared<SettingsFskBitRate>(config, ++i));
+  items_.push_back(std::make_shared<SettingsFskFreqDev>(config, ++i));
+  items_.push_back(std::make_shared<SettingsFskRxBw>(config, ++i));
+  items_.push_back(std::make_shared<SettingsFskShaping>(config, ++i));
   // other
-  items_.push_back(make_shared<SettingsBatteryMonCalItem>(config, ++i));
-  items_.push_back(make_shared<SettingsPmLightSleepAfterMsItem>(config, ++i));
-  items_.push_back(make_shared<SettingsSaveItem>(config, ++i));
-  items_.push_back(make_shared<SettingsResetItem>(config, ++i));
-  items_.push_back(make_shared<SettingsRebootItem>(config, ++i));
-  items_.push_back(make_shared<SettingsInfoItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsBatteryMonCalItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsPmLightSleepAfterMsItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsSaveItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsResetItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsRebootItem>(config, ++i));
+  items_.push_back(std::make_shared<SettingsInfoItem>(config, ++i));
 }
 
-void SettingsMenu::draw(shared_ptr<Adafruit_SSD1306> display) 
+void SettingsMenu::draw(std::shared_ptr<Adafruit_SSD1306> display) 
 {
   stringstream s;
   items_[selectedMenuItemIndex_]->getName(s);

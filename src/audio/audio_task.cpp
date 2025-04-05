@@ -5,7 +5,7 @@
 
 namespace LoraDv {
 
-AudioTask::AudioTask(shared_ptr<const Config> config, shared_ptr<PmService> pmService)
+AudioTask::AudioTask(std::shared_ptr<const Config> config, std::shared_ptr<PmService> pmService)
   : config_(config)
   , audioTaskHandle_(0)
   , radioTask_(nullptr)
@@ -27,7 +27,7 @@ AudioTask::AudioTask(shared_ptr<const Config> config, shared_ptr<PmService> pmSe
 {
 }
 
-void AudioTask::start(shared_ptr<RadioTask> radioTask)
+void AudioTask::start(std::shared_ptr<RadioTask> radioTask)
 {
   radioTask_ = radioTask;
   xTaskCreatePinnedToCore(&task, "AudioTask", CfgAudioTaskStack, this, CfgTaskPriority, &audioTaskHandle_, CfgCoreId);

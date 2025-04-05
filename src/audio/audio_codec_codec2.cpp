@@ -9,7 +9,7 @@ AudioCodecCodec2::AudioCodecCodec2()
 {
 }
 
-bool AudioCodecCodec2::start(shared_ptr<const Config> config) 
+bool AudioCodecCodec2::start(std::shared_ptr<const Config> config) 
 {
   codec_ = codec2_create(config->AudioCodec2Mode);
   if (codec_ == NULL) {

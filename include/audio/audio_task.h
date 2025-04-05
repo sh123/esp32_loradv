@@ -11,8 +11,6 @@
 #include "audio/audio_codec.h"
 #include "utils/dsp.h"
 
-using namespace std;
-
 namespace LoraDv {
 
 class RadioTask;
@@ -20,9 +18,9 @@ class RadioTask;
 class AudioTask {
 
 public:
-  explicit AudioTask(shared_ptr<const Config> config, shared_ptr<PmService> pmService);
+  explicit AudioTask(std::shared_ptr<const Config> config, std::shared_ptr<PmService> pmService);
 
-  void start(shared_ptr<RadioTask> radioTask);
+  void start(std::shared_ptr<RadioTask> radioTask);
   inline void stop() { isRunning_ = false; }
   bool loop();
 
@@ -69,17 +67,17 @@ private:
   void playTimer();
 
 private:
-  shared_ptr<const Config> config_;
+  std::shared_ptr<const Config> config_;
   TaskHandle_t audioTaskHandle_;
 
-  shared_ptr<RadioTask> radioTask_;
-  shared_ptr<PmService> pmService_;
+  std::shared_ptr<RadioTask> radioTask_;
+  std::shared_ptr<PmService> pmService_;
 
   Timer<1> playTimer_;
   Timer<1>::Task playTimerTask_;
 
-  shared_ptr<Dsp> dsp_;
-  shared_ptr<AudioCodec> audioCodec_;
+  std::shared_ptr<Dsp> dsp_;
+  std::shared_ptr<AudioCodec> audioCodec_;
 
   int16_t *pcmFrameBuffer_;
   int16_t *pcmResampleBuffer_;

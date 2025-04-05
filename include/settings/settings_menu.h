@@ -20,9 +20,9 @@ namespace LoraDv {
 
 class SettingsMenu {
 public:
-  SettingsMenu(shared_ptr<Config> config);
+  SettingsMenu(std::shared_ptr<Config> config);
 
-  void draw(shared_ptr<Adafruit_SSD1306> display);
+  void draw(std::shared_ptr<Adafruit_SSD1306> display);
 
   void onEncoderPositionChanged(int delta);
   void onEncoderButtonClicked();
@@ -30,8 +30,8 @@ public:
 private:
   bool isValueSelected_;
   int selectedMenuItemIndex_;
-  shared_ptr<Config> config_;
-  vector<shared_ptr<SettingsMenuItem>> items_; // Updated type
+  std::shared_ptr<Config> config_;
+  std::vector<std::shared_ptr<SettingsMenuItem>> items_; // Updated type
 };
 
 } // LoraDv
