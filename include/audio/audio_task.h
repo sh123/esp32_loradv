@@ -39,7 +39,7 @@ public:
   inline int getVolume() const { return volume_; }
 
 private:
-  static constexpr CfgCoreId = 0;                            // core id where task will run
+  static constexpr int CfgCoreId = 0;                        // core id where task will run
   static constexpr int CfgTaskPriority = 2;                  // task priority
 
   static constexpr i2s_port_t CfgAudioI2sSpkId = I2S_NUM_0;  // audio i2s speaker number
