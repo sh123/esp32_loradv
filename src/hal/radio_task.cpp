@@ -172,7 +172,7 @@ void RadioTask::rigTask()
   rigTaskStartReceive();
 
   byte *packetBuf = new byte[CfgRadioPacketBufLen];
-  byte *tmpBuf = new byte[CfgRadioPacketBufLen];
+  byte *tmpBuf = new byte[CfgRadioPacketBufLen + sizeof(iv_)];
 
   while (isRunning_) {
     uint32_t cmdBits = 0;
@@ -228,7 +228,7 @@ void RadioTask::rigTaskStartTransmit()
 void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf) 
 {
   int packetSize = radioModule_->getPacketLength();
-  if (packetSize > 8 && packetSize < CfgRadioPacketBufLen) {
+  if (packetSize > 8 && packetSize <= CfgRadioPacketBufLen) {
     // receive packet
     int state = radioModule_->readData(packetBuf, packetSize);
     if (state == RADIOLIB_ERR_NONE) {
@@ -267,6 +267,14 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
   while (radioTxQueue_.index.size() > 0) {
     // fetch packet size and packet from the queue
     int txBytesCnt = radioTxQueue_.index.shift();
+    if (txBytesCnt > CfgRadioPacketBufLen) {
+      LOG_ERROR("Packet size is too large, not transmitting");
+      for (int i = 0; i < txBytesCnt; i++) {
+        radioTxQueue_.data.shift();
+      }
+      vTaskDelay(1);
+      continue;
+    }
     for (int i = 0; i < txBytesCnt; i++) {
         packetBuf[i] = radioTxQueue_.data.shift();
     }
