@@ -63,6 +63,9 @@ private:
   void audioTaskPlay();
   void audioTaskRecord();
 
+  void decodeAndPlay(int frameSize, int16_t targetLevel);
+  int encodeAndQueue(int pcmFrameSize);
+
   void playTimerReset();
   static bool playTimerEnter(void *param);
   void playTimer();
