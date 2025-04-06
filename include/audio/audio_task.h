@@ -51,7 +51,7 @@ private:
   static constexpr int CfgStartupDelayMs = 3000;             // startup delay
   static constexpr int CfgAudioTaskStack = 32768;            // audio stack size
   static constexpr int CfgPlayCompletedDelayMs = 500;        // playback stopped status after ms
-  static constexpr int CfgAudioMaxVolumePcmMultiplier = 15;  // multipier to get max pcm volume from max control volume
+  static constexpr int CfgAudioMaxVolumePcmMultiplier = 10;  // multipier to get max pcm volume from max control volume
 
 private:
   void installAudio(int bytesPerSample) const;
