@@ -109,7 +109,7 @@
 #define CFG_AUDIO_HPF_CUTOFF_HZ     30          // high pass filter cutoff frequency
 #define CFG_AUDIO_CODEC2_MODE       CODEC2_MODE_1600
 #define CFG_AUDIO_MAX_PKT_SIZE      48          // maximum super frame size
-#define CFG_AUDIO_MAX_VOL           20          // maximum volume
+#define CFG_AUDIO_MAX_VOL           30          // maximum volume
 #define CFG_AUDIO_VOL               10          // default volume
 
 // audio, opus

@@ -209,7 +209,7 @@ void AudioTask::audioTaskPlay()
   
   size_t bytesWritten;
   LOG_DEBUG("Playing audio");
-  int16_t targetLevel = volume_ * 100;
+  int16_t targetLevel = dsp_->audioVolumeToLogPcm(volume_, maxVolume_, maxVolume_*CfgAudioMaxVolumePcmMultiplier);
   LOG_DEBUG("Target level is", targetLevel);
 
   // run till ptt is not pressed and radio has data

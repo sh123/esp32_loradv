@@ -82,4 +82,15 @@ void Dsp::audioFilterHpf(int16_t *pcmBuffer, int pcmBufferSize)
   }
 }
 
+int16_t Dsp::audioVolumeToLogPcm(int volume, int maxVolume, int maxPcmValue) 
+{
+  if (volume <= 0) return 0;
+  if (volume > maxVolume) volume = maxVolume;
+
+  float normalizedVolume = static_cast<float>(volume) / maxVolume;
+  float logScaled = std::log10(1 + 9 * normalizedVolume);
+
+  return static_cast<int16_t>(logScaled * maxPcmValue);
+}
+
 } // namespace LoraDv

@@ -18,6 +18,8 @@ public:
 
   void audioFilterHpf(int16_t *pcmBuffer, int pcmBufferSize);
 
+  int16_t audioVolumeToLogPcm(int volume, int maxVolume, int maxPcmValue);
+
 private:
   // AGC configuration
   static constexpr float CfgAgcMaxGain = 20.0;
