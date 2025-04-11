@@ -168,7 +168,11 @@ void RadioTask::rigTask()
     setupRigFsk(config_->LoraFreqRx, config_->FskBitRate, config_->FskFreqDev,
       config_->FskRxBw, config_->LoraPower, config_->FskShaping);
   }
-  randomSeed(radioModule_->random(0x7FFFFFFF));
+
+  int32_t seed = radioModule_->random(0x7FFFFFFF);
+  LOG_INFO("Random seed:", String(seed, HEX));
+  randomSeed(seed);
+
   rigTaskStartReceive();
 
   byte *packetBuf = new byte[CfgRadioPacketBufLen];
@@ -281,11 +285,7 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
     byte *sendBuf = packetBuf;
     // if privacy enabled
     if (config_->AudioEnPriv) {
-      // generate IV
-      for (int i = 0; i < sizeof(iv_); i++) {
-        iv_[i] = random(255);
-        tmpBuf[i] = iv_[i];
-      }
+      generateIv(tmpBuf);
       // encrypt
       cipher_->setIV(iv_, sizeof(iv_));
       cipher_->encrypt(tmpBuf + sizeof(iv_), packetBuf, txBytesCnt);
@@ -300,6 +300,14 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
       LOG_DEBUG("Transmitted packet", txBytesCnt);
     }
     vTaskDelay(1);
+  }
+}
+
+void RadioTask::generateIv(byte *tmpBuf) 
+{
+  for (int i = 0; i < sizeof(iv_); i++) {
+    iv_[i] = random(255); // radioModule_->randomByte()
+    tmpBuf[i] = iv_[i];
   }
 }
 

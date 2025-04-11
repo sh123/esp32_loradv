@@ -70,6 +70,7 @@ private:
   void rigTaskStartReceive();
   void rigTaskStartTransmit();
 
+  void generateIv(byte *tmpBuf);
 private:
   std::shared_ptr<const Config> config_;
 
