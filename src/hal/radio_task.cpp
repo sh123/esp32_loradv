@@ -306,7 +306,7 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
 void RadioTask::generateIv(byte *tmpBuf) 
 {
   for (int i = 0; i < sizeof(iv_); i++) {
-    iv_[i] = random(255); // radioModule_->randomByte()
+    iv_[i] = random(255);
     tmpBuf[i] = iv_[i];
   }
 }
