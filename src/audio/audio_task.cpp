@@ -194,6 +194,7 @@ void AudioTask::audioTask()
   }
 
   delete encodedFrameBuffer_;
+  delete pcmResampleBuffer_;
   delete pcmFrameBuffer_;
   audioCodec_->stop();
 
