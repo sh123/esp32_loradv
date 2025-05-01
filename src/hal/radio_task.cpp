@@ -243,7 +243,7 @@ void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf)
         isValidPacket = decryptPacket(packetBuf, tmpBuf, packetSize, packetSize);
         receiveBuf = tmpBuf;
       }
-      // send packet to the queue
+      // send packet to the RX queue
       if (isValidPacket) {
         LOG_DEBUG("Received packet, size", packetSize);
         for (int i = 0; i < packetSize; i++) {
@@ -251,6 +251,8 @@ void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf)
         }
         radioRxQueue_.index.push(packetSize);
         audioTask_->play();
+      } else {
+        LOG_ERROR("Invalid packet was received");
       }
     } else {
       LOG_ERROR("Read data error: ", state);
@@ -305,11 +307,15 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
 void RadioTask::encryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize) 
 {
   int curOutBufSize = inBufSize;
+  // add local auth data into the cipher
   cipher_->addAuthData(config_->AudioPrivacyData_, CfgAuthDataSize);
+  // generate iv and include it into payload head
   generateIv(outBuf);
   cipher_->setIV(iv_, CfgIvSize);
+  // encrypt
   cipher_->encrypt(outBuf + CfgIvSize, inBuf, inBufSize);
   curOutBufSize += CfgIvSize;
+  // generate auth tag and include it into payload tail
   byte authTag[CfgAuthDataSize];
   cipher_->computeTag(authTag, CfgAuthDataSize);
   for (int i = 0; i < CfgAuthDataSize; i++) {
@@ -323,15 +329,14 @@ bool RadioTask::decryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& out
 {
   int curOutBufSize = inBufSize - (CfgIvSize + CfgAuthDataSize);
   bool isValidPacket = true;
+  // add local auth data into the cipher
   cipher_->addAuthData(config_->AudioPrivacyData_, CfgAuthDataSize);
+  // set iv from the packet and decrypt
   cipher_->setIV(inBuf, CfgIvSize);
   cipher_->decrypt(outBuf, inBuf + CfgIvSize, curOutBufSize);
-  if (!cipher_->checkTag(inBuf + CfgIvSize + curOutBufSize, CfgAuthDataSize)) {
-    LOG_ERROR("Wrong packet tag");
-    isValidPacket = false;
-  }
   outBufSize = curOutBufSize;
-  return isValidPacket;
+  // check tag validity from the received packet
+  return cipher_->checkTag(inBuf + CfgIvSize + curOutBufSize, CfgAuthDataSize);
 }
 
 void RadioTask::generateIv(byte *tmpBuf) 
