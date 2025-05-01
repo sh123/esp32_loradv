@@ -22,7 +22,7 @@
 // USB serial logging
 // set to DebugLogLevel::LVL_TRACE for packet logging
 // set to DebugLogLevel::LVL_NONE to disable logging
-#define CFG_LOG_LEVEL               DebugLogLevel::LVL_TRACE
+#define CFG_LOG_LEVEL               DebugLogLevel::LVL_INFO
 
 // change pinouts if not defined through native board LORA_* definitions
 #ifndef LORA_RST
