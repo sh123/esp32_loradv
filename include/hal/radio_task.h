@@ -80,7 +80,6 @@ private:
   std::shared_ptr<MODULE_NAME> radioModule_;
   std::shared_ptr<AudioTask> audioTask_;
 
-  uint8_t iv_[CfgIvSize];
   std::shared_ptr<ChaChaPoly> cipher_;
 
   static TaskHandle_t loraTaskHandle_;

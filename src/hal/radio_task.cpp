@@ -176,7 +176,7 @@ void RadioTask::rigTask()
   rigTaskStartReceive();
 
   byte *packetBuf = new byte[CfgRadioPacketBufLen];
-  byte *tmpBuf = new byte[CfgRadioPacketBufLen + sizeof(iv_) + sizeof(config_->AudioPrivacyData_)];
+  byte *tmpBuf = new byte[CfgRadioPacketBufLen + CfgIvSize + sizeof(config_->AudioPrivacyData_)];
 
   while (isRunning_) {
     uint32_t cmdBits = 0;
@@ -310,17 +310,15 @@ void RadioTask::encryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& out
   // add local auth data into the cipher
   cipher_->addAuthData(config_->AudioPrivacyData_, CfgAuthDataSize);
   // generate iv and include it into payload head
-  generateIv(outBuf);
-  cipher_->setIV(iv_, CfgIvSize);
+  for (int i = 0; i < CfgIvSize; i++) {
+    outBuf[i] = random(255);
+  }
+  cipher_->setIV(outBuf, CfgIvSize);
   // encrypt
   cipher_->encrypt(outBuf + CfgIvSize, inBuf, inBufSize);
   curOutBufSize += CfgIvSize;
   // generate auth tag and include it into payload tail
-  byte authTag[CfgAuthDataSize];
-  cipher_->computeTag(authTag, CfgAuthDataSize);
-  for (int i = 0; i < CfgAuthDataSize; i++) {
-    outBuf[curOutBufSize + i] = authTag[i];
-  }
+  cipher_->computeTag(outBuf + curOutBufSize, CfgAuthDataSize);
   curOutBufSize += CfgAuthDataSize;
   outBufSize = curOutBufSize;
 }
@@ -337,14 +335,6 @@ bool RadioTask::decryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& out
   outBufSize = curOutBufSize;
   // check tag validity from the received packet
   return cipher_->checkTag(inBuf + CfgIvSize + curOutBufSize, CfgAuthDataSize);
-}
-
-void RadioTask::generateIv(byte *tmpBuf) 
-{
-  for (int i = 0; i < sizeof(iv_); i++) {
-    iv_[i] = random(255);
-    tmpBuf[i] = iv_[i];
-  }
 }
 
 } // LoraDv
