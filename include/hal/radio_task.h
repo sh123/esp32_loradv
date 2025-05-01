@@ -73,7 +73,6 @@ private:
 
   void encryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize);
   bool decryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize);
-  void generateIv(byte *tmpBuf);
 private:
   std::shared_ptr<const Config> config_;
 
