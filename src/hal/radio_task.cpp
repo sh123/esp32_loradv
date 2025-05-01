@@ -232,19 +232,19 @@ void RadioTask::rigTaskStartTransmit()
 void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf) 
 {
   int packetSize = radioModule_->getPacketLength();
-  if (packetSize > CfgIvSize + sizeof(config_->AudioPrivacyData_) && packetSize <= CfgRadioPacketBufLen) {
+  if (packetSize > CfgIvSize + CfgAuthDataSize && packetSize <= CfgRadioPacketBufLen) {
     // receive packet
     int state = radioModule_->readData(packetBuf, packetSize);
-    bool isBadPacket = false;
+    bool isValidPacket = true;
     if (state == RADIOLIB_ERR_NONE) {
       byte *receiveBuf = packetBuf;
       // if privacy enabled
       if (config_->AudioEnPriv) {
-        isBadPacket = decryptPacket(tmpBuf, packetBuf, packetSize, packetSize);
+        isValidPacket = decryptPacket(packetBuf, tmpBuf, packetSize, packetSize);
         receiveBuf = tmpBuf;
       }
       // send packet to the queue
-      if (!isBadPacket) {
+      if (isValidPacket) {
         LOG_DEBUG("Received packet, size", packetSize);
         for (int i = 0; i < packetSize; i++) {
           radioRxQueue_.data.push(receiveBuf[i]);
@@ -294,7 +294,7 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
     // transmit
     int loraRadioState = radioModule_->transmit(sendBuf, txBytesCnt);
     if (loraRadioState != RADIOLIB_ERR_NONE) {
-        LOG_ERROR("Radio transmit failed:", loraRadioState, txBytesCnt);
+      LOG_ERROR("Radio transmit failed:", loraRadioState, txBytesCnt);
     } else {
       LOG_DEBUG("Transmitted packet", txBytesCnt);
     }
@@ -304,31 +304,34 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
 
 void RadioTask::encryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize) 
 {
-  outBufSize = inBufSize;
+  int curOutBufSize = inBufSize;
   cipher_->addAuthData(config_->AudioPrivacyData_, CfgAuthDataSize);
   generateIv(outBuf);
   cipher_->setIV(iv_, CfgIvSize);
   cipher_->encrypt(outBuf + CfgIvSize, inBuf, inBufSize);
-  outBufSize += CfgIvSize
+  curOutBufSize += CfgIvSize;
   byte authTag[CfgAuthDataSize];
   cipher_->computeTag(authTag, CfgAuthDataSize);
   for (int i = 0; i < CfgAuthDataSize; i++) {
-    outBuf[outBufSize + i] = authTag[i];
+    outBuf[curOutBufSize + i] = authTag[i];
   }
-  outBufSize += CfgAuthDataSize;
+  curOutBufSize += CfgAuthDataSize;
+  outBufSize = curOutBufSize;
 }
 
 bool RadioTask::decryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize) 
 {
-  outBufSize = inBufSize - (CfgIvSize + CfgAuthDataSize);
-  cipher_->addAuthData(config_->AudioPrivacyData_, authDataSize);
+  int curOutBufSize = inBufSize - (CfgIvSize + CfgAuthDataSize);
+  bool isValidPacket = true;
+  cipher_->addAuthData(config_->AudioPrivacyData_, CfgAuthDataSize);
   cipher_->setIV(inBuf, CfgIvSize);
-  cipher_->decrypt(outBuf, inBuf + CfgIvSize, outBufSize);
-  if (!cipher_->checkTag(packetBuf + CfgIvSize + outBufSize, CfgAuthDataSize)) {
+  cipher_->decrypt(outBuf, inBuf + CfgIvSize, curOutBufSize);
+  if (!cipher_->checkTag(inBuf + CfgIvSize + curOutBufSize, CfgAuthDataSize)) {
     LOG_ERROR("Wrong packet tag");
-    return false;
+    isValidPacket = false;
   }
-  return true;
+  outBufSize = curOutBufSize;
+  return isValidPacket;
 }
 
 void RadioTask::generateIv(byte *tmpBuf) 

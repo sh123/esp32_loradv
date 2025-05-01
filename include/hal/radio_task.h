@@ -71,6 +71,7 @@ private:
   void rigTaskStartReceive();
   void rigTaskStartTransmit();
 
+  void encryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize);
   bool decryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize);
   void generateIv(byte *tmpBuf);
 private:
