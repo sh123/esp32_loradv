@@ -91,6 +91,7 @@ public:
   // privacy
   bool AudioEnPriv;     // enable/disable privacy
   byte AudioPrivacyKey_[32]; // privacy key
+  byte AudioPrivacyData_[16];  // privacy tag
 
   // battery monitor
   byte BatteryMonPin_;   // Battery monitor adc pin

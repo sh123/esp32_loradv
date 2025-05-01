@@ -5,6 +5,7 @@ namespace LoraDv {
 #define N(v) #v
 
 CFG_AUDIO_PRIVACY_KEY;
+CFG_AUDIO_PRIVACY_DATA;
 
 Config::Config()
 {
@@ -95,8 +96,9 @@ void Config::InitializeDefault()
   PmLightSleepDurationMs_ = CFG_PM_LSLEEP_DURATION_MS;
   PmLightSleepAwakeMs_ = CFG_PM_LSLEEP_AWAKE_MS;
 
-  // encryption key
+  // encryption key and auth tag data
   memcpy(AudioPrivacyKey_, AudioPrivacyKey, sizeof(AudioPrivacyKey));
+  memcpy(AudioPrivacyData_, AudioPrivacyData, sizeof(AudioPrivacyData));
 }
 
 void Config::Reset()

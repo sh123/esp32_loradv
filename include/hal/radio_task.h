@@ -6,7 +6,7 @@
 #include <DebugLog.h>
 #include <RadioLib.h>
 #include <CircularBuffer.hpp>
-#include <ChaCha.h>
+#include <ChaChaPoly.h>
 
 #include "settings/config.h"
 #include "audio/audio_task.h"
@@ -55,6 +55,7 @@ private:
 
   static constexpr int CfgRadioTaskStack = 4096;        // task stack size
   static constexpr size_t CfgIvSize = 8;                // IV, initialization vector size
+  static constexpr size_t CfgAuthDataSize = 16;         // auth data size
 
 private:
   void setupRig(long freq, long bw, int sf, int cr, int pwr, int sync, int crcBytes);
@@ -70,6 +71,7 @@ private:
   void rigTaskStartReceive();
   void rigTaskStartTransmit();
 
+  bool decryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize);
   void generateIv(byte *tmpBuf);
 private:
   std::shared_ptr<const Config> config_;
@@ -78,7 +80,7 @@ private:
   std::shared_ptr<AudioTask> audioTask_;
 
   uint8_t iv_[CfgIvSize];
-  std::shared_ptr<ChaCha> cipher_;
+  std::shared_ptr<ChaChaPoly> cipher_;
 
   static TaskHandle_t loraTaskHandle_;
 

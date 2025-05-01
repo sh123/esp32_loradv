@@ -9,7 +9,7 @@ RadioTask::RadioTask(std::shared_ptr<const Config> config)
   : config_(config)
   , radioModule_(nullptr)
   , audioTask_(nullptr)
-  , cipher_(new ChaCha())
+  , cipher_(new ChaChaPoly())
   , isImplicitMode_(false)
   , isIsrInstalled_(false)
   , isRunning_(false)
@@ -176,7 +176,7 @@ void RadioTask::rigTask()
   rigTaskStartReceive();
 
   byte *packetBuf = new byte[CfgRadioPacketBufLen];
-  byte *tmpBuf = new byte[CfgRadioPacketBufLen + sizeof(iv_)];
+  byte *tmpBuf = new byte[CfgRadioPacketBufLen + sizeof(iv_) + sizeof(config_->AudioPrivacyData_)];
 
   while (isRunning_) {
     uint32_t cmdBits = 0;
@@ -232,26 +232,26 @@ void RadioTask::rigTaskStartTransmit()
 void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf) 
 {
   int packetSize = radioModule_->getPacketLength();
-  if (packetSize > 8 && packetSize <= CfgRadioPacketBufLen) {
+  if (packetSize > CfgIvSize + sizeof(config_->AudioPrivacyData_) && packetSize <= CfgRadioPacketBufLen) {
     // receive packet
     int state = radioModule_->readData(packetBuf, packetSize);
+    bool isBadPacket = false;
     if (state == RADIOLIB_ERR_NONE) {
       byte *receiveBuf = packetBuf;
       // if privacy enabled
-      if (config_->AudioEnPriv){
-        // read iv and decrypt packet
-        cipher_->setIV(packetBuf, sizeof(iv_));
-        packetSize -= sizeof(iv_);
-        cipher_->decrypt(tmpBuf, packetBuf + sizeof(iv_), packetSize);
+      if (config_->AudioEnPriv) {
+        isBadPacket = decryptPacket(tmpBuf, packetBuf, packetSize, packetSize);
         receiveBuf = tmpBuf;
       }
       // send packet to the queue
-      LOG_DEBUG("Received packet, size", packetSize);
-      for (int i = 0; i < packetSize; i++) {
-        radioRxQueue_.data.push(receiveBuf[i]);
+      if (!isBadPacket) {
+        LOG_DEBUG("Received packet, size", packetSize);
+        for (int i = 0; i < packetSize; i++) {
+          radioRxQueue_.data.push(receiveBuf[i]);
+        }
+        radioRxQueue_.index.push(packetSize);
+        audioTask_->play();
       }
-      radioRxQueue_.index.push(packetSize);
-      audioTask_->play();
     } else {
       LOG_ERROR("Read data error: ", state);
     }
@@ -262,15 +262,17 @@ void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf)
       LOG_ERROR("Start receive error: ", state);
     }
   } else {
-    LOG_ERROR("Wrong packet size: ", packetSize);
+    LOG_ERROR("Wrong incoming packet size: ", packetSize);
   }
 }
 
 void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf) 
 {
+  // while there are no more packets
   while (radioTxQueue_.index.size() > 0) {
-    // fetch packet size and packet from the queue
+    // fetch packet size
     int txBytesCnt = radioTxQueue_.index.shift();
+    // ignore wrong too large packets
     if (txBytesCnt > CfgRadioPacketBufLen) {
       LOG_ERROR("Packet size is too large, not transmitting");
       for (int i = 0; i < txBytesCnt; i++) {
@@ -279,17 +281,14 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
       vTaskDelay(1);
       continue;
     }
+    // read packet from the queue
     for (int i = 0; i < txBytesCnt; i++) {
         packetBuf[i] = radioTxQueue_.data.shift();
     }
     byte *sendBuf = packetBuf;
     // if privacy enabled
     if (config_->AudioEnPriv) {
-      generateIv(tmpBuf);
-      // encrypt
-      cipher_->setIV(iv_, sizeof(iv_));
-      cipher_->encrypt(tmpBuf + sizeof(iv_), packetBuf, txBytesCnt);
-      txBytesCnt += sizeof(iv_);
+      encryptPacket(packetBuf, tmpBuf, txBytesCnt, txBytesCnt);
       sendBuf = tmpBuf;
     }
     // transmit
@@ -301,6 +300,35 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
     }
     vTaskDelay(1);
   }
+}
+
+void RadioTask::encryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize) 
+{
+  outBufSize = inBufSize;
+  cipher_->addAuthData(config_->AudioPrivacyData_, CfgAuthDataSize);
+  generateIv(outBuf);
+  cipher_->setIV(iv_, CfgIvSize);
+  cipher_->encrypt(outBuf + CfgIvSize, inBuf, inBufSize);
+  outBufSize += CfgIvSize
+  byte authTag[CfgAuthDataSize];
+  cipher_->computeTag(authTag, CfgAuthDataSize);
+  for (int i = 0; i < CfgAuthDataSize; i++) {
+    outBuf[outBufSize + i] = authTag[i];
+  }
+  outBufSize += CfgAuthDataSize;
+}
+
+bool RadioTask::decryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize) 
+{
+  outBufSize = inBufSize - (CfgIvSize + CfgAuthDataSize);
+  cipher_->addAuthData(config_->AudioPrivacyData_, authDataSize);
+  cipher_->setIV(inBuf, CfgIvSize);
+  cipher_->decrypt(outBuf, inBuf + CfgIvSize, outBufSize);
+  if (!cipher_->checkTag(packetBuf + CfgIvSize + outBufSize, CfgAuthDataSize)) {
+    LOG_ERROR("Wrong packet tag");
+    return false;
+  }
+  return true;
 }
 
 void RadioTask::generateIv(byte *tmpBuf) 
