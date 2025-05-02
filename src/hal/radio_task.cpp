@@ -326,7 +326,6 @@ void RadioTask::encryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& out
 bool RadioTask::decryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize) 
 {
   int curOutBufSize = inBufSize - (CfgIvSize + CfgAuthDataSize);
-  bool isValidPacket = true;
   // add local auth data into the cipher
   cipher_->addAuthData(config_->AudioPrivacyData_, CfgAuthDataSize);
   // set iv from the packet and decrypt
