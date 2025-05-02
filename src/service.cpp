@@ -25,6 +25,9 @@ void Service::setup()
 
   LOG_INFO("Board setup started");
  
+  // setup bootloader random source as WiFi and BT are not used
+  bootloader_random_enable();
+
   setupEncoder();
   setupScreen();
   setupPttButton();

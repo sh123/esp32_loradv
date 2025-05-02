@@ -8,6 +8,8 @@
 #include <CircularBuffer.hpp>
 #include <ChaChaPoly.h>
 
+#include <esp_random.h>
+
 #include "settings/config.h"
 #include "audio/audio_task.h"
 #include "utils/utils.h"

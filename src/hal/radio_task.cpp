@@ -310,9 +310,7 @@ void RadioTask::encryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& out
   // add local auth data into the cipher
   cipher_->addAuthData(config_->AudioPrivacyData_, CfgAuthDataSize);
   // generate iv and include it into payload head
-  for (int i = 0; i < CfgIvSize; i++) {
-    outBuf[i] = random(256);
-  }
+  esp_fill_random(outBuf, CfgIvSize);
   cipher_->setIV(outBuf, CfgIvSize);
   // encrypt
   cipher_->encrypt(outBuf + CfgIvSize, inBuf, inBufSize);

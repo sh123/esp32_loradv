@@ -14,6 +14,7 @@
 #include <codec2.h>
 #include <CircularBuffer.h>
 #include <arduino-timer.h>
+#include <bootloader_random.h>
 
 #include "settings/config.h"
 #include "hal/radio_task.h"
