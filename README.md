@@ -5,11 +5,11 @@ This project is a hobby/amateur/toy/educational radio ESP32 based LoRa/FSK Codec
 
 ⚠ **Please note that this device is strictly experimental and lacks any form of certification. The author holds no responsibility for any fines incurred due to spectrum misuse, legal violations, or damages caused during its use. As with any experimental project, it is essential that you fully understand what you are doing and use it at your own risk.**
 
-It mimics ordinary FM walkie-talkie, does not use any protocol for simplicity, just sends audio codec frames with pre-configured radio digital modulation.
+It functions like a standard FM walkie-talkie and, for simplicity, does not utilize any communication protocol. Instead, it transmits audio codec frames using pre-configured digital radio modulation.
 
 Overall components cost for this project is about 15-20$.
 
-Schematics for new board design with integrated components on the board is available under `extras/schematics`. Pinouts are compatible with first prototype version. There is place for GPS module, but do not solder it as there is no support for it, it just there for future experiments.
+Schematics for the new board design, which includes integrated components, can be found in the `extras/schematics` directory. The pinouts remain compatible with the first prototype version. While there is a designated space for a GPS module, it should not be soldered as it is not currently supported; it is included solely for potential future experiments.
 
 First prototype is based on https://github.com/sh123/esp32_loraprs modem, but uses additional peripherals:
 - I2S speaker module MAX98357A + 4ohm 3w speaker (40mm diameter)
