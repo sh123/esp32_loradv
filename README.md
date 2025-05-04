@@ -3,7 +3,7 @@
 ## Introduction
 This project is a hobby/amateur/toy/educational radio ESP32 based LoRa/FSK Codec2/OPUS DV 3d printed handheld trasceiver a.k.a. walkie-talkie, which is using 1W/2W E22-400M30S/E22-400M33S (SX1268) radio module (UHF, 70cm band) or optionally 100mW RA-01/RA-02 (SX1278) module. 
 
-⚠ **Please note that this device is strictly experimental and lacks any form of certification. The author holds no responsibility for any fines incurred due to spectrum misuse, legal violations, or damages caused during its use. As with any experimental project, it is essential that you fully understand what you are doing.**
+⚠ **Please note that this device is strictly experimental and lacks any form of certification. The author holds no responsibility for any fines incurred due to spectrum misuse, legal violations, or damages caused during its use. As with any experimental project, it is essential that you fully understand what you are doing and use it at your own risk.**
 
 It mimics ordinary FM walkie-talkie, does not use any protocol for simplicity, just sends audio codec frames with pre-configured radio digital modulation.
 
