@@ -14,8 +14,8 @@ Schematics for the new board design, which includes integrated components, can b
 First prototype is based on https://github.com/sh123/esp32_loraprs modem, but uses additional peripherals:
 - I2S speaker module MAX98357A + 4ohm 3w speaker (40mm diameter)
 - I2S microphone INMP441
-- PTT button
-- Rotary encoder with push button
+- PTT button (new board uses right angeled push button)
+- Rotary encoder with push button (new board uses EC11 right angeled encoder)
 - Small OLED display SSD1306 128x32
 - Battery voltage monitoring (just voltage divider fed into ADC pin, see schematics)
 - Powered from a single commonly avaialble 18650 cell (for example from old laptop battery)
