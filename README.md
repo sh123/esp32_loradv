@@ -12,7 +12,7 @@ Overall components cost for this project is about 15-20$.
 Schematics for the new board design, which includes integrated components, can be found in the `extras/schematics` directory. The pinouts remain compatible with the first prototype version. While there is a designated space for a GPS module, it should not be soldered as it is not currently supported; it is included solely for potential future experiments.
 
 First prototype is based on https://github.com/sh123/esp32_loraprs modem, but uses additional peripherals:
-- I2S speaker module MAX98357A + 4ohm 3w speaker (40mm diameter)
+- I2S speaker module MAX98357A + 4-8ohm 3w speaker (40mm diameter)
 - I2S microphone INMP441
 - PTT button (new board uses right angeled push button)
 - Rotary encoder with push button (new board uses EC11 right angeled encoder)
