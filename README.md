@@ -36,7 +36,7 @@ Supports next features:
 - Upload with platformio
 
 ## BOM
-Bill of materials (BOM) for the new board constuction (credits to n0p for collecting it)
+Bill of materials (BOM) for the new board constuction (credits to n0p and his club members for collecting it)
 ```
 ESP-WROOM32 30pin - https://es.aliexpress.com/item/1005005953505528.html
 Modem LoRa E22-400M30S (SX1268) - https://es.aliexpress.com/item/1005003122961059.html
