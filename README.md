@@ -35,7 +35,8 @@ Supports next features:
 - Build with platformio
 - Upload with platformio
 
-## BOM (credits to n0p)
+## BOM
+Bill of materials (BOM) for the project (credits to n0p for collecting it)
 ```
 ESP-WROOM32 30pin - https://es.aliexpress.com/item/1005005953505528.html
 Modem LoRa E22-400M30S (SX1268) - https://es.aliexpress.com/item/1005003122961059.html
