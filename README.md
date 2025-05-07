@@ -35,6 +35,29 @@ Supports next features:
 - Build with platformio
 - Upload with platformio
 
+## BOM (credits to n0p)
+```
+ESP-WROOM32 30pin - https://es.aliexpress.com/item/1005005953505528.html
+Modem LoRa E22-400M30S (SX1268) - https://es.aliexpress.com/item/1005003122961059.html
+I2S speaker module MAX98357A - https://es.aliexpress.com/item/1005005383121121.html
+4ohm 3w speaker (40mm diameter) - https://es.aliexpress.com/item/1005006684947554.html
+I2S microphone INMP441 - https://es.aliexpress.com/item/1005007889064664.html
+Rotary encoder with push button - https://es.aliexpress.com/item/1005008091948369.html 
+Small OLED display SSD1306 128×32 - https://es.aliexpress.com/item/1005008096924594.html
+Uses combined charge + 5v boost controller - https://es.aliexpress.com/item/1005008657948784.html
+
+18650 Cell
+Botón switch tactile SKHH angled - https://es.aliexpress.com/item/1005005369415986.html
+SMA-J-P-X-ST-EM1 Edgemount - https://es.aliexpress.com/item/10000000835065.html
+R1 - 100k 0603 - https://es.aliexpress.com/item/1005005677654015.html
+R2-R7 - 10k 0603 - https://es.aliexpress.com/item/1005005677654015.html
+C1, C3-C8, C10, C11 - 100nF 0603 - https://es.aliexpress.com/item/32371454429.html
+C2 - Elec 100uF SMD 3×5,3 - https://es.aliexpress.com/item/1005006724593986.html
+C9 - 47uF Radial D4 mm P2 mm - https://es.aliexpress.com/item/1005005022177024.html
+
+GPS - OPTIONAL - UNSUPPORTED ON WALKIE FW - CONFLICTS WITH ON BOARD SERIAL PORT PROGRAMMER - https://es.aliexpress.com/item/1005008733474270.html
+```
+
 ## Pictures
 
 Two fully 3d printed prototypes were built based on `esp32_loraprs` modem board.
