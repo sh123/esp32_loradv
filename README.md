@@ -31,7 +31,7 @@ Supports next features:
 
 Planned features/ideas:
 - Frequency split repeater mode, where two transceivers will be linked using espnow, so one will receive voice on RX frequency and then send packet using espnow to second transmitter which will receive packet using espnow and re-transmit it on TX frequency, this way receiver and transmitter could be positioned further apart with separate antennas thus eliminating need for duplexer
-- Bluetooth headset pairing to use with hands free
+- Bluetooth headset pairing to use with hands free, so can use headset instead of i2s speaker/mic when needed
 - Voice over AX.25, so meta data such as callsign could be included and visible on the other end
 - M17 protocol support
 
