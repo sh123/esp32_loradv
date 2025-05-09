@@ -30,7 +30,7 @@ Supports next features:
 - Experimental no warranty privacy option for ISM low power usage (⚠ **check your country regulations if it is allowed by the ISM band plan before experimenting as it might be illegal in some countries**), it is based on [ChaCha20-Poly1305](https://en.wikipedia.org/wiki/ChaCha20-Poly1305) stream cypher provided by [rwheater/Crypto](https://github.com/rweather/arduinolibs) library, it is comparable to AES256, uses 256 bits key, provides message authentication, but should have lower CPU requirements and power usage.
 
 Planned features:
-- Frequency split repeater mode. Link two transcivers using espnow, so one will receive voice on RX frequency and then send packet using espnow to second transmitter which will receive packet using espnow and re-transmit it on TX frequency
+- Frequency split repeater mode. Link two transceivers using espnow, so one will receive voice on RX frequency and then send packet using espnow to second transmitter which will receive packet using espnow and re-transmit it on TX frequency
 - Voice over AX.25, so meta data such as callsign could be included and visible on the other end
 - M17 protocol support
 
