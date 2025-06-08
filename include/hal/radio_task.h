@@ -56,7 +56,7 @@ private:
   static constexpr uint32_t CfgRadioTxStartBit = 0x10;  // task bit for start tx
 
   static constexpr int CfgRadioTaskStack = 4096;        // task stack size
-  static constexpr size_t CfgIvSize = 8;                // IV, initialization vector size
+  static constexpr size_t CfgIvSize = 12;               // IV/nonce, initialization vector size
   static constexpr size_t CfgAuthDataSize = 16;         // auth data size
 
 private:
