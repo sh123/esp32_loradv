@@ -57,7 +57,7 @@ private:
 
   static constexpr int CfgRadioTaskStack = 4096;        // task stack size
   static constexpr size_t CfgIvSize = 12;               // IV/nonce, initialization vector size
-  static constexpr size_t CfgAuthDataSize = 16;         // auth data size
+  static constexpr size_t CfgAuthTagSize = 16;          // auth tag size
 
 private:
   void setupRig(long freq, long bw, int sf, int cr, int pwr, int sync, int crcBytes);

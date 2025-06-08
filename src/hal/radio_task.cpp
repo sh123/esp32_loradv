@@ -176,7 +176,7 @@ void RadioTask::rigTask()
   rigTaskStartReceive();
 
   byte *packetBuf = new byte[CfgRadioPacketBufLen];
-  byte *tmpBuf = new byte[CfgRadioPacketBufLen + CfgIvSize + sizeof(config_->AudioPrivacyData_)];
+  byte *tmpBuf = new byte[CfgRadioPacketBufLen + CfgIvSize + CfgAuthTagSize];
 
   while (isRunning_) {
     uint32_t cmdBits = 0;
@@ -232,7 +232,7 @@ void RadioTask::rigTaskStartTransmit()
 void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf) 
 {
   int packetSize = radioModule_->getPacketLength();
-  if (packetSize > CfgIvSize + CfgAuthDataSize && packetSize <= CfgRadioPacketBufLen) {
+  if (packetSize > CfgIvSize + CfgAuthTagSize && packetSize <= CfgRadioPacketBufLen) {
     // receive packet
     int state = radioModule_->readData(packetBuf, packetSize);
     bool isValidPacket = true;
@@ -307,8 +307,6 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
 void RadioTask::encryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize) 
 {
   int curOutBufSize = inBufSize;
-  // add local auth data into the cipher
-  cipher_->addAuthData(config_->AudioPrivacyData_, CfgAuthDataSize);
   // generate iv and include it into payload head
   esp_fill_random(outBuf, CfgIvSize);
   cipher_->setIV(outBuf, CfgIvSize);
@@ -316,22 +314,20 @@ void RadioTask::encryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& out
   cipher_->encrypt(outBuf + CfgIvSize, inBuf, inBufSize);
   curOutBufSize += CfgIvSize;
   // generate auth tag and include it into payload tail
-  cipher_->computeTag(outBuf + curOutBufSize, CfgAuthDataSize);
-  curOutBufSize += CfgAuthDataSize;
+  cipher_->computeTag(outBuf + curOutBufSize, CfgAuthTagSize);
+  curOutBufSize += CfgAuthTagSize;
   outBufSize = curOutBufSize;
 }
 
 bool RadioTask::decryptPacket(byte *inBuf, byte *outBuf, int inBufSize, int& outBufSize) 
 {
-  int curOutBufSize = inBufSize - (CfgIvSize + CfgAuthDataSize);
-  // add local auth data into the cipher
-  cipher_->addAuthData(config_->AudioPrivacyData_, CfgAuthDataSize);
+  int curOutBufSize = inBufSize - (CfgIvSize + CfgAuthTagSize);
   // set iv from the packet and decrypt
   cipher_->setIV(inBuf, CfgIvSize);
   cipher_->decrypt(outBuf, inBuf + CfgIvSize, curOutBufSize);
   outBufSize = curOutBufSize;
   // check tag validity from the received packet
-  return cipher_->checkTag(inBuf + CfgIvSize + curOutBufSize, CfgAuthDataSize);
+  return cipher_->checkTag(inBuf + CfgIvSize + curOutBufSize, CfgAuthTagSize);
 }
 
 } // LoraDv
