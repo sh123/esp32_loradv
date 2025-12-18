@@ -3,17 +3,12 @@
 
 #include <Arduino.h>
 #include <Preferences.h>
+
+#define DEBUGLOG_DEFAULT_LOG_LEVEL_INFO
 #include <DebugLog.h>
 
 #include "version.h"
-
-#if __has_include("/tmp/esp32_loradv_default_config.h")
-#pragma message("Using external config")
-#include "/tmp/esp32_loradv_default_config.h"
-#else
-#pragma message("Using default built-in config")
 #include "settings/default_config.h"
-#endif
 
 namespace LoraDv {
 

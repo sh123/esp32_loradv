@@ -76,7 +76,6 @@ void RadioTask::setupRigFsk(long freq, float bitRate, float freqDev, float rxBw,
   if (state != RADIOLIB_ERR_NONE) {
     LOG_ERROR("Radio start error:", state);
   }
-  radioModule_->disableAddressFiltering();
   radioModule_->setDataShaping(shaping);
 #ifdef USE_SX126X
     #pragma message("Using SX126X")
@@ -232,7 +231,13 @@ void RadioTask::rigTaskStartTransmit()
 void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf) 
 {
   int packetSize = radioModule_->getPacketLength();
-  if (packetSize > CfgIvSize + CfgAuthTagSize && packetSize <= CfgRadioPacketBufLen) {
+  bool isValidPacket = packetSize <= CfgRadioPacketBufLen;
+
+  // should be larger than iv and tag length if privacy enabled
+  if (config_->AudioEnPriv)
+    isValidPacket &= packetSize > CfgIvSize + CfgAuthTagSize;
+
+  if (isValidPacket) {
     // receive packet
     int state = radioModule_->readData(packetBuf, packetSize);
     bool isValidPacket = true;
@@ -258,13 +263,13 @@ void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf)
       LOG_ERROR("Read data error: ", state);
     }
     lastRssi_ = radioModule_->getRSSI();
-    // probably not needed, still in receive
-    state = radioModule_->startReceive();
-    if (state != RADIOLIB_ERR_NONE) {
-      LOG_ERROR("Start receive error: ", state);
-    }
   } else {
     LOG_ERROR("Wrong incoming packet size: ", packetSize);
+  }
+  // start receive next
+  int state = radioModule_->startReceive();
+  if (state != RADIOLIB_ERR_NONE) {
+    LOG_ERROR("Start receive error: ", state);
   }
 }
 

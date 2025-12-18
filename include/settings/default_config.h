@@ -24,22 +24,17 @@
 // set to DebugLogLevel::LVL_NONE to disable logging
 #define CFG_LOG_LEVEL               DebugLogLevel::LVL_INFO
 
-// change pinouts if not defined through native board LORA_* definitions
-#ifndef LORA_RST
-#pragma message("LoRa pin definitions are not found, redefining...")
-#define LORA_RST                    26
-#define LORA_IRQ                    12
-#endif
-
 // modulation
 #define CFG_MOD_TYPE_LORA           0   
 #define CFG_MOD_TYPE_FSK            1
 #define CFG_MOD_TYPE                CFG_MOD_TYPE_LORA         
 
-// LoRa pinouts
-#define CFG_LORA_PIN_SS             SS
-#define CFG_LORA_PIN_RST            LORA_RST
-#define CFG_LORA_PIN_A              LORA_IRQ    // (sx127x - dio0, sx126x/sx128x - dio1)
+// LoRa base pinouts
+#define CFG_LORA_PIN_SS             5
+#define CFG_LORA_PIN_RST            26
+#define CFG_LORA_PIN_A              12          // (sx127x - dio0, sx126x/sx128x - dio1)
+
+// LoRa module specific pinouts
 #ifdef USE_SX126X
 #define CFG_LORA_PIN_B              14          // (sx127x - dio1, sx126x/sx128x - busy)
 #define CFG_LORA_PIN_RXEN           32          // (sx127x - unused, sx126x - RXEN pin number)

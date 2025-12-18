@@ -21,8 +21,6 @@ Service::Service(std::shared_ptr<Config> config)
 void Service::setup()
 {
   LOG_SET_LEVEL(config_->LogLevel);
-  LOG_SET_OPTION(false, false, true);  // disable file, line, enable func
-
   LOG_INFO("Board setup started");
  
   // setup bootloader random source as WiFi and BT are not used

@@ -3,8 +3,6 @@
 
 #include <Arduino.h>
 #include <memory>
-#define DEBUGLOG_DEFAULT_LOG_LEVEL_INFO
-#include <DebugLog.h>
 #include <RadioLib.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -12,7 +10,7 @@
 #include <AiEsp32RotaryEncoder.h>
 #include <driver/i2s.h>
 #include <codec2.h>
-#include <CircularBuffer.h>
+#include <CircularBuffer.hpp>
 #include <arduino-timer.h>
 #include <bootloader_random.h>
 

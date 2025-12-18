@@ -1,14 +1,14 @@
 #ifndef RADIO_TASK_H
 #define RADIO_TASK_H
-
 #include <Arduino.h>
 #include <memory>
-#include <DebugLog.h>
 #include <RadioLib.h>
 #include <CircularBuffer.hpp>
 #include <ChaChaPoly.h>
-
 #include <esp_random.h>
+
+#define DEBUGLOG_DEFAULT_LOG_LEVEL_INFO
+#include <DebugLog.h>
 
 #include "settings/config.h"
 #include "audio/audio_task.h"
