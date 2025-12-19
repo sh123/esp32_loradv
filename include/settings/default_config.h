@@ -52,7 +52,7 @@
 #define CFG_LORA_PWR                2           // output power in dBm (sx1268 with amplifier + 12 dbm)
 
 // LoRa protocol default parameters (they need to match between devices!!!)
-#define CFG_LORA_BW                 31.25e3     // discreate bandwidth (from 7.8 kHz up to 500 kHz)
+#define CFG_LORA_BW                 41.7e3      // discreate bandwidth (from 7.8 kHz up to 500 kHz)
 #define CFG_LORA_SF                 7           // spreading factor (6 - 12), 6 requires implicit header mode
 #define CFG_LORA_CR                 5           // coding rate (5 - 8)
 #define CFG_LORA_CRC                1           // 0 - disabled, 1 - 1 byte, 2 - 2 bytes
@@ -101,8 +101,8 @@
 #define CFG_AUDIO_SAMPLE_RATE       16000       // 8000 or 16000, i2s mic/spk have poor quality at 8000
 #define CFG_AUDIO_CODEC_SAMPLE_RATE 8000        // 8000
 #define CFG_AUDIO_RESAMPLE_COEFF    2           // 1 or 2 only
-#define CFG_AUDIO_HPF_CUTOFF_HZ     30          // high pass filter cutoff frequency
-#define CFG_AUDIO_CODEC2_MODE       CODEC2_MODE_1600
+#define CFG_AUDIO_HPF_CUTOFF_HZ     300         // high pass filter cutoff frequency
+#define CFG_AUDIO_CODEC2_MODE       CODEC2_MODE_1200
 #define CFG_AUDIO_MAX_PKT_SIZE      48          // maximum super frame size
 #define CFG_AUDIO_MAX_VOL           30          // maximum volume
 #define CFG_AUDIO_VOL               10          // default volume
