@@ -29,15 +29,30 @@ bool PmService::lightSleepEnterTimer(void *param)
 void PmService::lightSleepEnter(void) 
 {
   LOG_INFO("Entering light sleep");
+
+  // shutdown display
   display_->clearDisplay();
   display_->display();
+  display_->ssd1306_command(SSD1306_DISPLAYOFF);
 
+  // set minimum frequency
+  uint32_t savedCpuFrequencyMhz = getCpuFrequencyMhz();
+  setCpuFrequencyMhz(CfgMinCpuFrequencyMhz);
+
+  // enter polling sleep with periodic wakeup to avoid battery boost controller going into off mode
   esp_sleep_wakeup_cause_t wakeupCause = ESP_SLEEP_WAKEUP_UNDEFINED;
   while (true) {
     wakeupCause = lightSleepWait(config_->PmLightSleepDurationMs_ * 1000UL);
     if (wakeupCause != ESP_SLEEP_WAKEUP_TIMER) break;
     delay(config_->PmLightSleepAwakeMs_);
   }
+
+  // restore frequency
+  setCpuFrequencyMhz(savedCpuFrequencyMhz);
+
+  // start display
+  display_->display();
+  display_->ssd1306_command(SSD1306_DISPLAYON);
 
   LOG_INFO("Exiting light sleep");
   isExitFromSleep_ = true;

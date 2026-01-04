@@ -21,6 +21,9 @@ public:
   void lightSleepReset();
 
 private:
+  static constexpr uint32_t CfgMinCpuFrequencyMhz = 80;
+
+private:
   static bool lightSleepEnterTimer(void *param);
   void lightSleepEnter();
   esp_sleep_wakeup_cause_t lightSleepWait(uint64_t sleepTimeUs) const;
