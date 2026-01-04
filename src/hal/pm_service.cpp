@@ -47,6 +47,10 @@ esp_sleep_wakeup_cause_t PmService::lightSleepWait(uint64_t sleepTimeUs) const
 {
   esp_sleep_enable_ext0_wakeup((gpio_num_t)config_->PttBtnPin_, LOW);
   uint64_t bitMask = (uint64_t)(1 << config_->LoraPinA_);
+#ifdef USE_SX126X
+  // NOTE, not needed, but could be useful to wakeup and indicate activity on the band
+  //bitMask |= (int64_t)(1 << config_->LoraPinB_);
+#endif
   esp_sleep_enable_ext1_wakeup(bitMask, ESP_EXT1_WAKEUP_ANY_HIGH);
   esp_sleep_enable_timer_wakeup(sleepTimeUs);
   esp_light_sleep_start();
