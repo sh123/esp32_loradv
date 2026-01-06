@@ -133,6 +133,7 @@ public:
   SettingsAudioCodec2ModeItem(std::shared_ptr<Config> config, int index) 
     : SettingsMenuItem(config, index)
     , items_{ 
+      CODEC2_MODE_450,
       CODEC2_MODE_700C,
       CODEC2_MODE_1200,
       CODEC2_MODE_1300,
@@ -142,6 +143,7 @@ public:
       CODEC2_MODE_3200
     }
     , map_{ 
+      { CODEC2_MODE_450,  "450" },
       { CODEC2_MODE_700C, "700" },
       { CODEC2_MODE_1200, "1200" },
       { CODEC2_MODE_1300, "1300" },
