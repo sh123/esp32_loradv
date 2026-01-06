@@ -215,7 +215,7 @@ void RadioTask::rigTaskStartReceive()
   if (isHalfDuplex()) setFreq(config_->LoraFreqRx);
   int loraRadioState = radioModule_->startReceive();
   if (loraRadioState != RADIOLIB_ERR_NONE) {
-    LOG_ERROR("Start receive error: ", loraRadioState);
+    LOG_ERROR("Start receive error:", loraRadioState);
   }
   vTaskDelay(1);
   isIsrEnabled_ = true;
@@ -260,16 +260,16 @@ void RadioTask::rigTaskReceive(byte *packetBuf, byte *tmpBuf)
         LOG_ERROR("Invalid packet was received");
       }
     } else {
-      LOG_ERROR("Read data error: ", state);
+      LOG_ERROR("Read data error:", state);
     }
     lastRssi_ = radioModule_->getRSSI();
   } else {
-    LOG_ERROR("Wrong incoming packet size: ", packetSize);
+    LOG_ERROR("Wrong incoming packet size:", packetSize);
   }
   // start receive next
   int state = radioModule_->startReceive();
   if (state != RADIOLIB_ERR_NONE) {
-    LOG_ERROR("Start receive error: ", state);
+    LOG_ERROR("Start receive error:", state);
   }
 }
 
@@ -303,7 +303,7 @@ void RadioTask::rigTaskTransmit(byte *packetBuf, byte *tmpBuf)
     if (loraRadioState != RADIOLIB_ERR_NONE) {
       LOG_ERROR("Radio transmit failed:", loraRadioState, txBytesCnt);
     } else {
-      LOG_DEBUG("Transmitted packet", txBytesCnt);
+      LOG_DEBUG("Transmitted packet, size:", txBytesCnt);
     }
     vTaskDelay(1);
   }

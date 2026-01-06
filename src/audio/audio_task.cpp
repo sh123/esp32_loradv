@@ -328,7 +328,7 @@ void AudioTask::audioTaskRecord()
       packetSize = 0;
   }
 
-  // stop mic and tell radio to start transmission
+  // stop mic and tell radio to switch to receive
   vTaskDelay(1);
   i2s_stop(CfgAudioI2sMicId);
   radioTask_->startReceive();
