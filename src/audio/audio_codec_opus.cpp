@@ -27,6 +27,7 @@ bool AudioCodecOpus::start(std::shared_ptr<const Config> config)
   opus_encoder_ctl(opusEncoder_, OPUS_SET_BITRATE(config->AudioOpusRate));
   opus_encoder_ctl(opusEncoder_, OPUS_SET_COMPLEXITY(CfgComplexity));
   opus_encoder_ctl(opusEncoder_, OPUS_SET_SIGNAL(OPUS_SIGNAL_VOICE));
+  //opus_encoder_ctl(opusEncoder_, OPUS_SET_BANDWIDTH(OPUS_BANDWIDTH_NARROWBAND));
 
   // configure decoder
   int decoderError;

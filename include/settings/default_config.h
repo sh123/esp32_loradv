@@ -108,7 +108,7 @@
 #define CFG_AUDIO_VOL               10          // default volume
 
 // audio, opus
-#define CFG_AUDIO_OPUS_BITRATE      3200
+#define CFG_AUDIO_OPUS_BITRATE      2400        // 2400 is the minimum
 #define CFG_AUDIO_OPUS_PCMLEN       120
 
 // audio, experimental 

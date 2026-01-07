@@ -195,7 +195,7 @@ public:
   SettingsAudioOpusRate(std::shared_ptr<Config> config, int index) : SettingsMenuItem(config, index) {}
   void changeValue(int delta) { 
     int newVal = config_->AudioOpusRate + 100 * delta;
-    if (newVal >= 2400 && newVal <= 512000) config_->AudioOpusRate = newVal;
+    if (newVal >= 500 && newVal <= 16000) config_->AudioOpusRate = newVal;
   }
   void getName(std::stringstream &s) const { s << index_ << ".OPUS Rate"; }
   void getValue(std::stringstream &s) const { s << config_->AudioOpusRate << "bps"; }
