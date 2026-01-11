@@ -43,10 +43,10 @@ void Config::InitializeDefault()
   FskShaping = CFG_FSK_SHAPING;
 
   // lora pinouts
-  LoraPinSs_ = CFG_LORA_PIN_SS;
+  LoraPinSs_ = CFG_LORA_PIN_NSS;
   LoraPinRst_ = CFG_LORA_PIN_RST;
-  LoraPinA_ = CFG_LORA_PIN_A; // (sx127x - dio0, sx126x/sx128x - dio1)
-  LoraPinB_ = CFG_LORA_PIN_B; // (sx127x - dio1, sx126x/sx128x - busy)
+  LoraPinA_ = CFG_LORA_PIN_DIO1; // (sx127x - dio0, sx126x/sx128x - dio1)
+  LoraPinB_ = CFG_LORA_PIN_BUSY; // (sx127x - dio1, sx126x/sx128x - busy)
   LoraPinSwitchRx_ = CFG_LORA_PIN_RXEN;  // (sx127x - unused, sx126x - RXEN pin number)
   LoraPinSwitchTx_ = CFG_LORA_PIN_TXEN;  // (sx127x - unused, sx126x - TXEN pin number)
 
