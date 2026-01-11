@@ -9,8 +9,8 @@
 // saved settings version, increment to load new settings
 #define CFG_VERSION                 10
 
-// undef in variant.h file if SX126X is not in use
-#define USE_SX126X
+// define in variant.h file if SX126X is in use
+//#define USE_SX126X
 
 // override in variant.h file, from https://github.com/jgromes/RadioLib/wiki/Modules
 #ifndef MODULE_NAME

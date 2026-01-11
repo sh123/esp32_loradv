@@ -1,11 +1,6 @@
 #ifndef VARIANT_H
 #define VARIANT_H
 
-// sx126x is not in use
-#ifdef USE_SX126X
-#undef USE_SX126X
-#endif
-
 // RA01 module name from RadiioLib
 #define MODULE_NAME                 SX1278      // 433 MHz module
 
