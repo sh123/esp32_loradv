@@ -78,14 +78,12 @@ void RadioTask::setupRigFsk(long freq, float bitRate, float freqDev, float rxBw,
   }
   radioModule_->setDataShaping(shaping);
 #ifdef USE_SX126X
-    #pragma message("Using SX126X")
     LOG_INFO("Using SX126X module");
     radioModule_->setRfSwitchPins(config_->LoraPinSwitchRx_, config_->LoraPinSwitchTx_);
     if (isIsrInstalled_) radioModule_->clearDio1Action();
     radioModule_->setDio1Action(onRigIsrRxPacket);
     isIsrInstalled_ = true;
 #else
-    #pragma message("Using SX127X")
     LOG_INFO("Using SX127X module");
     if (isIsrInstalled_) radioModule_->clearDio0Action();
     radioModule_->setDio0Action(onRigIsrRxPacket, RISING);
