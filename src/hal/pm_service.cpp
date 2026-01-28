@@ -33,12 +33,15 @@ void PmService::lightSleepEnter(void)
   // shutdown display
   display_->clearDisplay();
   display_->display();
+
+#if CFG_PM_OPTIMIZE_SLEEP == true
+  #pragma message("Using optimized sleep mode")
   display_->ssd1306_command(SSD1306_DISPLAYOFF);
 
   // set minimum frequency
   uint32_t savedCpuFrequencyMhz = getCpuFrequencyMhz();
   setCpuFrequencyMhz(CfgMinCpuFrequencyMhz);
-
+#endif
   // enter polling sleep with periodic wakeup to avoid battery boost controller going into off mode
   esp_sleep_wakeup_cause_t wakeupCause = ESP_SLEEP_WAKEUP_UNDEFINED;
   while (true) {
@@ -47,13 +50,14 @@ void PmService::lightSleepEnter(void)
     delay(config_->PmLightSleepAwakeMs_);
   }
 
+#if CFG_PM_OPTIMIZE_SLEEP == true
   // restore frequency
   setCpuFrequencyMhz(savedCpuFrequencyMhz);
 
   // start display
   display_->display();
   display_->ssd1306_command(SSD1306_DISPLAYON);
-
+#endif
   LOG_INFO("Exiting light sleep");
   isExitFromSleep_ = true;
 }

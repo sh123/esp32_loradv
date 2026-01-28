@@ -165,6 +165,9 @@
 #ifndef CFG_PM_LSLEEP_AWAKE_MS
 #define CFG_PM_LSLEEP_AWAKE_MS      100         // how long to be awake in light sleep polling
 #endif
+#ifndef CFG_PM_OPTIMIZE_SLEEP
+#define CFG_PM_OPTIMIZE_SLEEP       false       // set to true if not using boost controller with auto shutdown
+#endif
 
 // audio
 #define CFG_AUDIO_CODEC_CODEC2      0
