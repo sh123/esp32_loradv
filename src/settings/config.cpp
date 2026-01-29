@@ -49,6 +49,8 @@ void Config::InitializeDefault()
   LoraPinB_ = CFG_LORA_PIN_BUSY; // (sx127x - dio1, sx126x/sx128x - busy)
   LoraPinSwitchRx_ = CFG_LORA_PIN_RXEN;  // (sx127x - unused, sx126x - RXEN pin number)
   LoraPinSwitchTx_ = CFG_LORA_PIN_TXEN;  // (sx127x - unused, sx126x - TXEN pin number)
+  LoraFreqMin_ = CFG_LORA_FREQ_MIN;
+  LoraFreqMax_ = CFG_LORA_FREQ_MAX;
 
   // ptt button
   PttBtnPin_ = CFG_PTT_BTN_PIN;

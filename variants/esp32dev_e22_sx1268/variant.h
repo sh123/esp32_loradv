@@ -4,7 +4,6 @@
 // e22 module type
 #define USE_SX126X
 #define MODULE_NAME                 SX1268      // 433 MHz module
-//#define MODULE_NAME                 SX1262      // 868 MHz module
 
 // LoRa pinougs
 #define CFG_LORA_PIN_NSS            5

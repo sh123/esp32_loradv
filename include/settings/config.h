@@ -46,7 +46,9 @@ public:
   byte LoraPinB_;        // (sx127x - dio1, sx126x/sx128x - busy)
   byte LoraPinSwitchRx_; // (sx127x - unused, sx126x - RXEN pin number)
   byte LoraPinSwitchTx_; // (sx127x - unused, sx126x - TXEN pin number)
-
+  long LoraFreqMin_;     // module minimum frequency
+  long LoraFreqMax_;     // module maximum frequency
+  
   // rotary encoder
   byte EncoderPinA_;     // Encoder A pin number
   byte EncoderPinB_;     // Encoder B pin number

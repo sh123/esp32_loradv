@@ -30,11 +30,11 @@ protected:
 
 class SettingsLoraFreqStepItem : public SettingsMenuItem {
 private:
-  static const int CfgItemsCount = 7;
+  static const int CfgItemsCount = 10;
 public:
   SettingsLoraFreqStepItem(std::shared_ptr<Config> config, int index) 
     : SettingsMenuItem(config, index)
-    , items_{ 1000, 5000, 6250, 10000, 12500, 20000, 25000 } 
+    , items_{ 1000, 5000, 6250, 10000, 12500, 20000, 25000, 50000, 100000, 500000 } 
   {
     for (selIndex_ = 0; selIndex_ < CfgItemsCount; selIndex_++)
       if (config_->LoraFreqStep == items_[selIndex_])
@@ -57,7 +57,7 @@ public:
   SettingsLoraFreqRxItem(std::shared_ptr<Config> config, int index) : SettingsMenuItem(config, index) {}
   void changeValue(int delta) { 
     long newVal = config_->LoraFreqRx + config_->LoraFreqStep * delta;
-    if (newVal >= 400e6 && newVal <= 520e6) config_->LoraFreqRx = newVal;
+    if (newVal >= config_->LoraFreqMin_ && newVal <= config_->LoraFreqMax_) config_->LoraFreqRx = newVal;
   }
   void getName(std::stringstream &s) const { s << index_ << ".RX Freq"; }
   void getValue(std::stringstream &s) const { s << config_->LoraFreqRx << "Hz"; }
@@ -68,7 +68,7 @@ public:
   SettingsLoraFreqTxItem(std::shared_ptr<Config> config, int index) : SettingsMenuItem(config, index) {}
   void changeValue(int delta) {
     long newVal = config_->LoraFreqTx + config_->LoraFreqStep * delta;
-    if (newVal >= 400e6 && newVal <= 520e6) config_->LoraFreqTx = newVal;
+    if (newVal >= config_->LoraFreqMin_ && newVal <= config_->LoraFreqMax_) config_->LoraFreqTx = newVal;
   }
   void getName(std::stringstream &s) const { s << index_ << ".TX Freq"; }
   void getValue(std::stringstream &s) const { s << config_->LoraFreqTx << "Hz"; }

@@ -65,6 +65,12 @@
 #ifndef CFG_LORA_FREQ_STEP
 #define CFG_LORA_FREQ_STEP          25e3        // frquency step
 #endif
+#ifndef CFG_LORA_FREQ_MIN
+#define CFG_LORA_FREQ_MIN           410e3       // minimum frequency
+#endif
+#ifndef CFG_LORA_FREQ_MAX
+#define CFG_LORA_FREQ_MAX           493e3       // maximum frequency
+#endif
 #ifndef CFG_LORA_PWR
 #define CFG_LORA_PWR                2           // output power in dBm (sx1268 with amplifier + 12 dbm)
 #endif
