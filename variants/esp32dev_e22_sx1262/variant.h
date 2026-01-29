@@ -8,8 +8,8 @@
 // module specific ranges and base frequency
 #define CFG_LORA_FREQ_RX            866.775e6   // RX frequency in MHz
 #define CFG_LORA_FREQ_TX            866.775e6   // TX frequency in MHz
-#define CFG_LORA_FREQ_MIN           850e3       // minimum frequency
-#define CFG_LORA_FREQ_MAX           930e3       // maximum frequency
+#define CFG_LORA_FREQ_MIN           850e6       // minimum frequency
+#define CFG_LORA_FREQ_MAX           930e6       // maximum frequency
 
 // LoRa pinougs
 #define CFG_LORA_PIN_NSS            5
